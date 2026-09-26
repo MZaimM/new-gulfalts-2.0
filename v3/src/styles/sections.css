@@ -91,11 +91,17 @@
 /* ---------------------------------------------------------------------------
    H04 Brand Manifesto (The firm): one centred statement.
 --------------------------------------------------------------------------- */
-.h04 > .chapter_content {
+.h04 { --join: 100vh; }
+.h04 .chapter_overlay {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  min-height: 100svh;
   padding: calc(var(--header-h) + 48px) var(--gutter) clamp(64px, 8vw, 112px);
   text-align: center;
+}
+.h04_copy { display: flex; flex-direction: column; align-items: center; }
+/* The statement rises in with the last part of the wipe instead of a separate reveal. */
+.js .h04_copy {
+  opacity: clamp(0, (var(--join-p, 1) - 0.55) * 3, 1);
+  transform: translate3d(0, calc((1 - var(--join-p, 1)) * 48px), 0);
 }
 .h04 .chapter_eyebrow { margin-bottom: 24px; color: var(--text-inverse-secondary); }
 .h04_heading { max-width: 15ch; font-size: var(--fs-section); line-height: var(--heading-leading); letter-spacing: var(--heading-tracking); text-wrap: balance; }
@@ -273,7 +279,8 @@
   .h02_caption { right: auto; left: var(--gutter); bottom: 40px; }
 
 
-  .h04 > .chapter_content { padding-bottom: 64px; }
+  .h04 { --join: 80vh; }
+  .h04 .chapter_overlay { padding-bottom: 64px; }
   .h04_body { margin-top: 32px; }
 
   /* Feature: eyebrow → heading → image → story → figures → link */
@@ -321,7 +328,8 @@
    Reduced motion: composition adjustments for the unpinned layout.
 --------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-  .h01 .chapter_overlay { justify-content: center; align-items: center; }
+  .h01 .chapter_overlay, .h04 .chapter_overlay { justify-content: center; align-items: center; }
+  .js .h04_copy { opacity: 1; transform: none; }
   .h01_title, .h01_next-shade { transition: none; }
   .h02_path, .h11_statements, .h11_layers, .h13_places, .h03_words { position: relative; inset: auto; top: auto; bottom: auto; transform: none !important; }
   .h03_words { display: grid; gap: 8px; place-items: start; padding: 0; }

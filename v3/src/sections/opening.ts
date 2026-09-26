@@ -85,8 +85,10 @@ export const renderH04 = () => autoplayChapter({
   scrim: 'focus',
   id: 'the-firm',
   content: `
-    <p class="chapter_eyebrow" data-reveal>${esc(h04.copy.eyebrow)}</p>
-    <h2 class="chapter_heading h04_heading" id="h04-title" data-reveal-words>${esc(h04.copy.heading)}</h2>
-    <p class="h04_lead" data-reveal>${esc(h04.copy.lead)}</p>
-    <p class="chapter_body h04_body" data-reveal>${esc(h04.copy.body)}</p>`
+    <div class="h04_copy">
+      <p class="chapter_eyebrow">${esc(h04.copy.eyebrow)}</p>
+      <h2 class="chapter_heading h04_heading" id="h04-title">${esc(h04.copy.heading)}</h2>
+      <p class="h04_lead">${esc(h04.copy.lead)}</p>
+      <p class="chapter_body h04_body">${esc(h04.copy.body)}</p>
+    </div>`
 });

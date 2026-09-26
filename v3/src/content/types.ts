@@ -58,6 +58,11 @@ export interface AutoplayChapter extends ChapterBase {
   /** Optional scroll track (in viewport heights) for copy that changes as the visitor advances. */
   track?: { desktop: number; mobile: number };
   joinPrevious?: boolean;
+  /**
+   * How a joined chapter arrives: `dissolve` (default) fades in over the previous one; `wipe`
+   * uncovers it bottom-up with a hard edge while the previous picture drifts up and dims.
+   */
+  joinStyle?: 'dissolve' | 'wipe';
 }
 
 export interface StaticChapter extends ChapterBase {

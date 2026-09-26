@@ -25,10 +25,30 @@
   isolation: isolate;
 }
 
-/* A joined chapter slides under the tail of the previous one and dissolves in over --join. */
+/* A joined chapter slides under the tail of the previous one and dissolves in over --join
+   (--join-p runs 0 → 1 across it; see ChapterTrack). */
 .js .chapter_component.is-joined { margin-top: calc(-100lvh - var(--join)); background: transparent; }
 .js .chapter_component.is-joined > .chapter_track { height: calc(var(--track) * 1vh + var(--join)); }
-.js .chapter_component.is-joined .chapter_sticky { opacity: var(--join-opacity, 0); }
+.js .chapter_component.is-joined .chapter_sticky { opacity: var(--join-p, 0); }
+
+/* Wipe join (after floema.com): the incoming chapter is uncovered bottom-up with a hard edge
+   and its picture rises into place, while the outgoing picture drifts up faster, grows a
+   touch and dims. Transform, opacity and clip-path only, all driven by scroll. */
+.js .chapter_component.is-joined.is-wipe .chapter_sticky {
+  opacity: 1;
+  clip-path: inset(calc((1 - var(--join-p, 0)) * 100%) 0 0 0);
+}
+.js .chapter_component.is-joined.is-wipe .chapter_media-wrap {
+  transform: translate3d(0, calc((1 - var(--join-p, 0)) * 18vh), 0);
+}
+.js .chapter_component.has-wipe-next .chapter_media-wrap {
+  transform: translate3d(0, calc(var(--exit, 0) * -22vh), 0) scale(calc(1 + var(--exit, 0) * 0.05));
+}
+.js .chapter_component.has-wipe-next .chapter_sticky::after {
+  content: ''; position: absolute; inset: 0; z-index: 2;
+  background: var(--ink); opacity: calc(var(--exit, 0) * 0.55);
+  pointer-events: none;
+}
 
 /* Media: poster is always underneath, the video fades in once it has a decoded frame. */
 .chapter_media-wrap { position: absolute; inset: 0; z-index: 0; background: var(--ink); }
@@ -164,7 +184,10 @@ html:not(.js) .sequence_frame:not(:first-child) { display: none; }
 --------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   .js .chapter_component.is-joined { margin-top: 0; }
-  .js .chapter_component.is-joined .chapter_sticky { opacity: 1; }
+  .js .chapter_component.is-joined .chapter_sticky { opacity: 1; clip-path: none; }
+  .js .chapter_component.is-joined.is-wipe .chapter_media-wrap,
+  .js .chapter_component.has-wipe-next .chapter_media-wrap { transform: none; }
+  .js .chapter_component.has-wipe-next .chapter_sticky::after { content: none; }
   .chapter_track,
   .js .chapter_component.is-joined > .chapter_track { height: auto; }
   .chapter_sticky { position: relative; height: auto; min-height: 100svh; }

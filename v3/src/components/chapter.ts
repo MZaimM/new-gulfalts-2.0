@@ -90,7 +90,7 @@ export const autoplayChapter = ({ chapter, className, labelledBy, content, eager
       </div>`
     : `${media}<div class="chapter_content">${content}</div>`;
   return `
-<section class="chapter_component is-autoplay ${className}${chapter.track ? ' has-track' : ''}${chapter.joinPrevious ? ' is-joined' : ''}" id="${id}"
+<section class="chapter_component is-autoplay ${className}${chapter.track ? ' has-track' : ''}${chapter.joinPrevious ? ' is-joined' : ''}${chapter.joinStyle === 'wipe' ? ' is-wipe' : ''}" id="${id}"
   data-chapter="${chapter.id}" data-media="autoplay" data-state="idle" data-reduced-motion="poster"${stepAttr} aria-labelledby="${labelledBy}">
   ${body}
 </section>`;

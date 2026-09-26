@@ -92,7 +92,8 @@ export const h03 = {
   code: 'H03',
   title: 'Brand spectrum',
   type: 'sequence',
-  track: { desktop: 360, mobile: 260 },
+  // Longer than the beats need: the last ~100vh is H04 wiping in over the final still.
+  track: { desktop: 420, mobile: 320 },
   joinPrevious: true,
   cues: [
     { at: 0, id: 'work', label: 'Workspace', copy: 'For work.' },
@@ -113,7 +114,7 @@ export const h03 = {
 } satisfies SequenceChapter & { copy: unknown };
 
 // ---------------------------------------------------------------------------
-// H04 Brand Manifesto (The firm) — AUTOPLAY
+// H04 Brand Manifesto (The firm) — AUTOPLAY, wipes in over H03
 // ---------------------------------------------------------------------------
 export const h04 = {
   id: 'h04-brand-manifesto',
@@ -122,6 +123,10 @@ export const h04 = {
   type: 'autoplay',
   media: media('h04-brand-manifesto', 'v00'),
   loop: true,
+  // Wipes up over H03's last still (see the wipe join in chapters.css), then holds briefly.
+  track: { desktop: 160, mobile: 150 },
+  joinPrevious: true,
+  joinStyle: 'wipe',
   copy: {
     eyebrow: 'The firm',
     heading: 'Spaces are more than structures.',

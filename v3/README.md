@@ -21,7 +21,7 @@ npm run media      # render ulang semua video + gambar (butuh ffmpeg)
 | 1 | H01 Intro | Jadi intro 3 tahap (lihat peta chapter). Step dipicu posisi scroll (`data-steps`), animasinya berbasis waktu dan berbalik saat scroll ke atas. Navbar jadi solid saat background intro hilang |
 | 2 | H02 Dubai arrival | Video diganti `video concept/DFD/scene1&2.mp4` (awan → pesisir Dubai → Al Quoz → Fintech District). 1080p, marker di gedung DFD |
 | 3 | H03 Brand spectrum | Montage video diganti tumpukan still HD (AVIF/JPEG responsif, crop 9:16 khusus mobile) yang cross-fade per cue |
-| 4 | H04 The firm | Seluruh teks rata tengah, scrim lebih kuat |
+| 4 | H04 The firm | Seluruh teks rata tengah, scrim lebih kuat. Masuk dengan wipe ala floema.com di atas still terakhir H03 |
 | 5 | H05 Dubai Creative Park | Gambar potret `Block 5 Padel - side.png` + metrik 160,000+ sq ft & 54 spaces + satu CTA |
 | 6–7 | H06 journey, H07 snapshot | Dihapus |
 | 8 | H08 Dubai Fintech District | Match cut diganti feature seperti H05 (dicerminkan) dengan copy DFD, 50,000 sq ft & 65 units |
@@ -47,7 +47,7 @@ Mengikuti style guide gulfalts.com (https://www.gulfalts.com/style/style-guide),
 | H01 | Intro | Autoplay loop v01 (12 dtk ping-pong, 1,9 MB / 0,6 MB) di track pendek: logo reveal → scroll: background fade ke frame awal H02 → scroll lagi: logo slide out → H02 menyambung tanpa potongan |
 | H02 | Dubai arrival | Scrub, v01 — 1920×1080 / 608×1080, ±5 MB / 2 MB |
 | H03 | Brand spectrum | Sequence still HD (4 frame) |
-| H04 | The firm | Autoplay loop (v00) |
+| H04 | The firm | Autoplay loop (v00) di track pendek; wipe dari bawah di atas H03 |
 | H05 | Dubai Creative Park | Static feature |
 | H08 | Dubai Fintech District | Static feature (mirrored) |
 | H11 | Our approach | Scrub, v01 — 1920×1080 / 608×1080, ±12 MB / 4 MB |
@@ -87,6 +87,7 @@ Semua copy, statistik, marker, dan CTA adalah HTML statis (dirender saat build d
 - **Scrub**: `chapter_track` (tinggi = `track` × vh) berisi `chapter_sticky` yang `position: sticky`. Posisi scroll → progress 0–1 → `currentTime` video. Scroll native tidak pernah dibajak (Lenis hanya menghaluskan wheel).
 - **Overlay**: `data-show="a-b"` tampil saat progress di rentang a–b; `data-cue="id"` tampil hanya saat cue itu aktif; `data-cue-mark` diberi penekanan saat cue aktif.
 - **Steps**: `data-steps="bg-out:0.05 brand-out:0.5"` pada section → `.is-bg-out` / `.is-brand-out` saat progress melewati angka itu, plus event `chapter:step` (dipakai untuk menjeda video intro dan mengubah navbar).
+- **Join (wipe)**: `joinStyle: 'wipe'` (H04) membuka chapter dari bawah ke atas dengan tepi tegas (`clip-path`), gambarnya naik ke posisi, sementara gambar chapter sebelumnya bergeser naik lebih cepat, sedikit membesar, dan meredup (`--exit`). Semua mengikuti scroll, seperti transisi koleksi di floema.com.
 - **Join (dissolve)**: chapter dengan `joinPrevious: true` (H02, H03, H13) naik ke bawah ekor chapter sebelumnya dan fade-in di atasnya selama `--join` (60vh desktop, 40vh mobile), jadi tidak ada hard cut. Chapter sebelumnya menyelesaikan ceritanya dulu, lalu copy-nya menyingkir.
 - **State media**: `idle → loading → ready → active ⇄ paused`, gagal → `error → fallback` (poster tetap tampil). Terlihat di atribut `data-state` tiap section.
 - **Loading**: tidak ada video yang dimuat saat page load selain H01 dan chapter berikutnya. Video lain mulai buffer satu layar sebelum masuk, atau saat chapter sebelumnya sudah lewat 55%.

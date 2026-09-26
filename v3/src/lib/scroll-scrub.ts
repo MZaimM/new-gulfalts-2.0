@@ -18,7 +18,7 @@ const parseRange = (value: string): [number, number] => {
   return [Number(from), Number(to)];
 };
 
-/** A joined chapter is pulled up by (stage + --join); whatever exceeds the stage is the dissolve. */
+/** A joined chapter is pulled up by (stage + --join); whatever exceeds the stage is the join. */
 const joinDistance = (section: HTMLElement) => {
   const stage = section.querySelector<HTMLElement>('.chapter_sticky')?.offsetHeight ?? 0;
   const pull = -parseFloat(getComputedStyle(section).marginTop) || 0;
@@ -39,6 +39,8 @@ export class ChapterTrack {
   private track: HTMLElement;
   private sticky: HTMLElement;
   private joined: boolean;
+  /** The next chapter wipes in over this one, so this one drifts up and dims (--exit). */
+  private wipeNext = false;
   private ranges: Range[];
   private cueEls: HTMLElement[];
   private markEls: HTMLElement[];
@@ -104,6 +106,8 @@ export class ChapterTrack {
     this.lead = this.joined ? joinDistance(this.section) : 0;
     const next = this.section.nextElementSibling;
     this.tail = next instanceof HTMLElement && next.classList.contains('is-joined') ? joinDistance(next) : 0;
+    this.wipeNext = this.tail > 0 && next instanceof HTMLElement && next.classList.contains('is-wipe');
+    this.section.classList.toggle('has-wipe-next', this.wipeNext);
     this.layoutMarkers();
   }
 
@@ -124,11 +128,14 @@ export class ChapterTrack {
     }
 
     const offset = clamp(scrollY - start, 0, this.distance);
-    if (this.lead) this.section.style.setProperty('--join-opacity', clamp(offset / this.lead).toFixed(3));
+    // --join-p: 0 → 1 while this chapter dissolves or wipes in over the previous one.
+    if (this.lead) this.section.style.setProperty('--join-p', clamp(offset / this.lead).toFixed(3));
     if (this.tail) {
-      // The next chapter dissolves over this one; let the copy step aside first.
-      const exit = clamp((offset - (this.distance - this.tail)) / (this.tail * 0.35));
+      // The next chapter joins over this one; let the copy step aside first.
+      const tailStart = this.distance - this.tail;
+      const exit = clamp((offset - tailStart) / (this.tail * 0.35));
       this.overlay.style.opacity = exit ? (1 - exit).toFixed(3) : '';
+      if (this.wipeNext) this.section.style.setProperty('--exit', clamp((offset - tailStart) / this.tail).toFixed(3));
     }
     const story = clamp((offset - this.lead) / Math.max(1, this.distance - this.lead - this.tail));
     if (story === this.progress) return;
