@@ -29,6 +29,16 @@ npm run media      # render ulang semua video + gambar (butuh ffmpeg)
 | 11 | H12 curation | Dihapus; H13 Our destinations dipertahankan |
 | 11 | H13 Our destinations | Video diganti `video concept/DFD/Scene-2.mp4` (7,7 dtk pertama, diputar mundur: situs DFD → Al Quoz → pesisir Dubai). Marker di Al Quoz dengan label di kiri titik |
 
+## Style
+
+Mengikuti style guide gulfalts.com (https://www.gulfalts.com/style/style-guide), menggantikan DM Sans dari `../GULFALTS-DESIGN.md`. Semua nilai ada di `src/styles/tokens.css`.
+
+- **Typography**: heading Season Serif 400, line-height 1.2, tracking -0.01em (H1 63→40, H2 48→32, H3 40→28 px); body, nav, dan button Season Sans 300; eyebrow 12px/500/uppercase/1.2px; input form Guardian Sans.
+- **Color**: `--primary-color` #101010, `--secondary-color` #4B4B4B, `--text-color` #FFF (teks di atas gelap), `--off-white` #F3E9E3, `--off-white-secondary` #E0D3CC, `--button-primary` #801B2B (hover #6B1624, pressed #5F1420).
+- **Button**: pill 999px, 14px Season Sans Light, padding 12px 18px (16px di mobile), transisi 0.3s. `.primary-button` = `.button.is-alternate` (burgundy), `.button` = putih untuk latar gelap (CTA "Inquire" di navbar), `.text-link` = `.button-view-more`.
+- **Radius**: `--radius-sm` 8 · `--radius-input` 12 · `--radius-card` 16 (gambar feature, panel directory, navbar) · `--radius-pill` 999.
+- **Font**: file WOFF2 di `public/fonts` (dari `../Font`). Season adalah versi **TRIAL**; lisensi webfont harus dibeli sebelum launch.
+
 ## Peta chapter
 
 | ID | Chapter | Media |

@@ -13,6 +13,8 @@
   <link rel="icon" href="/media/images/logo-dark.svg" type="image/svg+xml" />
   <link rel="preload" href="/media/posters/gulfalts-h01-brand-reveal-poster-desktop-v00.jpg" as="image" media="(min-width: 768px)" fetchpriority="high" />
   <link rel="preload" href="/media/posters/gulfalts-h01-brand-reveal-poster-mobile-v00.jpg" as="image" media="(max-width: 767px)" fetchpriority="high" />
+  <link rel="preload" href="/fonts/SeasonSans-TRIAL-Light.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/SeasonSerif-TRIAL-Regular.woff2" as="font" type="font/woff2" crossorigin />
   <script>document.documentElement.classList.add('js');</script>
   <script type="module" src="/src/main.ts"></script>
 </head>
@@ -28,13 +30,12 @@
       <a href="#h05-creative-park">Creative Park</a>
       <a href="#h08-fintech-district">Fintech District</a>
       <a href="#h13-dubai-pull-out">Destinations</a>
-      <a href="mailto:info@gulfalts.com?subject=Gulfalts%20partnership%20enquiry">Inquire</a>
+      <a class="button nav-cta" href="mailto:info@gulfalts.com?subject=Gulfalts%20partnership%20enquiry">Inquire</a>
     </nav>
     <button class="menu-toggle" aria-expanded="false" aria-controls="menu-dialog"><span class="menu-glyph" aria-hidden="true"></span><span>Menu</span></button>
   </header>
 
   <dialog id="menu-dialog" class="menu-dialog" aria-labelledby="menu-title">
-    <img class="menu-backdrop" src="/media/images/creative-interior.jpg" alt="" width="1600" height="900" loading="lazy" />
     <div class="menu-body">
       <div class="menu-top"><span id="menu-title">Explore Gulfalts</span><button class="menu-close" aria-label="Close menu">Close <span aria-hidden="true">×</span></button></div>
       <nav aria-label="Expanded navigation">

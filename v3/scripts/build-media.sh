@@ -75,7 +75,7 @@ for file in \
   posters/gulfalts-h01-brand-reveal-poster-desktop-v00.jpg posters/gulfalts-h01-brand-reveal-poster-mobile-v00.jpg \
   video/gulfalts-h04-brand-manifesto-desktop-v00.mp4 video/gulfalts-h04-brand-manifesto-mobile-v00.mp4 \
   posters/gulfalts-h04-brand-manifesto-poster-desktop-v00.jpg posters/gulfalts-h04-brand-manifesto-poster-mobile-v00.jpg \
-  images/logo-dark.svg images/logo-light.svg images/gulfalts-wordmark-white.svg images/creative-interior.jpg; do
+  images/logo-dark.svg images/logo-light.svg images/gulfalts-wordmark-white.svg; do
   mkdir -p "$(dirname "$ROOT/public/media/$file")"
   cp "$V2/$file" "$ROOT/public/media/$file"
 done

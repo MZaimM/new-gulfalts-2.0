@@ -15,7 +15,7 @@
 
 .chapter_component { position: relative; }
 .chapter_component.is-scrub,
-.chapter_component.is-autoplay { background: var(--ink); color: var(--canvas); }
+.chapter_component.is-autoplay { background: var(--ink); color: var(--text-inverse); }
 
 .chapter_track { position: relative; height: calc(var(--track) * 1vh); }
 .chapter_sticky {
@@ -80,7 +80,7 @@
   position: absolute;
   top: calc(var(--header-h) + 24px); left: var(--gutter); right: var(--gutter);
   display: flex; justify-content: space-between; align-items: baseline; gap: 24px;
-  font-size: var(--fs-meta); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  font-size: var(--fs-meta); font-weight: 500; letter-spacing: var(--eyebrow-tracking); text-transform: uppercase;
   font-variant-numeric: tabular-nums;
 }
 .chapter_hud-label { display: flex; gap: 16px; align-items: baseline; }
@@ -94,7 +94,7 @@
 }
 .chapter_progress span {
   display: block; height: 100%;
-  background: var(--canvas);
+  background: var(--text-inverse);
   transform-origin: left;
   transform: scaleX(var(--p, 0));
 }
@@ -109,13 +109,13 @@
   width: 14px; height: 14px; margin-left: -7px;
   border-radius: 50%;
   background: var(--burgundy);
-  box-shadow: 0 0 0 2px var(--canvas);
+  box-shadow: 0 0 0 2px var(--text-inverse);
   transition: transform var(--t-quick) var(--ease);
 }
 .chapter_marker-label {
-  padding: 6px 10px; border-radius: 4px;
-  background: var(--ink); color: var(--canvas);
-  font-size: var(--fs-meta); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 6px 12px; border-radius: var(--radius-pill);
+  background: var(--ink); color: var(--text-inverse);
+  font-size: var(--fs-meta); font-weight: 500; letter-spacing: var(--eyebrow-tracking); text-transform: uppercase;
   white-space: nowrap;
   transition: background var(--t-quick) ease, color var(--t-quick) ease;
 }
@@ -123,7 +123,7 @@
 .chapter_marker > a:hover .chapter_marker-dot,
 .chapter_marker > a:focus-visible .chapter_marker-dot { transform: scale(1.35); }
 .chapter_marker.is-highlight .chapter_marker-label,
-.chapter_marker > a:hover .chapter_marker-label { background: var(--canvas); color: var(--ink); }
+.chapter_marker > a:hover .chapter_marker-label { background: var(--text-inverse); color: var(--ink); }
 
 /* Sequence chapters: HD stills cross-fade on each cue while the stage settles from a slight
    push-in to rest over the chapter (transform only, so it stays on the compositor). */
@@ -187,7 +187,7 @@ html:not(.js) .sequence_frame:not(:first-child) { display: none; }
     display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
     gap: 32px 24px;
     padding: 64px var(--gutter) var(--section-space);
-    background: var(--ink); color: var(--canvas);
+    background: var(--ink); color: var(--text-inverse);
   }
   .chapter_keyframe img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
   .chapter_keyframe p {

@@ -54,7 +54,7 @@ export const initReveals = () => {
   gsap.utils.toArray<HTMLElement>('[data-reveal-media]').forEach(target => {
     const image = target.querySelector('img');
     gsap.timeline({ scrollTrigger: { trigger: target, start: 'top 85%', once: true } })
-      .fromTo(target, { clipPath: 'inset(10% 0% 0% 0% round 6px)' }, { clipPath: 'inset(0% 0% 0% 0% round 6px)', duration: 1.1, ease: 'power3.out' })
+      .fromTo(target, { clipPath: 'inset(10% 0% 0% 0% round 16px)' }, { clipPath: 'inset(0% 0% 0% 0% round 16px)', duration: 1.1, ease: 'power3.out' })
       .fromTo(image, { scale: 1.08 }, { scale: 1, duration: 1.4, ease: 'power3.out' }, 0);
   });
 };

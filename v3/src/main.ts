@@ -1,4 +1,3 @@
-import '@fontsource-variable/dm-sans';
 import './styles/tokens.css';
 import './styles/global.css';
 import './styles/site-chrome.css';

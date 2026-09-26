@@ -1,6 +1,6 @@
 /*
  * H05 / H08: one editorial layout for both featured destinations, mirrored so the two read as a
- * pair without repeating: a tall architectural image on one side, the story, verified figures
+ * pair without repeating: an architectural image on one side, the story, verified figures
  * and a single project link on the other.
  */
 import type { DestinationStat, ResponsiveImage } from '../content/types';
@@ -30,7 +30,7 @@ export const destinationFeature = ({ id, destinationId, eyebrow, heading, body, 
     <p class="chapter_eyebrow feature_eyebrow" data-reveal><span>${esc(eyebrow)}</span><span class="feature_index" aria-hidden="true">${destination.index}</span></p>
     <div class="feature_grid">
       <figure class="feature_figure" data-reveal-media>
-        ${picture({ image, alt: image.alt, sizes: '(max-width: 767px) calc(100vw - 32px), (max-width: 1199px) 46vw, 640px' })}
+        ${picture({ image, alt: image.alt, sizes: '(max-width: 767px) calc(100vw - 32px), (max-width: 1199px) 40vw, 560px' })}
       </figure>
       <div class="feature_copy">
         <h2 class="section-display feature_heading" id="${titleId}" data-reveal-words>${esc(heading)}</h2>
