@@ -284,15 +284,14 @@
   .h04_body { margin-top: 32px; }
 
   /* Feature: eyebrow → heading → image → story → figures → link */
-  .feature_grid, .is-mirrored .feature_grid { display: flex; flex-direction: column; gap: 24px; }
+  .feature_grid, .is-mirrored .feature_grid { display: flex; flex-direction: column; align-items: stretch; gap: 24px; }
   .feature_copy { display: contents; }
   .feature_heading { order: 1; }
   .feature_figure { order: 2; margin: 8px 0; }
   .feature_figure img { aspect-ratio: 4 / 5; }
   .feature_body { order: 3; font-size: 1.125rem; }
   .feature_data { order: 4; margin-top: 8px; }
-  .feature_action { order: 5; flex-direction: column; align-items: stretch; margin-top: 8px; }
-  .feature_action .primary-button { justify-content: space-between; }
+  .feature_action { order: 5; flex-direction: column; align-items: flex-start; margin-top: 8px; }
   .destination_stat { flex-direction: column; align-items: flex-start; gap: 8px; }
   .destination_stat dt { text-align: left; }
 

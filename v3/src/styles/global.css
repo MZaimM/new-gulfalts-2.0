@@ -96,9 +96,6 @@ a:hover > .link-arrow { transform: translateX(4px); }
 @media (max-width: 767px) {
   .primary-button, .button { padding: 12px 16px; }
 }
-@media (max-width: 479px) {
-  .primary-button, .button { width: 100%; }
-}
 
 /* Reveal helpers — the hidden state is set by JS so content never depends on it. */
 .reveal-word { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-bottom: -0.08em; }
