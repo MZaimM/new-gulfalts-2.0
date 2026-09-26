@@ -18,14 +18,16 @@ interface MediaOptions {
   eager?: boolean;
   loop?: boolean;
   scrim?: 'even' | 'bottom' | 'left' | 'soft' | 'focus' | 'deep';
+  /** Markup placed under the poster (H01 keeps H02's opening frame there). */
+  underlay?: string;
 }
 
 /**
  * Poster first, video on top. The video carries no src in the HTML: the runtime picks the
  * desktop or mobile file when the chapter comes near, so nothing downloads early.
  */
-export const chapterMedia = (media: MediaSources, { kind, eager = false, loop = false, scrim = 'even' }: MediaOptions) => `
-  <div class="chapter_media-wrap" aria-hidden="true">
+export const chapterMedia = (media: MediaSources, { kind, eager = false, loop = false, scrim = 'even', underlay = '' }: MediaOptions) => `
+  <div class="chapter_media-wrap" aria-hidden="true">${underlay}
     <picture class="chapter_poster">
       <source media="(max-width: 767px)" srcset="${media.posterMobile}" width="540" height="960" />
       <img src="${media.posterDesktop}" alt="" width="1280" height="720" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" />

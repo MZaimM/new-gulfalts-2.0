@@ -76,10 +76,14 @@ interface AutoplayShell {
   eager?: boolean;
   scrim?: Scrim;
   id?: string;
+  underlay?: string;
+  /** Scroll-triggered steps, as story progress thresholds (see ChapterTrack). */
+  steps?: Record<string, number>;
 }
 
-export const autoplayChapter = ({ chapter, className, labelledBy, content, eager = false, scrim = 'even', id = chapter.id }: AutoplayShell) => {
-  const media = chapterMedia(chapter.media, { kind: 'autoplay', eager, loop: chapter.loop, scrim });
+export const autoplayChapter = ({ chapter, className, labelledBy, content, eager = false, scrim = 'even', id = chapter.id, underlay, steps }: AutoplayShell) => {
+  const media = chapterMedia(chapter.media, { kind: 'autoplay', eager, loop: chapter.loop, scrim, underlay });
+  const stepAttr = steps ? ` data-steps="${Object.entries(steps).map(([name, at]) => `${name}:${at}`).join(' ')}"` : '';
   const body = chapter.track
     ? `<div class="chapter_track" ${trackStyle(chapter.track)}>
         <div class="chapter_sticky">${media}<div class="chapter_overlay">${content}</div></div>
@@ -87,7 +91,7 @@ export const autoplayChapter = ({ chapter, className, labelledBy, content, eager
     : `${media}<div class="chapter_content">${content}</div>`;
   return `
 <section class="chapter_component is-autoplay ${className}${chapter.track ? ' has-track' : ''}${chapter.joinPrevious ? ' is-joined' : ''}" id="${id}"
-  data-chapter="${chapter.id}" data-media="autoplay" data-state="idle" data-reduced-motion="poster" aria-labelledby="${labelledBy}">
+  data-chapter="${chapter.id}" data-media="autoplay" data-state="idle" data-reduced-motion="poster"${stepAttr} aria-labelledby="${labelledBy}">
   ${body}
 </section>`;
 };

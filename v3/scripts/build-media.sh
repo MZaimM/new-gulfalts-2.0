@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Builds the V3 media set from the production sources in ../video concept and ../Website Material.
 #
+#   H01 Intro              ../v1/public/assets/DFD-Sample.mp4 → autoplay loop, v01 (ping-pong)
 #   H02 Dubai arrival      video concept/DFD/scene1&2.mp4   → scrub, v01
 #   H11 Our approach       video concept/DCP/DCP-Video.mp4  → scrub, v01 (+ reduced-motion stills)
 #   H13 Our destinations   video concept/DFD/Scene-2.mp4    → scrub, v01, played in reverse (pull-out)
@@ -57,6 +58,22 @@ frames() {
   done
 }
 
+# intro <master> <name>  darkened, softened aerial played forward then backward, so the
+# background keeps moving under the logo and loops without a seam. Normal GOP (it only plays).
+intro() {
+  local master="$1" name="$2"
+  local grade="scale=1920:1080:flags=lanczos,eq=brightness=-0.16:saturation=0.45,gblur=sigma=4,fps=24"
+  local loop="[0:v]$grade,split[a][b];[b]reverse[r];[a][r]concat=n=2:v=1:a=0,format=yuv420p"
+  local web=(-an -c:v libx264 -preset slower -profile:v high -crf 27 -g 48 -movflags +faststart)
+  ffmpeg -v error -y -t 6 -i "$master" -filter_complex "$loop[v]" -map "[v]" "${web[@]}" "$OUT_VIDEO/gulfalts-$name-desktop-v01.mp4"
+  ffmpeg -v error -y -t 6 -i "$master" -filter_complex "$loop,crop=608:1080:656:0[v]" -map "[v]" "${web[@]}" "$OUT_VIDEO/gulfalts-$name-mobile-v01.mp4"
+  ffmpeg -v error -y -i "$OUT_VIDEO/gulfalts-$name-desktop-v01.mp4" -frames:v 1 -pix_fmt yuvj420p -q:v 4 "$OUT_POSTER/gulfalts-$name-poster-desktop-v01.jpg"
+  ffmpeg -v error -y -i "$OUT_VIDEO/gulfalts-$name-mobile-v01.mp4" -frames:v 1 -pix_fmt yuvj420p -q:v 4 "$OUT_POSTER/gulfalts-$name-poster-mobile-v01.jpg"
+}
+
+log "H01 Intro (moving aerial loop)"
+intro "$ROOT/../v1/public/assets/DFD-Sample.mp4" h01-brand-reveal
+
 log "H02 Dubai arrival (DFD scene 1 & 2)"
 scrub "$SRC/DFD/scene1&2.mp4" h02-dubai-arrival 0.45 30 1.5:1.5:4:4
 
@@ -69,10 +86,8 @@ log "H13 Our destinations (DFD scene 2, reversed at runtime)"
 # Only the first 7.7 s: the static drone hold at the end would stall the start of the pull-out.
 scrub "$SRC/DFD/Scene-2.mp4" h13-dubai-pull-out 0.52 30 1.5:1.5:4:4 7.7
 
-log "Carry over from V2: H01 reveal, H04 manifesto, logos"
+log "Carry over from V2: H04 manifesto, logos"
 for file in \
-  video/gulfalts-h01-brand-reveal-desktop-v00.mp4 video/gulfalts-h01-brand-reveal-mobile-v00.mp4 \
-  posters/gulfalts-h01-brand-reveal-poster-desktop-v00.jpg posters/gulfalts-h01-brand-reveal-poster-mobile-v00.jpg \
   video/gulfalts-h04-brand-manifesto-desktop-v00.mp4 video/gulfalts-h04-brand-manifesto-mobile-v00.mp4 \
   posters/gulfalts-h04-brand-manifesto-poster-desktop-v00.jpg posters/gulfalts-h04-brand-manifesto-poster-mobile-v00.jpg \
   images/logo-dark.svg images/logo-light.svg images/gulfalts-wordmark-white.svg; do

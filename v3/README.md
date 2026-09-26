@@ -18,6 +18,7 @@ npm run media      # render ulang semua video + gambar (butuh ffmpeg)
 
 | # | Section | V3 |
 |---|---|---|
+| 1 | H01 Intro | Jadi intro 3 tahap (lihat peta chapter). Step dipicu posisi scroll (`data-steps`), animasinya berbasis waktu dan berbalik saat scroll ke atas. Navbar jadi solid saat background intro hilang |
 | 2 | H02 Dubai arrival | Video diganti `video concept/DFD/scene1&2.mp4` (awan → pesisir Dubai → Al Quoz → Fintech District). 1080p, marker di gedung DFD |
 | 3 | H03 Brand spectrum | Montage video diganti tumpukan still HD (AVIF/JPEG responsif, crop 9:16 khusus mobile) yang cross-fade per cue |
 | 4 | H04 The firm | Seluruh teks rata tengah, scrim lebih kuat |
@@ -43,7 +44,7 @@ Mengikuti style guide gulfalts.com (https://www.gulfalts.com/style/style-guide),
 
 | ID | Chapter | Media |
 |---|---|---|
-| H01 | Brand reveal | Autoplay (v00) |
+| H01 | Intro | Autoplay loop v01 (12 dtk ping-pong, 1,9 MB / 0,6 MB) di track pendek: logo reveal → scroll: background fade ke frame awal H02 → scroll lagi: logo slide out → H02 menyambung tanpa potongan |
 | H02 | Dubai arrival | Scrub, v01 — 1920×1080 / 608×1080, ±5 MB / 2 MB |
 | H03 | Brand spectrum | Sequence still HD (4 frame) |
 | H04 | The firm | Autoplay loop (v00) |
@@ -85,10 +86,11 @@ Semua copy, statistik, marker, dan CTA adalah HTML statis (dirender saat build d
 - **Sequence (H03)**: track yang sama dengan scrub, tapi panggungnya tumpukan `<picture>`; frame milik cue aktif diberi `.is-current` dan cross-fade, dengan push-in halus lewat `transform`.
 - **Scrub**: `chapter_track` (tinggi = `track` × vh) berisi `chapter_sticky` yang `position: sticky`. Posisi scroll → progress 0–1 → `currentTime` video. Scroll native tidak pernah dibajak (Lenis hanya menghaluskan wheel).
 - **Overlay**: `data-show="a-b"` tampil saat progress di rentang a–b; `data-cue="id"` tampil hanya saat cue itu aktif; `data-cue-mark` diberi penekanan saat cue aktif.
-- **Join (dissolve)**: chapter dengan `joinPrevious: true` (H03, H13) naik ke bawah ekor chapter sebelumnya dan fade-in di atasnya selama `--join` (60vh desktop, 40vh mobile), jadi tidak ada hard cut. Chapter sebelumnya menyelesaikan ceritanya dulu, lalu copy-nya menyingkir.
+- **Steps**: `data-steps="bg-out:0.05 brand-out:0.5"` pada section → `.is-bg-out` / `.is-brand-out` saat progress melewati angka itu, plus event `chapter:step` (dipakai untuk menjeda video intro dan mengubah navbar).
+- **Join (dissolve)**: chapter dengan `joinPrevious: true` (H02, H03, H13) naik ke bawah ekor chapter sebelumnya dan fade-in di atasnya selama `--join` (60vh desktop, 40vh mobile), jadi tidak ada hard cut. Chapter sebelumnya menyelesaikan ceritanya dulu, lalu copy-nya menyingkir.
 - **State media**: `idle → loading → ready → active ⇄ paused`, gagal → `error → fallback` (poster tetap tampil). Terlihat di atribut `data-state` tiap section.
 - **Loading**: tidak ada video yang dimuat saat page load selain H01 dan chapter berikutnya. Video lain mulai buffer satu layar sebelum masuk, atau saat chapter sebelumnya sudah lewat 55%.
-- **Autoplay**: diputar hanya saat terlihat, dijeda saat keluar. H01 hanya diputar sekali.
+- **Autoplay**: diputar hanya saat terlihat, dijeda saat keluar. Video intro H01 loop, dan dijeda begitu background-nya fade out.
 - **Mobile (<768px)**: file 608×1080 terpisah, track lebih pendek, HUD diringkas, satu safe area teks di bawah.
 - **Reduced motion**: tanpa pinning, tanpa scrub, tanpa video. Setiap chapter tampil sebagai poster + seluruh copy; H11 menjadi urutan still frame, H03 menampilkan frame pertamanya.
 

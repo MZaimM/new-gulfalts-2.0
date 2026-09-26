@@ -1,14 +1,17 @@
 /* Chapter-specific composition for the V3 chapters (H01–H05, H08, H11, H13, H14). */
 
 /* ---------------------------------------------------------------------------
-   H01 Brand Reveal
+   H01 Intro: logo over a moving aerial → aerial fades onto H02's first frame → logo slides out.
+   Steps are toggled by scroll (.is-bg-out, .is-brand-out) and animate on their own time.
 --------------------------------------------------------------------------- */
-.h01 { display: grid; place-items: center; text-align: center; }
-.h01 > .chapter_content {
-  display: grid; justify-items: center;
-  width: 100%; padding: calc(var(--header-h) + 24px) var(--gutter) 120px;
+.h01 .chapter_overlay {
+  display: grid; place-items: center; text-align: center;
+  padding-bottom: 120px;
 }
-.h01_title { display: grid; justify-items: center; gap: clamp(24px, 3vw, 40px); }
+.h01_title {
+  display: grid; justify-items: center; gap: clamp(24px, 3vw, 40px);
+  transition: transform 900ms var(--ease), opacity 600ms ease;
+}
 .h01_logo { display: block; width: min(64vw, 620px); height: auto; overflow: visible; fill: var(--text-inverse); }
 .h01_logo .logo_g, .h01_logo .logo_rest path, .h01_logo .logo_rest rect { transform-box: fill-box; transform-origin: center; }
 .h01_positioning {
@@ -16,16 +19,42 @@
   letter-spacing: 0.32em; text-transform: uppercase;
   padding-left: 0.32em; /* optically centre the tracked line */
 }
+.h01_cue {
+  position: absolute; left: 0; right: 0; bottom: 28px;
+  display: flex; justify-content: center;
+  transition: opacity var(--t-standard) ease;
+}
 .h01_enter {
-  position: absolute; left: 50%; bottom: 28px; z-index: 1;
   display: inline-flex; align-items: center; gap: 10px;
   min-height: 44px; padding: 0 8px;
-  transform: translateX(-50%);
   font-size: var(--fs-meta); font-weight: 500; letter-spacing: var(--eyebrow-tracking); text-transform: uppercase;
   color: var(--text-inverse-secondary);
   transition: color var(--t-quick) ease;
 }
 .h01_enter:hover { color: var(--text-inverse); }
+
+/* Layer 1 (bottom): H02's opening frame, with H02's own scrim so the hand-over is invisible. */
+.h01_next, .h01_next-frame, .h01_next-frame img, .h01_next-shade { position: absolute; inset: 0; width: 100%; height: 100%; }
+.h01_next-frame img { object-fit: cover; }
+.h01_next-shade { background: rgba(16, 16, 16, 0.34); transition: opacity 900ms ease; }
+
+/* Layer 2: the moving aerial and its scrim. */
+.h01 .chapter_media-wrap > .chapter_poster,
+.h01 .chapter_media-wrap > .chapter_scrim { transition: opacity 1000ms ease; }
+.chapter_component.h01 .chapter_media-wrap > .chapter_video { transition: opacity 1000ms ease; }
+
+/* Step 1 — background out: the aerial dissolves onto H02's first frame; the logo stays. */
+.h01.is-bg-out .chapter_media-wrap > .chapter_poster,
+.h01.is-bg-out .chapter_media-wrap > .chapter_scrim,
+.chapter_component.h01.is-bg-out .chapter_media-wrap > .chapter_video { opacity: 0; }
+.h01.is-bg-out .h01_cue { opacity: 0; pointer-events: none; }
+
+/* Step 2 — brand out: the logo slides up and away; the shade lifts with it. */
+.h01.is-brand-out .h01_title { transform: translate3d(0, -14vh, 0); opacity: 0; }
+.h01.is-brand-out .h01_next-shade { opacity: 0; }
+
+/* H02 dissolves in over a frame it already matches, so the join can be short. */
+.h02 { --join: 10vh; }
 
 /* ---------------------------------------------------------------------------
    H02 Dubai Arrival
@@ -292,6 +321,8 @@
    Reduced motion: composition adjustments for the unpinned layout.
 --------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
+  .h01 .chapter_overlay { justify-content: center; align-items: center; }
+  .h01_title, .h01_next-shade { transition: none; }
   .h02_path, .h11_statements, .h11_layers, .h13_places, .h03_words { position: relative; inset: auto; top: auto; bottom: auto; transform: none !important; }
   .h03_words { display: grid; gap: 8px; place-items: start; padding: 0; }
   .h03_word, .h13_place, .h11_statement { grid-area: auto; }

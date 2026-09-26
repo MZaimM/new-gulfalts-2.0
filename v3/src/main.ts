@@ -62,6 +62,16 @@ if (!reduced) {
   });
 }
 
+// H01 intro: once the aerial has faded out there is nothing to show, so stop decoding it.
+const intro = document.querySelector<HTMLElement>('.h01');
+const introMedia = intro ? media.get(intro) : undefined;
+intro?.addEventListener('chapter:step', event => {
+  const { name, active } = (event as CustomEvent<{ name: string; active: boolean }>).detail;
+  if (name !== 'bg-out' || !introMedia?.isReady) return;
+  if (active) introMedia.video.pause();
+  else introMedia.video.play().catch(() => {});
+});
+
 let viewport = window.innerHeight;
 const update = () => {
   const y = window.scrollY;

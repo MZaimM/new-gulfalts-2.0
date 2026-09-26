@@ -7,18 +7,35 @@ import { autoplayChapter, chapterHud, scrubChapter, sequenceChapter } from '../c
 import { logoSvg } from '../components/logo';
 import { esc, show } from '../components/markup';
 
+/**
+ * H02's opening frame and scrim sit under the H01 aerial. Fading the aerial out reveals the exact
+ * picture H02 starts on, so when H02 dissolves in on top there is nothing to see change.
+ * The extra shade keeps the white logo legible over the bright clouds and leaves with it.
+ */
+const h01Underlay = () => `
+    <div class="h01_next">
+      <picture class="h01_next-frame">
+        <source media="(max-width: 767px)" srcset="${h02.media.posterMobile}" width="608" height="1080" />
+        <img src="${h02.media.posterDesktop}" alt="" width="1920" height="1080" fetchpriority="low" decoding="async" />
+      </picture>
+      <div class="chapter_scrim is-left"></div>
+      <div class="h01_next-shade"></div>
+    </div>`;
+
 export const renderH01 = () => autoplayChapter({
   chapter: h01,
   className: 'h01',
   labelledBy: 'h01-title',
   eager: true,
   scrim: 'deep',
+  underlay: h01Underlay(),
+  steps: h01.steps,
   content: `
     <h1 class="h01_title" id="h01-title">
       ${logoSvg('h01_logo')}
       <span class="h01_positioning">${esc(h01.copy.positioning)}</span>
     </h1>
-    <a class="h01_enter" href="#${h02.id}">${esc(h01.copy.enter)} <span aria-hidden="true">↓</span></a>`
+    <p class="h01_cue"><a class="h01_enter" href="#${h02.id}">${esc(h01.copy.enter)} <span aria-hidden="true">↓</span></a></p>`
 });
 
 export const renderH02 = () => {

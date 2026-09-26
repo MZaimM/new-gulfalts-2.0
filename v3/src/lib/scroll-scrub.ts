@@ -45,6 +45,8 @@ export class ChapterTrack {
   private frameEls: HTMLElement[];
   private counter: HTMLElement | null;
   private cues: ChapterCue[];
+  /** Named steps from `data-steps="name:0.1 other:0.5"`; `.is-<name>` is set once passed. */
+  private steps: { name: string; at: number; active: boolean }[];
 
   private overlay: HTMLElement;
   private top = 0;
@@ -77,6 +79,10 @@ export class ChapterTrack {
     this.markEls = [...section.querySelectorAll<HTMLElement>('.chapter_overlay [data-cue-mark]')];
     this.frameEls = [...section.querySelectorAll<HTMLElement>('[data-cue-frame]')];
     this.counter = section.querySelector('.chapter_count-current');
+    this.steps = (section.dataset.steps ?? '').split(' ').filter(Boolean).map(step => {
+      const [name, at] = step.split(':');
+      return { name, at: Number(at), active: false };
+    });
     this.ranges.filter(range => range.interactive).forEach(range => range.el.setAttribute('inert', ''));
 
     if (media && config) {
@@ -134,6 +140,14 @@ export class ChapterTrack {
 
   private apply(story: number) {
     this.section.style.setProperty('--p', story.toFixed(4));
+
+    for (const step of this.steps) {
+      const active = story >= step.at;
+      if (active === step.active) continue;
+      step.active = active;
+      this.section.classList.toggle(`is-${step.name}`, active);
+      this.section.dispatchEvent(new CustomEvent('chapter:step', { detail: { name: step.name, active } }));
+    }
 
     for (const range of this.ranges) {
       const active = story >= range.from && story <= range.to && (story > 0 || range.from === 0);

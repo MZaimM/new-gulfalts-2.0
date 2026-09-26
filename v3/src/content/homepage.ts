@@ -11,7 +11,7 @@ import type { AutoplayChapter, MediaSources, ResponsiveImage, ScrubChapter, Sequ
  * (removed in V3: their content now lives in H05, H08 and H11).
  *
  * Media versions: v01 = production footage (scripts/build-media.sh), v00 = V2 placeholder
- * (H01 reveal and H04 manifesto only).
+ * (H04 manifesto only).
  */
 
 const media = (name: string, version: string): MediaSources => ({
@@ -33,20 +33,27 @@ const spectrumFrame = (cue: string) => ({
 });
 
 // ---------------------------------------------------------------------------
-// H01 Brand Reveal — AUTOPLAY
+// H01 Intro — AUTOPLAY loop on a short pinned track
+//   1. The logo reveals over a moving aerial.
+//   2. First scroll: the aerial fades out onto H02's opening frame; the logo stays.
+//   3. Further scroll: the logo slides out and H02 takes over (same frame, so no cut).
+// The steps are scroll-triggered but time-animated (CSS transitions), and reverse on the way up.
 // ---------------------------------------------------------------------------
 export const h01 = {
   id: 'h01-brand-reveal',
   code: 'H01',
-  title: 'Brand reveal',
+  title: 'Intro',
   type: 'autoplay',
-  media: media('h01-brand-reveal', 'v00'),
-  loop: false,
+  media: media('h01-brand-reveal', 'v01'),
+  loop: true,
+  track: { desktop: 170, mobile: 160 },
+  /** Story progress (0–1) at which each intro step fires. */
+  steps: { 'bg-out': 0.05, 'brand-out': 0.5 },
   copy: {
     positioning: 'Dynamic destinations',
     enter: 'Scroll to enter'
   }
-} satisfies AutoplayChapter & { copy: unknown };
+} satisfies AutoplayChapter & { steps: Record<string, number>; copy: unknown };
 
 // ---------------------------------------------------------------------------
 // H02 Dubai Arrival — SCRUB (DFD scene 1 & 2: clouds → Dubai coast → Al Quoz → Fintech District)
@@ -59,6 +66,8 @@ export const h02 = {
   media: media('h02-dubai-arrival', 'v01'),
   duration: 9.08,
   track: { desktop: 400, mobile: 300 },
+  // Dissolves in from H01's final state, which already shows this chapter's first frame.
+  joinPrevious: true,
   cues: [
     { at: 0.03, id: 'uae', label: 'UAE' },
     { at: 0.33, id: 'dubai', label: 'Dubai' },

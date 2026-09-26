@@ -7,11 +7,24 @@ type ScrollTo = (hash: string, options?: { immediate?: boolean }) => void;
 
 export const initHeader = (hero: HTMLElement) => {
   const header = document.querySelector<HTMLElement>('.site-header')!;
+  // Transparent only over the intro's dark aerial: once it fades onto the bright H02 frame
+  // (the `bg-out` step) or the intro has scrolled away, the header resolves to the solid bar.
+  let heroVisible = true;
+  let introDone = false;
+  const sync = () => header.classList.toggle('is-solid', !heroVisible || introDone);
   const observer = new IntersectionObserver(([entry]) => {
-    header.classList.toggle('is-solid', !entry.isIntersecting);
+    heroVisible = entry.isIntersecting;
+    sync();
   }, { threshold: 0, rootMargin: '-80px 0px 0px 0px' });
   observer.observe(hero);
-  return () => observer.disconnect();
+  const onStep = (event: Event) => {
+    const { name, active } = (event as CustomEvent<{ name: string; active: boolean }>).detail;
+    if (name !== 'bg-out') return;
+    introDone = active;
+    sync();
+  };
+  hero.addEventListener('chapter:step', onStep);
+  return () => { observer.disconnect(); hero.removeEventListener('chapter:step', onStep); };
 };
 
 /** Marks the nav link whose chapter group is on screen. */
