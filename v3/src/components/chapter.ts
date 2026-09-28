@@ -21,7 +21,7 @@ interface ScrubShell {
 
 export const scrubChapter = ({ chapter, className, labelledBy, overlay, after = '', scrim = 'even' }: ScrubShell) => `
 <section class="chapter_component is-scrub ${className}${chapter.joinPrevious ? ' is-joined' : ''}" id="${chapter.id}"
-  data-chapter="${chapter.id}" data-media="scrub" data-scrub-duration="${chapter.duration}"
+  data-chapter="${chapter.id}" data-media="scrub" data-scrub-duration="${chapter.duration}"${chapter.anchorProgress ? ` data-anchor-progress="${chapter.anchorProgress}"` : ''}
   data-scrub-ready="false" data-state="idle" data-reduced-motion="fallback" aria-labelledby="${labelledBy}">
   <div class="chapter_track" ${trackStyle(chapter.track)}>
     <div class="chapter_sticky">

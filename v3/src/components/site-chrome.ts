@@ -27,9 +27,12 @@ export const initHeader = (hero: HTMLElement) => {
   return () => { observer.disconnect(); hero.removeEventListener('chapter:step', onStep); };
 };
 
-/** Marks the nav link whose chapter group is on screen. */
+/**
+ * Marks every nav item whose chapter group is on screen. Items carry `data-nav="<key>"`, so the
+ * Destinations toggle and the matching submenu link can both be current at once.
+ */
 export const initNavState = (groups: Record<string, string[]>) => {
-  const links = [...document.querySelectorAll<HTMLAnchorElement>('.desktop-nav a[href^="#"]')];
+  const items = [...document.querySelectorAll<HTMLElement>('.desktop-nav [data-nav]')];
   // The root is a zero-height line across the middle of the screen, so ratios are always 0.
   const visible = new Set<string>();
   const observer = new IntersectionObserver(entries => {
@@ -37,10 +40,10 @@ export const initNavState = (groups: Record<string, string[]>) => {
       if (entry.isIntersecting) visible.add(entry.target.id);
       else visible.delete(entry.target.id);
     });
-    const current = Object.entries(groups).find(([, ids]) => ids.some(id => visible.has(id)));
-    links.forEach(link => {
-      if (current && link.getAttribute('href') === current[0]) link.setAttribute('aria-current', 'true');
-      else link.removeAttribute('aria-current');
+    items.forEach(item => {
+      const ids = groups[item.dataset.nav ?? ''] ?? [];
+      if (ids.some(id => visible.has(id))) item.setAttribute('aria-current', 'true');
+      else item.removeAttribute('aria-current');
     });
   }, { rootMargin: '-50% 0px -50% 0px' });
   Object.values(groups).flat().forEach(id => {
@@ -48,6 +51,59 @@ export const initNavState = (groups: Record<string, string[]>) => {
     if (section) observer.observe(section);
   });
   return () => observer.disconnect();
+};
+
+/**
+ * Desktop Destinations dropdown (disclosure pattern): opens on click, on hover for fine
+ * pointers, and from the keyboard; Escape, an outside click or leaving it closes it.
+ */
+export const initNavDropdown = () => {
+  const root = document.querySelector<HTMLElement>('.nav-dropdown');
+  if (!root) return;
+  const toggle = root.querySelector<HTMLButtonElement>('.nav-dropdown_toggle')!;
+  const links = [...root.querySelectorAll<HTMLAnchorElement>('.nav-dropdown_link')];
+  const hover = window.matchMedia('(hover: hover) and (pointer: fine)');
+  let leaveTimer = 0;
+  // A click that lands right after a hover opened the panel should not close it again.
+  let hoverOpenedAt = 0;
+
+  const setOpen = (open: boolean) => {
+    window.clearTimeout(leaveTimer);
+    root.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+  };
+  const isOpen = () => root.classList.contains('is-open');
+
+  toggle.addEventListener('click', () => {
+    if (isOpen() && performance.now() - hoverOpenedAt < 600) return;
+    setOpen(!isOpen());
+  });
+  root.addEventListener('mouseenter', () => {
+    if (!hover.matches || isOpen()) return;
+    hoverOpenedAt = performance.now();
+    setOpen(true);
+  });
+  root.addEventListener('mouseleave', () => {
+    if (!hover.matches) return;
+    leaveTimer = window.setTimeout(() => setOpen(false), 160);
+  });
+  root.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && isOpen()) {
+      setOpen(false);
+      toggle.focus();
+    } else if (event.key === 'ArrowDown' && event.target === toggle) {
+      event.preventDefault();
+      setOpen(true);
+      links[0]?.focus();
+    }
+  });
+  root.addEventListener('focusout', event => {
+    if (!root.contains(event.relatedTarget as Node | null)) setOpen(false);
+  });
+  document.addEventListener('pointerdown', event => {
+    if (isOpen() && !root.contains(event.target as Node)) setOpen(false);
+  });
+  links.forEach(link => link.addEventListener('click', () => setOpen(false)));
 };
 
 export const initMenu = (lenis: Lenis | null) => {

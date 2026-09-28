@@ -19,7 +19,7 @@ npm run media      # render ulang semua video + gambar (butuh ffmpeg)
 | # | Section | V3 |
 |---|---|---|
 | 1 | H01 Intro | Jadi intro 3 tahap (lihat peta chapter). Step dipicu posisi scroll (`data-steps`), animasinya berbasis waktu dan berbalik saat scroll ke atas. Navbar jadi solid saat background intro hilang |
-| 2 | H02 Dubai arrival | Video diganti `video concept/DFD/scene1&2.mp4` (awan → pesisir Dubai → Al Quoz → Fintech District). 1080p, marker di gedung DFD |
+| 2 | H02 Dubai arrival | Video diganti `video concept/DFD/scene1&2.mp4` (awan → pesisir Dubai → Al Quoz → Fintech District). 1080p, tanpa marker |
 | 3 | H03 Brand spectrum | Montage video diganti tumpukan still HD (AVIF/JPEG responsif, crop 9:16 khusus mobile) yang cross-fade per cue |
 | 4 | H04 The firm | Seluruh teks rata tengah, scrim lebih kuat. Masuk dengan wipe ala floema.com di atas still terakhir H03 |
 | 5 | H05 Dubai Creative Park | Gambar potret `Block 5 Padel - side.png` + metrik 160,000+ sq ft & 54 spaces + satu CTA |
@@ -40,6 +40,13 @@ Mengikuti style guide gulfalts.com (https://www.gulfalts.com/style/style-guide),
 - **Radius**: `--radius-sm` 8 · `--radius-input` 12 · `--radius-card` 16 (gambar feature, panel directory, navbar) · `--radius-pill` 999.
 - **Font**: file WOFF2 di `public/fonts` (dari `../Font`). Season adalah versi **TRIAL**; lisensi webfont harus dibeli sebelum launch.
 
+## Navigasi
+
+- **Navbar desktop**: `Destinations ▾` (dropdown: Creative Park, Fintech District, All destinations) + tombol `Inquire`. Dropdown terbuka lewat hover, klik, atau keyboard (Arrow Down masuk ke daftar, Escape menutup); `Destinations` dan item submenu diberi `aria-current` saat section-nya terlihat.
+- **Menu full-screen**: Home, Destinations, Our approach. `Destinations` (dan "All destinations" di dropdown) mendarat di H13 saat directory + marker sudah tampil (`anchorProgress: 0.85`).
+- **The Firm** hanya ada di footer.
+- **Contact drawer**: `Inquire` (navbar) dan `Contact` (footer) membuka panel putih dari kanan seperti gulfalts.com: Get in Touch, Contact Form (Full Name, Phone Number, Email Address, jenis inquiry dengan 5 opsi yang sama), Submit Inquiry. Validasi + state loading/berhasil/gagal ada. **Belum mengirim data**: `CONTACT_ENDPOINT` di `src/components/contact.ts` masih `null`, jadi setelah submit pengunjung diminta email ke info@gulfalts.com. Isi endpoint (mis. Netlify Forms atau backend lain) untuk mengaktifkan.
+
 ## Peta chapter
 
 | ID | Chapter | Media |
@@ -48,8 +55,7 @@ Mengikuti style guide gulfalts.com (https://www.gulfalts.com/style/style-guide),
 | H02 | Dubai arrival | Scrub, v01 — 1920×1080 / 608×1080, ±5 MB / 2 MB |
 | H03 | Brand spectrum | Sequence still HD (4 frame) |
 | H04 | The firm | Autoplay loop (v00) di track pendek; wipe dari bawah di atas H03 |
-| H05 | Dubai Creative Park | Static feature |
-| H08 | Dubai Fintech District | Static feature (mirrored) |
+| H05 | Featured destinations | Static, dua kolom sama lebar yang sejajar (CSS subgrid), gambar 4:3. Tiap kolom punya id sendiri (`#h05-creative-park`, `#h08-fintech-district`) |
 | H11 | Our approach | Scrub, v01 — 1920×1080 / 608×1080, ±12 MB / 4 MB |
 | H13 | Our destinations | Scrub mundur, v01 — 1920×1080 / 608×1080, ±5 MB / 2 MB + directory |
 | H14 | Next destination + footer | Static |
@@ -105,7 +111,7 @@ Semua copy, statistik, marker, dan CTA adalah HTML statis (dirender saat build d
 
 Angka di H05/H08 diambil dari brief V3 (September 2026) dan ditandai `confirmed`. Angka yang diubah ke `'unconfirmed'` di `src/content/destinations.ts` otomatis tampil dengan penanda **"To be confirmed"**.
 
-- Copy singkat V8 District dan Motor Garten masih "Details to be confirmed".
+- V8 District dan Motor Garten memakai kategori dari gulfalts.com ("Specialized commercial facilities"); thumbnail dari render project di gulfalts.com (`../Website Material/gulfalts.com`).
 - Posisi marker H13 bersifat indikatif: footage adalah render bergaya, jadi titik ditempatkan di koridor Al Quoz (antara Palm Jumeirah dan The World, di pedalaman), bukan koordinat survei. Di layar landscape frame di-anchor kanan (`object-position: 100%`) agar cluster tidak tertutup panel; di mobile marker disembunyikan karena tertutup directory.
 - Belum ada halaman "semua destination" di gulfalts.com; `allDestinationsUrl` sementara mengarah ke homepage gulfalts.com.
 

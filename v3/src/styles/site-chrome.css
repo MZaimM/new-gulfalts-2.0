@@ -28,9 +28,47 @@
 .desktop-nav a:not(.button):hover { opacity: .65; }
 /* Inquire: the navbar CTA is a pill button (style guide .button). */
 .desktop-nav .nav-cta { min-height: 40px; padding: 10px 18px; margin-left: 8px; }
-.desktop-nav a[aria-current='true']::after {
+/* Current section: a hairline under the top-level item. */
+.desktop-nav > a[aria-current='true']::after,
+.nav-dropdown_toggle[aria-current='true']::after {
   content: ''; position: absolute; left: 0; right: 0; bottom: 8px; height: 1px; background: currentColor;
 }
+
+/* Destinations dropdown: an ink card under the bar (style guide radius-card / radius-sm). */
+.nav-dropdown { position: relative; }
+.nav-dropdown_toggle {
+  position: relative; display: flex; align-items: center; gap: 8px; min-height: 44px;
+  font-weight: 300; transition: opacity var(--t-quick);
+}
+.nav-dropdown_toggle:hover { opacity: .65; }
+.nav-dropdown_chevron { transition: transform var(--t-quick) var(--ease); }
+.nav-dropdown.is-open .nav-dropdown_chevron { transform: rotate(180deg); }
+.nav-dropdown_panel {
+  position: absolute; top: calc(100% + 14px); left: -16px; z-index: 1;
+  display: grid; gap: 2px; min-width: 248px; padding: 8px;
+  border: 1px solid rgba(255, 255, 255, .12); border-radius: var(--radius-card);
+  background: var(--ink); color: var(--text-inverse);
+  box-shadow: 0 6px 28px rgba(16, 16, 16, .08);
+  opacity: 0; visibility: hidden; transform: translate3d(0, -6px, 0);
+  transition: opacity var(--t-quick) ease, transform var(--t-quick) var(--ease), visibility 0s linear var(--t-quick);
+}
+/* Bridges the gap between toggle and panel so the hover does not drop on the way down. */
+.nav-dropdown_panel::before { content: ''; position: absolute; left: 0; right: 0; bottom: 100%; height: 16px; }
+.nav-dropdown.is-open .nav-dropdown_panel {
+  opacity: 1; visibility: visible; transform: none;
+  transition: opacity var(--t-quick) ease, transform var(--t-quick) var(--ease), visibility 0s;
+}
+.nav-dropdown_link {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  min-height: 44px; padding: 10px 14px; border-radius: var(--radius-sm);
+  font-size: var(--fs-ui); font-weight: 300;
+  transition: background-color var(--t-quick) ease;
+}
+.nav-dropdown_link:hover, .nav-dropdown_link:focus-visible { background: rgba(255, 255, 255, .08); }
+.nav-dropdown_link[aria-current='true'] { background: rgba(255, 255, 255, .08); }
+.nav-dropdown_meta { font-size: var(--fs-meta); font-weight: 500; letter-spacing: var(--eyebrow-tracking); color: var(--text-inverse-secondary); font-variant-numeric: tabular-nums; }
+.nav-dropdown_link.is-all { margin-top: 4px; border-top: 1px solid rgba(255, 255, 255, .12); border-radius: 0 0 var(--radius-sm) var(--radius-sm); color: var(--text-inverse-secondary); }
+.nav-dropdown_link.is-all:hover { color: var(--text-inverse); }
 .menu-toggle { justify-self: end; display: flex; align-items: center; gap: 10px; min-height: 44px; text-transform: uppercase; font-size: var(--fs-ui); font-weight: 300; }
 .menu-glyph { position: relative; width: 20px; height: 10px; border-top: 1px solid currentColor; }
 .menu-glyph::after { content: ''; position: absolute; left: 0; top: 5px; width: 12px; border-top: 1px solid currentColor; }
@@ -39,9 +77,6 @@
 @media (max-width: 1199px) {
   .site-header { grid-template-columns: 1fr auto 100px; }
   .desktop-nav { gap: 18px; font-size: 14px; }
-}
-@media (max-width: 1023px) {
-  .desktop-nav a:nth-child(-n+3) { display: none; }
 }
 @media (max-width: 767px) {
   .site-header { grid-template-columns: 1fr auto; }
@@ -89,12 +124,7 @@ body.menu-open { overflow: hidden; }
   opacity: 0; transform: translateY(30px);
   transition: transform .58s var(--ease), opacity .42s ease, color var(--t-quick);
 }
-.menu-dialog.is-visible nav a { opacity: 1; transform: none; }
-.menu-dialog.is-visible nav a:nth-child(2) { transition-delay: .055s; }
-.menu-dialog.is-visible nav a:nth-child(3) { transition-delay: .11s; }
-.menu-dialog.is-visible nav a:nth-child(4) { transition-delay: .165s; }
-.menu-dialog.is-visible nav a:nth-child(5) { transition-delay: .22s; }
-.menu-dialog.is-visible nav a:nth-child(6) { transition-delay: .275s; }
+.menu-dialog.is-visible nav a { opacity: 1; transform: none; transition-delay: calc(var(--i, 0) * 55ms); }
 .menu-dialog nav a:hover { opacity: .68; }
 .menu-contact {
   display: flex; justify-content: space-between; min-height: 44px;
@@ -155,6 +185,9 @@ main { position: relative; z-index: 1; background: var(--canvas); }
 .footer-links { display: grid; justify-items: start; gap: 8px; }
 .footer-links a { color: var(--paper); transition: color .18s; }
 .footer-links a:hover { color: var(--secondary-text-color); }
+/* "Contact" opens the contact drawer, so it is a button styled as a footer link. */
+.footer-link-button { color: var(--paper); font-weight: 300; text-align: left; transition: color .18s; }
+.footer-link-button:hover { color: var(--secondary-text-color); }
 .site-footer :focus-visible { outline-color: var(--paper); }
 .footer-brand { display: block; width: 100%; height: auto; margin: 80px 0 0; }
 .footer-bottom { display: flex; justify-content: space-between; gap: 28px; margin-top: 28px; font-size: 12px; color: var(--secondary-text-color); }
@@ -174,4 +207,92 @@ main { position: relative; z-index: 1; background: var(--canvas); }
   .footer-links a { display: flex; align-items: center; min-height: 32px; font-size: 15px; }
   .footer-brand { margin-top: 48px; }
   .footer-bottom { flex-direction: column; align-items: flex-start; gap: 6px; margin-top: 24px; }
+}
+
+/* ---------------------------------------------------------------------------
+   Contact drawer (as on gulfalts.com): a white panel sliding in from the right, half the
+   screen up to 750px, full width on phones.
+--------------------------------------------------------------------------- */
+body.contact-open { overflow: hidden; }
+.contact-drawer {
+  position: fixed; inset: 0 0 0 auto;
+  width: min(750px, 50vw); height: 100dvh; max-width: none; max-height: none;
+  margin: 0; padding: 0; border: 0;
+  overflow-y: auto; overscroll-behavior: contain;
+  background: var(--paper); color: var(--ink);
+  transform: translate3d(100%, 0, 0);
+  transition: transform .4s cubic-bezier(.25, .46, .45, .94);
+}
+.contact-drawer.is-visible { transform: none; }
+.contact-drawer::backdrop { background: rgba(16, 16, 16, .24); }
+.contact-drawer_body { position: relative; display: grid; align-content: start; gap: 16px; min-height: 100%; padding: 96px 48px 48px; }
+.contact-drawer_close {
+  position: absolute; top: 32px; right: 40px;
+  display: grid; place-items: center; width: 44px; height: 44px;
+  color: var(--ink); border-radius: var(--radius-pill);
+  transition: background-color var(--t-quick) ease;
+}
+.contact-drawer_close:hover { background: var(--surface); }
+.contact-drawer_title { font-size: var(--fs-section); line-height: var(--heading-leading); letter-spacing: var(--heading-tracking); }
+.contact-drawer_intro { max-width: 52ch; font-family: var(--form-font); font-size: 1rem; line-height: 1.5; color: var(--text-secondary); }
+.contact-drawer_subtitle {
+  margin-top: 40px;
+  font-family: var(--heading-font); font-weight: var(--heading-weight);
+  font-size: 2rem; line-height: var(--heading-leading); letter-spacing: var(--heading-tracking);
+}
+.contact-form { display: grid; gap: 24px; margin-top: 8px; }
+.contact-form_row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.contact-field { display: grid; gap: 8px; }
+.contact-field input, .contact-field select {
+  width: 100%; min-height: 52px; padding: 12px 40px 12px 16px;
+  border: 1px solid #e9e9e9; border-radius: var(--radius-input);
+  background-color: var(--paper); color: var(--ink);
+  font-family: var(--form-font); font-size: 1.25rem; font-weight: 400;
+  transition: border-color var(--t-quick) ease;
+}
+.contact-field input::placeholder { color: #999; }
+.contact-field select {
+  appearance: none; -webkit-appearance: none; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4.5 6 8.5l4-4' fill='none' stroke='%23101010' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 18px center; background-size: 12px;
+}
+.contact-field select:invalid { color: #999; }
+.contact-field input:hover, .contact-field select:hover { border-color: rgba(16, 16, 16, .24); }
+.contact-field input:focus-visible, .contact-field select:focus-visible { outline: 2px solid var(--button-primary); outline-offset: 2px; border-color: transparent; }
+.contact-field [aria-invalid] { border-color: var(--button-primary); }
+.contact-field_error { font-family: var(--form-font); font-size: .875rem; line-height: 1.4; color: var(--button-primary); }
+.contact-form_submit {
+  position: relative; overflow: hidden;
+  display: flex; justify-content: center; align-items: center;
+  min-height: 48px; padding: 12px 24px; border-radius: var(--radius-pill);
+  background: var(--ink); color: var(--text-inverse);
+  font-family: var(--form-font); font-size: 1rem; font-weight: 400;
+  transition: background-color var(--t-button) ease;
+}
+.contact-form_submit:hover { background: var(--button-primary); }
+.contact-form_submit:disabled { cursor: progress; }
+/* Loading: a hairline runs along the foot of the button instead of a spinner. */
+.contact-form_progress {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+  background: var(--text-inverse); transform: scaleX(0); transform-origin: left;
+}
+.contact-form.is-loading .contact-form_progress { animation: contact-progress 1.1s var(--ease) infinite; }
+@keyframes contact-progress { from { transform: scaleX(0); } to { transform: scaleX(1); opacity: 0; } }
+.contact-form_status { font-family: var(--form-font); font-size: .9375rem; line-height: 1.5; color: var(--text-secondary); }
+.contact-form.is-failed .contact-form_status { color: var(--button-primary); }
+.contact-form.is-sent .contact-form_status { color: var(--ink); }
+
+@media (max-width: 991px) {
+  .contact-drawer { width: min(750px, 100vw); }
+}
+@media (max-width: 767px) {
+  .contact-drawer_body { padding: 80px var(--gutter) 32px; }
+  .contact-drawer_close { top: 16px; right: 12px; }
+  .contact-drawer_subtitle { margin-top: 24px; font-size: 1.75rem; }
+  .contact-form_row { grid-template-columns: minmax(0, 1fr); }
+  .contact-field input, .contact-field select { font-size: 1.125rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .contact-drawer { transition: none; }
+  .contact-form.is-loading .contact-form_progress { animation: none; transform: scaleX(1); }
 }

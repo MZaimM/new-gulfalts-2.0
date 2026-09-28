@@ -41,8 +41,10 @@ export interface ScrubChapter extends ChapterBase {
    * All progress values (cues, overlay windows) are measured after any join dissolve.
    */
   videoSpan?: [number, number];
-  /** Play the file backwards (H13 re-uses the H02 aerial as a pull-out). */
+  /** Play the file backwards (H13 plays DFD scene 2 as a pull-out). */
   reverse?: boolean;
+  /** Where a link to this chapter lands, as story progress (H13: once the directory shows). */
+  anchorProgress?: number;
   /**
    * Dissolve over the previous chapter instead of scrolling it away. The dissolve adds its
    * own lead-in to the track (see --join in chapters.css), so story timings are unaffected.

@@ -114,34 +114,41 @@
 }
 
 /* ---------------------------------------------------------------------------
-   H05 / H08 Destination features: architecture image + story, figures and one link.
-   H08 mirrors H05 so the pair alternates image sides. The copy flows as one tight block,
-   centred against a 4:5 image, so the figures sit right under the story instead of being
-   pushed to the foot of a tall picture.
+   H05 Featured destinations: Creative Park and Fintech District side by side. Two equal
+   columns; subgrid lines up each row (image, eyebrow, heading, body, figures, link) across
+   both, so the two destinations read level with each other.
 --------------------------------------------------------------------------- */
-.destination_feature { padding: var(--section-space) var(--gutter); }
-.destination_feature + .destination_feature { padding-top: 0; }
-.feature_inner { max-width: var(--max); margin: 0 auto; }
-.feature_eyebrow {
-  display: flex; justify-content: space-between; gap: 24px;
-  padding-bottom: 20px; margin-bottom: clamp(40px, 5vw, 64px);
+.featured { padding: var(--section-space) var(--gutter); }
+.featured_inner { max-width: var(--max); margin: 0 auto; }
+.featured_head {
+  display: grid; gap: 20px;
+  padding-bottom: 32px; margin-bottom: clamp(48px, 6vw, 96px);
   border-bottom: 1px solid var(--line);
 }
-.feature_index { color: var(--burgundy); font-variant-numeric: tabular-nums; }
-.feature_grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; }
-.feature_figure { grid-column: 8 / -1; grid-row: 1; overflow: hidden; border-radius: var(--radius-card); background: var(--surface); }
-.feature_figure img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; }
-.feature_copy {
-  grid-column: 1 / span 6; grid-row: 1;
-  display: flex; flex-direction: column; gap: 24px;
+.featured_title { max-width: 18ch; }
+.featured_grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(24px, 4vw, 64px); }
+.featured_item {
+  display: grid; grid-row: span 6; grid-template-rows: subgrid; row-gap: 20px;
+  scroll-margin-top: calc(var(--header-h) + 32px);
 }
-.is-mirrored .feature_figure { grid-column: 1 / span 5; }
-.is-mirrored .feature_copy { grid-column: 7 / -1; }
-.feature_heading { max-width: 18ch; text-wrap: balance; }
-.feature_body { max-width: 46ch; color: var(--text-secondary); text-wrap: pretty; }
-.feature_data { margin-top: 16px; }
-.feature_action { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; margin-top: 8px; }
-.feature_location {
+/* The copy block dissolves into the item so each of its children is a subgrid row. */
+.featured_copy { display: contents; }
+.featured_figure { margin-bottom: 12px; overflow: hidden; border-radius: var(--radius-card); background: var(--surface); }
+.featured_figure img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+.featured_heading, .featured_body { align-self: start; }
+.featured_data { align-self: start; }
+.featured_eyebrow { display: flex; align-items: baseline; gap: 12px; }
+.featured_index { color: var(--burgundy); font-variant-numeric: tabular-nums; }
+.featured_heading {
+  max-width: 16ch;
+  font-family: var(--heading-font); font-size: var(--fs-feature); font-weight: var(--heading-weight);
+  line-height: var(--heading-leading); letter-spacing: var(--heading-tracking); text-wrap: balance;
+}
+.featured_body { max-width: 44ch; font-size: var(--fs-lead); line-height: 1.5; color: var(--text-secondary); text-wrap: pretty; }
+.featured_data { margin-top: 4px; }
+.featured .destination_stat strong { font-size: var(--fs-feature); }
+.featured_action { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; margin-top: 4px; }
+.featured_location {
   font-size: var(--fs-meta); font-weight: 500; letter-spacing: var(--eyebrow-tracking); text-transform: uppercase;
   color: var(--text-secondary);
 }
@@ -257,10 +264,6 @@
    Tablet
 --------------------------------------------------------------------------- */
 @media (max-width: 1199px) {
-  .feature_figure { grid-column: 1 / span 5; }
-  .feature_copy { grid-column: 7 / -1; gap: 20px; }
-  .destination_feature:not(.is-mirrored) .feature_figure { grid-column: 8 / -1; }
-  .destination_feature:not(.is-mirrored) .feature_copy { grid-column: 1 / span 6; }
   .destination_stats { grid-template-columns: 1fr; }
   .destination_stat { flex-direction: row; align-items: baseline; justify-content: space-between; gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--line); }
   .destination_stat dd { flex: none; }
@@ -283,15 +286,11 @@
   .h04 .chapter_overlay { padding-bottom: 64px; }
   .h04_body { margin-top: 32px; }
 
-  /* Feature: eyebrow → heading → image → story → figures → link */
-  .feature_grid, .is-mirrored .feature_grid { display: flex; flex-direction: column; align-items: stretch; gap: 24px; }
-  .feature_copy { display: contents; }
-  .feature_heading { order: 1; }
-  .feature_figure { order: 2; margin: 8px 0; }
-  .feature_figure img { aspect-ratio: 4 / 5; }
-  .feature_body { order: 3; font-size: 1.125rem; }
-  .feature_data { order: 4; margin-top: 8px; }
-  .feature_action { order: 5; flex-direction: column; align-items: flex-start; margin-top: 8px; }
+  /* Featured destinations: one column, the two destinations one after the other. */
+  .featured_grid { grid-template-columns: minmax(0, 1fr); row-gap: 80px; }
+  .featured_item { grid-row: auto; grid-template-rows: none; row-gap: 20px; }
+  .featured_body { font-size: 1.125rem; }
+  .featured_action { flex-direction: column; align-items: flex-start; }
   .destination_stat { flex-direction: column; align-items: flex-start; gap: 8px; }
   .destination_stat dt { text-align: left; }
 

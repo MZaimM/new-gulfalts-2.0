@@ -1,7 +1,8 @@
 import type { Destination, DestinationStat } from './types';
 
 /*
- * Destination data used by H05, H08, H13 and H14.
+ * Destination data used by H05, H13 and H14. V8 District and Motor Garten copy and previews follow
+ * gulfalts.com (category "Specialized Commercial Facilities").
  * Figures come from the client's V3 brief (September 2026). Any figure set to `unconfirmed`
  * renders with a visible "To be confirmed" flag until Gulfalts verifies it.
  */
@@ -45,10 +46,11 @@ export const destinations: Destination[] = [
     index: '03',
     name: 'V8 District',
     fullName: 'V8 District',
-    tags: 'Details to be confirmed',
-    tagsConfirmed: false,
+    tags: 'Specialized commercial facilities',
+    tagsConfirmed: true,
     url: `${venueBase}/v8-district`,
     location: 'Dubai',
+    preview: '/media/images/preview-v8-district-320.jpg',
     marker: { x: 0.575, y: 0.47, xMobile: 0.674 }
   },
   {
@@ -56,10 +58,11 @@ export const destinations: Destination[] = [
     index: '04',
     name: 'Motor Garten',
     fullName: 'Motor Garten',
-    tags: 'Details to be confirmed',
-    tagsConfirmed: false,
+    tags: 'Specialized commercial facilities',
+    tagsConfirmed: true,
     url: `${venueBase}/motor-garten`,
     location: 'Dubai',
+    preview: '/media/images/preview-motor-garten-320.jpg',
     marker: { x: 0.53, y: 0.65, xMobile: 0.532 }
   }
 ];

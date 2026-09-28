@@ -12,9 +12,10 @@ import { chapterById } from './content/homepage';
 import { ChapterMedia } from './lib/media-loader';
 import { ChapterTrack, layoutMarkers, observeAutoplay } from './lib/scroll-scrub';
 import { prefersReducedMotion } from './lib/viewport';
-import { initAnchors, initFooter, initHeader, initMenu, initNavState } from './components/site-chrome';
+import { initAnchors, initFooter, initHeader, initMenu, initNavDropdown, initNavState } from './components/site-chrome';
 import { initReveals, playBrandReveal } from './components/reveals';
 import { initDirectory } from './components/destination-directory';
+import { initContact } from './components/contact';
 
 gsap.registerPlugin(ScrollTrigger);
 const reduced = prefersReducedMotion();
@@ -106,11 +107,17 @@ const scrollToHash = (hash: string, { immediate = false } = {}) => {
   if (!target) return;
   let top = target.getBoundingClientRect().top + window.scrollY;
   // A joined chapter starts under the previous one; land where its dissolve has finished.
-  if (!reduced && target.classList.contains('is-joined')) {
-    const stage = target.querySelector<HTMLElement>('.chapter_sticky')?.offsetHeight ?? 0;
-    const pull = -parseFloat(getComputedStyle(target).marginTop) || 0;
-    top += Math.max(0, pull - stage);
-  }
+  const stage = target.querySelector<HTMLElement>('.chapter_sticky')?.offsetHeight ?? 0;
+  const lead = !reduced && target.classList.contains('is-joined')
+    ? Math.max(0, (-parseFloat(getComputedStyle(target).marginTop) || 0) - stage)
+    : 0;
+  top += lead;
+  // Some anchors land part-way into a pinned chapter (H13: once the directory is showing).
+  const progress = Number(target.dataset.anchorProgress);
+  const track = target.querySelector<HTMLElement>('.chapter_track');
+  if (!reduced && progress && track) top += (track.offsetHeight - stage - lead) * progress;
+  // Leave room for the fixed header on in-flow targets (CSS scroll-margin-top).
+  top -= parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
   if (lenis) lenis.scrollTo(top, { immediate, duration: immediate ? 0 : 1.4 });
   else window.scrollTo({ top });
 };
@@ -118,13 +125,15 @@ const scrollToHash = (hash: string, { immediate = false } = {}) => {
 const menu = initMenu(lenis);
 initAnchors(scrollToHash, menu);
 initHeader(document.querySelector<HTMLElement>('.h01')!);
+initNavDropdown();
 initNavState({
-  '#the-firm': ['the-firm'],
+  destinations: ['h05-creative-park', 'h08-fintech-district', 'h13-dubai-pull-out', 'h14-next-destination'],
   '#h05-creative-park': ['h05-creative-park'],
   '#h08-fintech-district': ['h08-fintech-district'],
-  '#h13-dubai-pull-out': ['h11-raw-to-destination', 'h13-dubai-pull-out', 'h14-next-destination']
+  '#h13-dubai-pull-out': ['h13-dubai-pull-out', 'h14-next-destination']
 });
 initFooter(lenis);
+initContact(lenis);
 initDirectory(document.querySelector<HTMLElement>('.h13')!);
 
 // ---------------------------------------------------------------------------

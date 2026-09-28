@@ -75,12 +75,7 @@ export const h02 = {
     { at: 0.9, id: 'destinations', label: 'Dubai Fintech District · Al Quoz' }
   ],
   copy: {
-    heading: 'From the UAE to Al Quoz, Dubai',
-    // Marker positions on the final frame (video-frame fractions). The mobile file is a
-    // 608×1080 crop starting at x = 560px, so its x differs.
-    markers: [
-      { destination: 'fintech-district', x: 0.43, y: 0.57, xMobile: 0.437 }
-    ]
+    heading: 'From the UAE to Al Quoz, Dubai'
   }
 } satisfies ScrubChapter & { copy: unknown };
 
@@ -136,6 +131,18 @@ export const h04 = {
 } satisfies AutoplayChapter & { copy: unknown };
 
 // ---------------------------------------------------------------------------
+// H05 Featured destinations — one STATIC section holding H05 (Creative Park) and H08 (Fintech
+// District) side by side. Their copy stays below as two items.
+// ---------------------------------------------------------------------------
+export const featured = {
+  id: 'featured-destinations',
+  copy: {
+    eyebrow: 'Featured destinations — Al Quoz',
+    heading: 'Two destinations in Al Quoz, Dubai.'
+  }
+};
+
+// ---------------------------------------------------------------------------
 // H05 Dubai Creative Park — STATIC feature
 // ---------------------------------------------------------------------------
 export const h05 = {
@@ -150,7 +157,7 @@ export const h05 = {
     body: 'Sport, wellness, family activities, creative studios and F&B, brought together in one connected, walkable community.',
     cta: 'Explore Dubai Creative Park',
     image: {
-      ...image('h05-creative-park', [640, 960, 1280, 1600], 3 / 4),
+      ...image('featured-creative-park', [640, 960, 1280, 1600], 4 / 3),
       alt: 'The long white facade of a Dubai Creative Park building at dusk, lit by rows of wall lights above landscaped parking.'
     }
   }
@@ -171,7 +178,7 @@ export const h08 = {
     body: 'A business district built to prioritize accessibility, customizable spaces and natural light: offices, showrooms, galleries, wellness and F&B. A curated tenant mix designed for a connected business community.',
     cta: 'Explore Dubai Fintech District',
     image: {
-      ...image('h08-fintech-district', [640, 960, 1280, 1600], 3 / 4),
+      ...image('featured-fintech-district', [640, 960, 1280, 1600], 4 / 3),
       alt: 'The curved glass frontage of a Dubai Fintech District building, with a café inside and palm-lined streets around it.'
     }
   }
@@ -220,6 +227,8 @@ export const h13 = {
   track: { desktop: 400, mobile: 320 },
   // The pull-out plays over the first 60% of the track; the directory sits on the hold frame.
   videoSpan: [0, 0.6],
+  // Menu / nav links land on the hold frame with the directory and markers showing.
+  anchorProgress: 0.85,
   cues: [
     { at: 0, id: 'exterior', label: 'Destination' },
     { at: 0.22, id: 'al-quoz', label: 'Al Quoz' },

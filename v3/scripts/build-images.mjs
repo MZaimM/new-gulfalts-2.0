@@ -18,6 +18,8 @@ await mkdir(out, { recursive: true });
 
 const DCP = file => path.join(material, 'DCP ', file);
 const DFD = file => path.join(material, 'DFD ', file);
+// Venue images taken from gulfalts.com (V8 District, Motor Garten project renders).
+const SITE = file => path.join(material, 'gulfalts.com', file);
 
 /**
  * name, source, aspect (w/h), focus point (0–1) the crop is centred on, widths.
@@ -34,13 +36,15 @@ const jobs = [
   ['h03-life-desktop', DCP('Outdoor food court.png'), 16 / 9, [0.5, 0.58], [1280, 1920, 2560]],
   ['h03-life-mobile', DCP('Outdoor food court.png'), 9 / 16, [0.5, 0.5], [720, 1080]],
 
-  // H05 Creative Park / H08 Fintech District — portrait architecture
-  ['h05-creative-park', DCP('Block 5 Padel - side.png'), 3 / 4, [0.5, 0.5], [640, 960, 1280, 1600]],
-  ['h08-fintech-district', DFD('Courtyard corner.jpg'), 3 / 4, [0.6, 0.5], [640, 960, 1280, 1600]],
+  // H05 Featured destinations — Creative Park and Fintech District, 4:3 side by side
+  ['featured-creative-park', DCP('Block 5 Padel - side.png'), 4 / 3, [0.5, 0.6], [640, 960, 1280, 1600]],
+  ['featured-fintech-district', DFD('Courtyard corner.jpg'), 4 / 3, [0.58, 0.5], [640, 960, 1280, 1600]],
 
   // H13 directory previews and the share image
   ['preview-creative-park', DCP('Block 5 Padel - side.png'), 16 / 9, [0.5, 0.62], [320]],
   ['preview-fintech-district', DFD('Courtyard corner.jpg'), 16 / 9, [0.6, 0.5], [320]],
+  ['preview-v8-district', SITE('v8-district-auto-park.avif'), 16 / 9, [0.35, 0.55], [320]],
+  ['preview-motor-garten', SITE('motor-garten-concept.avif'), 16 / 9, [0.5, 0.5], [320]],
   ['og-gulfalts', DCP('Block 5 Padel - side.png'), 1200 / 630, [0.5, 0.6], [1200]]
 ];
 

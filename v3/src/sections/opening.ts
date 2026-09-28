@@ -2,7 +2,6 @@
  * Opening act: H01 Brand Reveal → H02 Dubai Arrival → H03 Brand Spectrum → H04 Brand Manifesto.
  */
 import { h01, h02, h03, h04 } from '../content/homepage';
-import { destinationById } from '../content/destinations';
 import { autoplayChapter, chapterHud, scrubChapter, sequenceChapter } from '../components/chapter';
 import { logoSvg } from '../components/logo';
 import { esc, show } from '../components/markup';
@@ -54,13 +53,6 @@ export const renderH02 = () => {
           ${index ? '<span class="h02_arrow">→</span>' : ''}${esc(cue.label)}
         </li>`).join('')}
       </ol>
-      <ul class="chapter_markers h02_markers" ${show(final.at)} aria-label="${esc(final.label)}">
-        ${h02.copy.markers.map(marker => `
-        <li class="chapter_marker" data-x="${marker.x}" data-y="${marker.y}" data-x-mobile="${marker.xMobile}">
-          <span class="chapter_marker-dot" aria-hidden="true"></span>
-          <span class="chapter_marker-label">${esc(destinationById(marker.destination).name)}</span>
-        </li>`).join('')}
-      </ul>
       <p class="h02_caption" ${show(final.at)}>${esc(final.label)}</p>`
   });
 };
