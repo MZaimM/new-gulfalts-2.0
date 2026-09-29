@@ -18,10 +18,11 @@ npm run media      # render ulang semua video + gambar (butuh ffmpeg)
 
 | # | Section | V3 |
 |---|---|---|
-| 1 | H01 Intro | Jadi intro 3 tahap (lihat peta chapter). Step dipicu posisi scroll (`data-steps`), animasinya berbasis waktu dan berbalik saat scroll ke atas. Navbar jadi solid saat background intro hilang |
+| 1 | H01 Intro | Animasi logo baru (SVG mask, timeline dan easing dari `gulfalts-logo-reveal.html`; `components/logo.ts` + `reveals.ts`), background langsung frame awan scrub H02, tagline "Dynamic Destinations" (title case), navbar tersembunyi sampai animasi logo selesai |
 | 2 | H02 Dubai arrival | Video diganti `video concept/DFD/scene1&2.mp4` (awan → pesisir Dubai → Al Quoz → Fintech District). 1080p, tanpa marker |
-| 3 | H03 Brand spectrum | Montage video diganti tumpukan still HD (AVIF/JPEG responsif, crop 9:16 khusus mobile) yang cross-fade per cue |
-| 4 | H04 The firm | Seluruh teks rata tengah, scrim lebih kuat. Masuk dengan wipe ala floema.com di atas still terakhir H03 |
+| 3 | H03 Brand spectrum | **Dihapus dari landing page.** Disimpan sebagai komponen HTML mandiri di `backups/brand-spectrum/` (lihat di bawah) |
+| 4 | H04 The firm | Seluruh teks rata tengah, scrim lebih kuat. Masuk dengan wipe ala floema.com di atas frame akhir H02 |
+| 4b | Our destinations | **Baru**: portal dari `gulfalts-homepage-preview.html` — dua cakram logo (DCP, DFD) yang melayang, terbuka menjadi foto destinasi saat hover/fokus/tap pertama, dan membesar memenuhi layar saat diklik |
 | 5 | H05 Dubai Creative Park | Gambar potret `Block 5 Padel - side.png` + metrik 160,000+ sq ft & 54 spaces + satu CTA |
 | 6–7 | H06 journey, H07 snapshot | Dihapus |
 | 8 | H08 Dubai Fintech District | Match cut diganti feature seperti H05 (dicerminkan) dengan copy DFD, 50,000 sq ft & 65 units |
@@ -47,14 +48,22 @@ Mengikuti style guide gulfalts.com (https://www.gulfalts.com/style/style-guide),
 - **The Firm** hanya ada di footer.
 - **Contact drawer**: `Inquire` (navbar) dan `Contact` (footer) membuka panel putih dari kanan seperti gulfalts.com: Get in Touch, Contact Form (Full Name, Phone Number, Email Address, jenis inquiry dengan 5 opsi yang sama), Submit Inquiry. Validasi + state loading/berhasil/gagal ada. **Belum mengirim data**: `CONTACT_ENDPOINT` di `src/components/contact.ts` masih `null`, jadi setelah submit pengunjung diminta email ke info@gulfalts.com. Isi endpoint (mis. Netlify Forms atau backend lain) untuk mengaktifkan.
 
+## Backup komponen
+
+- `backups/brand-spectrum/index.html` — section "For work / For movement / For culture / For life" (H03) sebagai file HTML mandiri: CSS dan JS vanilla di dalam satu file, gambar HD di `images/`, font di `fonts/`. Buka langsung di browser, atau salin blok `<section class="bs">` beserta `<style>` dan `<script>`-nya ke halaman lain. Folder ini tidak ikut di-build maupun di-deploy.
+
+## Our destinations (portal)
+
+Diport dari `../gulfalts-homepage-preview (1).html`. Foto dan logo diekstrak dari file itu ke `../Website Material/portals/`; foto dipotong kotak oleh `scripts/build-images.mjs` (`portal-*`), logo disalin ke `public/media/images/mark-*.svg`. Aksen emas (`--portal-sand`, #d8b98f) dan bingkai gradien mengikuti referensi, tidak ada di style guide gulfalts.com. Klik portal membuka halaman venue di tab yang sama setelah transisi lingkaran; di layar sentuh, tap pertama membuka portal.
+
 ## Peta chapter
 
 | ID | Chapter | Media |
 |---|---|---|
-| H01 | Intro | Autoplay loop v01 (12 dtk ping-pong, 1,9 MB / 0,6 MB) di track pendek: logo reveal → scroll: background fade ke frame awal H02 → scroll lagi: logo slide out → H02 menyambung tanpa potongan |
+| H01 | Intro | Tanpa video: animasi logo port dari `gulfalts-logo-reveal.html` (ikon G ter-zoom → kotak membuka ke kanan menyingkap "Gulf" → lubang A-L-T-S; G dan ALTS transparan) di atas frame awan pembuka H02. Scroll: logo slide out, lalu scrub H02 berjalan dari frame yang sama. Navbar baru muncul setelah animasi logo selesai |
 | H02 | Dubai arrival | Scrub, v01 — 1920×1080 / 608×1080, ±5 MB / 2 MB |
-| H03 | Brand spectrum | Sequence still HD (4 frame) |
-| H04 | The firm | Autoplay loop (v00) di track pendek; wipe dari bawah di atas H03 |
+| H04 | The firm | Autoplay loop (v00) di track pendek; wipe dari bawah di atas frame akhir H02 |
+| — | Our destinations | Static, portal DCP + DFD (`components/destination-portals.ts`, `components/portals.ts`) |
 | H05 | Featured destinations | Static, dua kolom sama lebar yang sejajar (CSS subgrid), gambar 4:3. Tiap kolom punya id sendiri (`#h05-creative-park`, `#h08-fintech-district`) |
 | H11 | Our approach | Scrub, v01 — 1920×1080 / 608×1080, ±12 MB / 4 MB |
 | H13 | Our destinations | Scrub mundur, v01 — 1920×1080 / 608×1080, ±5 MB / 2 MB + directory |
@@ -89,17 +98,16 @@ Semua copy, statistik, marker, dan CTA adalah HTML statis (dirender saat build d
 
 ## Cara kerja chapter
 
-- **Sequence (H03)**: track yang sama dengan scrub, tapi panggungnya tumpukan `<picture>`; frame milik cue aktif diberi `.is-current` dan cross-fade, dengan push-in halus lewat `transform`.
 - **Scrub**: `chapter_track` (tinggi = `track` × vh) berisi `chapter_sticky` yang `position: sticky`. Posisi scroll → progress 0–1 → `currentTime` video. Scroll native tidak pernah dibajak (Lenis hanya menghaluskan wheel).
 - **Overlay**: `data-show="a-b"` tampil saat progress di rentang a–b; `data-cue="id"` tampil hanya saat cue itu aktif; `data-cue-mark` diberi penekanan saat cue aktif.
-- **Steps**: `data-steps="bg-out:0.05 brand-out:0.5"` pada section → `.is-bg-out` / `.is-brand-out` saat progress melewati angka itu, plus event `chapter:step` (dipakai untuk menjeda video intro dan mengubah navbar).
+- **Steps**: `data-steps="brand-out:0.2"` pada section → `.is-brand-out` saat progress melewati angka itu, plus event `chapter:step` (navbar ikut muncul bila pengunjung scroll sebelum animasi logo selesai).
 - **Join (wipe)**: `joinStyle: 'wipe'` (H04) membuka chapter dari bawah ke atas dengan tepi tegas (`clip-path`), gambarnya naik ke posisi, sementara gambar chapter sebelumnya bergeser naik lebih cepat, sedikit membesar, dan meredup (`--exit`). Semua mengikuti scroll, seperti transisi koleksi di floema.com.
-- **Join (dissolve)**: chapter dengan `joinPrevious: true` (H02, H03, H13) naik ke bawah ekor chapter sebelumnya dan fade-in di atasnya selama `--join` (60vh desktop, 40vh mobile), jadi tidak ada hard cut. Chapter sebelumnya menyelesaikan ceritanya dulu, lalu copy-nya menyingkir.
+- **Join (dissolve)**: chapter dengan `joinPrevious: true` (H02, H13) naik ke bawah ekor chapter sebelumnya dan fade-in di atasnya selama `--join` (60vh desktop, 40vh mobile), jadi tidak ada hard cut. Chapter sebelumnya menyelesaikan ceritanya dulu, lalu copy-nya menyingkir.
 - **State media**: `idle → loading → ready → active ⇄ paused`, gagal → `error → fallback` (poster tetap tampil). Terlihat di atribut `data-state` tiap section.
-- **Loading**: tidak ada video yang dimuat saat page load selain H01 dan chapter berikutnya. Video lain mulai buffer satu layar sebelum masuk, atau saat chapter sebelumnya sudah lewat 55%.
-- **Autoplay**: diputar hanya saat terlihat, dijeda saat keluar. Video intro H01 loop, dan dijeda begitu background-nya fade out.
+- **Loading**: saat page load hanya video H02 (scrub pertama, tepat di bawah intro) yang dimuat; gambar pertama yang tampil adalah frame awannya. Video lain mulai buffer satu layar sebelum masuk, atau saat chapter sebelumnya sudah lewat 55%.
+- **Autoplay**: diputar hanya saat terlihat, dijeda saat keluar.
 - **Mobile (<768px)**: file 608×1080 terpisah, track lebih pendek, HUD diringkas, satu safe area teks di bawah.
-- **Reduced motion**: tanpa pinning, tanpa scrub, tanpa video. Setiap chapter tampil sebagai poster + seluruh copy; H11 menjadi urutan still frame, H03 menampilkan frame pertamanya.
+- **Reduced motion**: tanpa pinning, tanpa scrub, tanpa video. Setiap chapter tampil sebagai poster + seluruh copy; H11 menjadi urutan still frame.
 
 ## Mengganti media
 

@@ -1,6 +1,11 @@
 /*
- * The Gulfalts wordmark, split so H01 can reveal the "G" first and let the rest of the
- * logo grow out of it. Path data is copied verbatim from media/images/logo-light.svg.
+ * The Gulfalts wordmark for the H01 intro, built the way gulfalts-logo-reveal.html builds it:
+ * one white tile masked with the "G" and the "ALTS" letters cut out (so they are transparent and
+ * the page shows through), plus the white "Gulf" shown only left of the tile's trailing edge.
+ * The tile starts as the square G icon and unfolds into the ALTS block; see playBrandReveal.
+ * Path data is copied verbatim from media/images/logo-light.svg; the ALTS letters, cut out of
+ * the block there, are split out so they can appear one by one.
+ * The markup is the finished logo, so without JS (or with reduced motion) it is simply static.
  */
 const G = 'M0,275.06C0,140.14,114.12,57.49,251.17,57.49c101.85,0,191.98,49.05,224.51,127.99l-64.52,25.06c-28.27-53.86-85.33-89.59-159.99-89.59-95.98,0-177.05,57.59-177.05,155.71,0,109.85,99.19,150.92,183.98,150.92s150.38-41.06,159.97-101.85h-151.98v-55.47h222.91v211.71h-55.46c-1.07-24.53-2.13-48-3.2-71.99h-3.2c-34.66,51.73-95.99,81.06-180.78,81.06C102.39,491.03,0,401.45,0,275.06';
 
@@ -13,8 +18,42 @@ const REST = [
 
 const RECT = { x: 1001.52, y: 55.35, width: 66.13, height: 426.61 };
 
-export const logoSvg = (className: string, label = 'Gulfalts') => `
-  <svg class="${className}" viewBox="0 0 3043.58 537.32" role="img" aria-label="${label}" focusable="false">
-    <g class="logo_g"><path d="${G}" /></g>
-    <g class="logo_rest">${REST.map(d => `<path d="${d}" />`).join('')}<rect x="${RECT.x}" y="${RECT.y}" width="${RECT.width}" height="${RECT.height}" /></g>
+/** The ALTS block path is the block followed by one sub-path per letter (A, L, T, S). */
+const [, A_OUTER, L, T, S] = REST[0].split(/(?=M)/);
+const A_COUNTER = REST[1];
+const U = REST[2];
+const F = REST[3];
+
+export const LOGO_VIEW = { width: 3043.58, height: 537.32 };
+/** The white ALTS block the tile settles into. */
+export const LOGO_BLOCK = { x: 1460.54, y: 0, width: 1583.04, height: 537.32 };
+/** Left edges of "u", "l" and "f": they appear as the trailing edge passes them. */
+export const LOGO_TRAIL_X = [584.49, 1001.52, 1146.57];
+
+const BIG = 'x="-40000" y="-40000" width="80000" height="80000"';
+
+export const logoIntroSvg = (className: string, label = 'Gulfalts') => `
+  <svg class="${className}" viewBox="0 0 ${LOGO_VIEW.width} ${LOGO_VIEW.height}" role="img" aria-label="${label}" focusable="false">
+    <defs>
+      <mask id="${className}-tile" maskUnits="userSpaceOnUse" ${BIG}>
+        <rect ${BIG} fill="#fff" />
+        <path d="${G}" fill="#000" />
+        <path class="logo_hole" d="${A_OUTER}${A_COUNTER}" fill="#000" fill-rule="evenodd" />
+        <path class="logo_hole" d="${L}" fill="#000" />
+        <path class="logo_hole" d="${T}" fill="#000" />
+        <path class="logo_hole" d="${S}" fill="#000" />
+      </mask>
+      <mask id="${className}-left" maskUnits="userSpaceOnUse" ${BIG}>
+        <rect class="logo_left" x="-40000" y="-40000" width="${40000 + LOGO_BLOCK.x}" height="80000" fill="#fff" />
+      </mask>
+    </defs>
+    <g class="logo_cam">
+      <rect class="logo_tile" x="${LOGO_BLOCK.x}" y="${LOGO_BLOCK.y}" width="${LOGO_BLOCK.width}" height="${LOGO_BLOCK.height}" mask="url(#${className}-tile)" />
+      <g class="logo_word" mask="url(#${className}-left)">
+        <path d="${G}" />
+        <path class="logo_trail" d="${U}" />
+        <rect class="logo_trail" x="${RECT.x}" y="${RECT.y}" width="${RECT.width}" height="${RECT.height}" />
+        <path class="logo_trail" d="${F}" />
+      </g>
+    </g>
   </svg>`;

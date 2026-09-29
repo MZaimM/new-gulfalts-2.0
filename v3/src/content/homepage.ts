@@ -1,9 +1,9 @@
-import type { AutoplayChapter, MediaSources, ResponsiveImage, ScrubChapter, SequenceChapter, StaticChapter } from './types';
+import type { AutoplayChapter, MediaSources, ResponsiveImage, ScrubChapter, StaticChapter } from './types';
 
 /*
  * Homepage chapters, V3: "From Space to Destination".
  *
- *   H01 Brand reveal → H02 Dubai arrival → H03 Brand spectrum → H04 The firm →
+ *   H01 Intro → H02 Dubai arrival → H04 The firm → Our destinations (portals) →
  *   H05 Dubai Creative Park → H08 Dubai Fintech District → H11 Our approach →
  *   H13 Our destinations → H14 Next destination
  *
@@ -26,34 +26,26 @@ const still = (name: string, frame: number, version: string) =>
 
 /** Mirrors the jobs in scripts/build-images.mjs. */
 const image = (name: string, widths: number[], ratio: number): ResponsiveImage => ({ name, widths, ratio });
-const spectrumFrame = (cue: string) => ({
-  cue,
-  desktop: image(`h03-${cue}-desktop`, [1280, 1920, 2560], 16 / 9),
-  mobile: image(`h03-${cue}-mobile`, [720, 1080], 9 / 16)
-});
 
 // ---------------------------------------------------------------------------
-// H01 Intro — AUTOPLAY loop on a short pinned track
-//   1. The logo reveals over a moving aerial.
-//   2. First scroll: the aerial fades out onto H02's opening frame; the logo stays.
-//   3. Further scroll: the logo slides out and H02 takes over (same frame, so no cut).
-// The steps are scroll-triggered but time-animated (CSS transitions), and reverse on the way up.
+// H01 Intro — the logo animation over H02's opening frame (clouds), on a short pinned track.
+//   1. The Gulfalts logo animates in (components/reveals.ts); the header waits for it.
+//   2. First scroll: the logo slides out and H02's scrub takes over from the same frame.
+// The step is scroll-triggered but time-animated (CSS transitions) and reverses on the way up.
 // ---------------------------------------------------------------------------
 export const h01 = {
   id: 'h01-brand-reveal',
   code: 'H01',
   title: 'Intro',
-  type: 'autoplay',
-  media: media('h01-brand-reveal', 'v01'),
-  loop: true,
-  track: { desktop: 170, mobile: 160 },
+  type: 'intro',
+  track: { desktop: 130, mobile: 125 },
   /** Story progress (0–1) at which each intro step fires. */
-  steps: { 'bg-out': 0.05, 'brand-out': 0.5 },
+  steps: { 'brand-out': 0.2 },
   copy: {
-    positioning: 'Dynamic destinations',
+    positioning: 'Dynamic Destinations',
     enter: 'Scroll to enter'
   }
-} satisfies AutoplayChapter & { steps: Record<string, number>; copy: unknown };
+} as const;
 
 // ---------------------------------------------------------------------------
 // H02 Dubai Arrival — SCRUB (DFD scene 1 & 2: clouds → Dubai coast → Al Quoz → Fintech District)
@@ -65,7 +57,8 @@ export const h02 = {
   type: 'scrub',
   media: media('h02-dubai-arrival', 'v01'),
   duration: 9.08,
-  track: { desktop: 400, mobile: 300 },
+  // Its last ~100vh is H04 wiping in over the final frame, so the track carries that too.
+  track: { desktop: 440, mobile: 340 },
   // Dissolves in from H01's final state, which already shows this chapter's first frame.
   joinPrevious: true,
   cues: [
@@ -80,36 +73,7 @@ export const h02 = {
 } satisfies ScrubChapter & { copy: unknown };
 
 // ---------------------------------------------------------------------------
-// H03 Brand Spectrum — SEQUENCE (HD stills cross-fading on scroll)
-// ---------------------------------------------------------------------------
-export const h03 = {
-  id: 'h03-brand-spectrum',
-  code: 'H03',
-  title: 'Brand spectrum',
-  type: 'sequence',
-  // Longer than the beats need: the last ~100vh is H04 wiping in over the final still.
-  track: { desktop: 420, mobile: 320 },
-  joinPrevious: true,
-  cues: [
-    { at: 0, id: 'work', label: 'Workspace', copy: 'For work.' },
-    { at: 0.25, id: 'movement', label: 'Movement', copy: 'For movement.' },
-    { at: 0.5, id: 'culture', label: 'Culture', copy: 'For culture.' },
-    { at: 0.75, id: 'life', label: 'Life', copy: 'For life.' }
-  ],
-  frames: [spectrumFrame('work'), spectrumFrame('movement'), spectrumFrame('culture'), spectrumFrame('life')],
-  copy: {
-    heading: 'Destinations for work, movement, culture and life.',
-    alts: {
-      work: 'A daylit Gulfalts office with a lounge, desks and tall windows onto a landscaped park.',
-      movement: 'An indoor padel hall with a row of glass-walled courts under a steel roof.',
-      culture: 'A double-height galleria with a café, an olive tree and a mezzanine lined with greenery.',
-      life: 'An evening food court between the buildings, with food trucks, string lights and shared tables.'
-    } as Record<string, string>
-  }
-} satisfies SequenceChapter & { copy: unknown };
-
-// ---------------------------------------------------------------------------
-// H04 Brand Manifesto (The firm) — AUTOPLAY, wipes in over H03
+// H04 Brand Manifesto (The firm) — AUTOPLAY, wipes in over H02's last frame
 // ---------------------------------------------------------------------------
 export const h04 = {
   id: 'h04-brand-manifesto',
@@ -118,7 +82,7 @@ export const h04 = {
   type: 'autoplay',
   media: media('h04-brand-manifesto', 'v00'),
   loop: true,
-  // Wipes up over H03's last still (see the wipe join in chapters.css), then holds briefly.
+  // Wipes up over H02's final frame (see the wipe join in chapters.css), then holds briefly.
   track: { desktop: 160, mobile: 150 },
   joinPrevious: true,
   joinStyle: 'wipe',
@@ -129,6 +93,33 @@ export const h04 = {
     body: 'We curate dynamic environments where business, wellness and community thrive.'
   }
 } satisfies AutoplayChapter & { copy: unknown };
+
+// ---------------------------------------------------------------------------
+// Our destinations — portals (after gulfalts-homepage-preview.html). Two floating logo discs
+// that open into a view of each destination on hover and carry the visitor through on click.
+// ---------------------------------------------------------------------------
+export const portals = {
+  id: 'our-destinations',
+  copy: { eyebrow: 'Our destinations' },
+  items: [
+    {
+      destination: 'creative-park',
+      tag: 'Sport · Wellness · F&B',
+      name: 'Dubai Creative Park',
+      cta: 'Step inside',
+      mark: { src: '/media/images/mark-creative-park.svg', width: 1704, height: 968, className: 'is-dcp' },
+      image: image('portal-creative-park', [480, 800], 1)
+    },
+    {
+      destination: 'fintech-district',
+      tag: 'Office · Showroom · Wellness',
+      name: 'Dubai Fintech District',
+      cta: 'Step inside',
+      mark: { src: '/media/images/mark-fintech-district.svg', width: 1607, height: 498, className: 'is-dfd' },
+      image: image('portal-fintech-district', [480, 800], 1)
+    }
+  ]
+};
 
 // ---------------------------------------------------------------------------
 // H05 Featured destinations — one STATIC section holding H05 (Creative Park) and H08 (Fintech
@@ -259,6 +250,6 @@ export const h14 = {
   }
 } satisfies StaticChapter & { copy: unknown };
 
-export const chapters = [h01, h02, h03, h04, h05, h08, h11, h13, h14];
+export const chapters = [h01, h02, h04, h05, h08, h11, h13, h14];
 
 export const chapterById = (id: string) => chapters.find(chapter => chapter.id === id);

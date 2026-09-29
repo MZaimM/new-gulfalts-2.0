@@ -16,6 +16,7 @@ import { initAnchors, initFooter, initHeader, initMenu, initNavDropdown, initNav
 import { initReveals, playBrandReveal } from './components/reveals';
 import { initDirectory } from './components/destination-directory';
 import { initContact } from './components/contact';
+import { initPortals } from './components/portals';
 
 gsap.registerPlugin(ScrollTrigger);
 const reduced = prefersReducedMotion();
@@ -44,8 +45,8 @@ if (!reduced) {
   sections.forEach(section => {
     if (!section.querySelector('.chapter_track')) return;
     const config = chapterById(section.dataset.chapter ?? '');
-    const tracked = config?.type === 'scrub' || config?.type === 'sequence' ? config : undefined;
-    tracks.push(new ChapterTrack(section, tracked, config?.type === 'scrub' ? media.get(section) : undefined));
+    const scrub = config?.type === 'scrub' ? config : undefined;
+    tracks.push(new ChapterTrack(section, scrub, scrub ? media.get(section) : undefined));
   });
 
   // Only the hero and the next chapter are buffered ahead of time.
@@ -58,20 +59,10 @@ if (!reduced) {
     if (entry.isIntersecting) media.get(entry.target as HTMLElement)?.load();
   }), { rootMargin: '100% 0px' });
   media.forEach((item, section) => {
-    if (item.kind === 'autoplay') observeAutoplay(item, { eager: section.classList.contains('h01') });
+    if (item.kind === 'autoplay') observeAutoplay(item);
     else nearby.observe(section);
   });
 }
-
-// H01 intro: once the aerial has faded out there is nothing to show, so stop decoding it.
-const intro = document.querySelector<HTMLElement>('.h01');
-const introMedia = intro ? media.get(intro) : undefined;
-intro?.addEventListener('chapter:step', event => {
-  const { name, active } = (event as CustomEvent<{ name: string; active: boolean }>).detail;
-  if (name !== 'bg-out' || !introMedia?.isReady) return;
-  if (active) introMedia.video.pause();
-  else introMedia.video.play().catch(() => {});
-});
 
 let viewport = window.innerHeight;
 const update = () => {
@@ -124,23 +115,26 @@ const scrollToHash = (hash: string, { immediate = false } = {}) => {
 
 const menu = initMenu(lenis);
 initAnchors(scrollToHash, menu);
-initHeader(document.querySelector<HTMLElement>('.h01')!);
+const hero = document.querySelector<HTMLElement>('.h01')!;
+// The logo animation plays once; the header waits for it (see initHeader).
+const logoDone = reduced ? Promise.resolve() : playBrandReveal(hero);
+initHeader(hero, logoDone);
 initNavDropdown();
 initNavState({
-  destinations: ['h05-creative-park', 'h08-fintech-district', 'h13-dubai-pull-out', 'h14-next-destination'],
+  destinations: ['our-destinations', 'h05-creative-park', 'h08-fintech-district', 'h13-dubai-pull-out', 'h14-next-destination'],
   '#h05-creative-park': ['h05-creative-park'],
   '#h08-fintech-district': ['h08-fintech-district'],
   '#h13-dubai-pull-out': ['h13-dubai-pull-out', 'h14-next-destination']
 });
 initFooter(lenis);
 initContact(lenis);
+initPortals(reduced);
 initDirectory(document.querySelector<HTMLElement>('.h13')!);
 
 // ---------------------------------------------------------------------------
 // Motion
 // ---------------------------------------------------------------------------
 if (!reduced) {
-  playBrandReveal(document.querySelector<HTMLElement>('.h01')!);
   initReveals();
 }
 

@@ -13,6 +13,10 @@
   transition: inset .52s var(--ease), height .52s var(--ease), padding .52s var(--ease),
     background .34s ease, color .34s ease, border-radius .52s var(--ease), box-shadow .34s ease, border-color .34s ease;
 }
+/* Hidden until the intro logo animation has finished (JS only, so it never stays hidden). */
+.js .site-header.is-waiting { opacity: 0; visibility: hidden; translate: 0 -8px; pointer-events: none; }
+.site-header { transition-property: inset, height, padding, background, color, border-radius, box-shadow, border-color, opacity, translate, visibility; }
+.site-header:not(.is-waiting) { transition-duration: .52s, .52s, .52s, .34s, .34s, .52s, .34s, .34s, .7s, .7s, 0s; }
 .site-header.is-solid {
   inset: 12px var(--gutter) auto;
   height: 60px; padding: 0 28px;

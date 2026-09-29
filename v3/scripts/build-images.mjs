@@ -20,25 +20,23 @@ const DCP = file => path.join(material, 'DCP ', file);
 const DFD = file => path.join(material, 'DFD ', file);
 // Venue images taken from gulfalts.com (V8 District, Motor Garten project renders).
 const SITE = file => path.join(material, 'gulfalts.com', file);
+// Portal photos taken from gulfalts-homepage-preview.html (Our destinations portals).
+const PORTAL = file => path.join(material, 'portals', file);
 
 /**
  * name, source, aspect (w/h), focus point (0–1) the crop is centred on, widths.
  * The crop keeps as much of the source as the aspect allows.
  */
 const jobs = [
-  // H03 Brand spectrum — desktop 16:9 and mobile 9:16 per beat
-  ['h03-work-desktop', DCP('Gulfalts Office.png'), 16 / 9, [0.5, 0.5], [1280, 1920, 2560]],
-  ['h03-work-mobile', DCP('Office space 9-16.png'), 9 / 16, [0.5, 0.5], [720, 1080]],
-  ['h03-movement-desktop', DCP('Padel.png'), 16 / 9, [0.5, 0.5], [1280, 1920, 2560]],
-  ['h03-movement-mobile', DCP('padel 9-16.png'), 9 / 16, [0.5, 0.5], [720, 1080]],
-  ['h03-culture-desktop', DFD('Galleria Loft Space.jpg'), 16 / 9, [0.5, 0.55], [1280, 1920, 2560]],
-  ['h03-culture-mobile', DFD('Galleria Loft Space.jpg'), 9 / 16, [0.46, 0.5], [720, 1080]],
-  ['h03-life-desktop', DCP('Outdoor food court.png'), 16 / 9, [0.5, 0.58], [1280, 1920, 2560]],
-  ['h03-life-mobile', DCP('Outdoor food court.png'), 9 / 16, [0.5, 0.5], [720, 1080]],
+  // H03 Brand spectrum stills now live in backups/brand-spectrum/images (section removed).
 
   // H05 Featured destinations — Creative Park and Fintech District, 4:3 side by side
   ['featured-creative-park', DCP('Block 5 Padel - side.png'), 4 / 3, [0.5, 0.6], [640, 960, 1280, 1600]],
   ['featured-fintech-district', DFD('Courtyard corner.jpg'), 4 / 3, [0.58, 0.5], [640, 960, 1280, 1600]],
+
+  // Our destinations portals — square, seen through a circle
+  ['portal-creative-park', PORTAL('dcp-photo.jpg'), 1, [0.5, 0.5], [480, 800]],
+  ['portal-fintech-district', PORTAL('dfd-photo.jpg'), 1, [0.5, 0.5], [480, 800]],
 
   // H13 directory previews and the share image
   ['preview-creative-park', DCP('Block 5 Padel - side.png'), 16 / 9, [0.5, 0.62], [320]],

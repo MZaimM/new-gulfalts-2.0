@@ -18,7 +18,7 @@ export interface ChapterCue {
   label: string;
   /** Optional overlay line shown while this cue is active. */
   copy?: string;
-  /** Still used for the mobile / reduced-motion keyframe sequence. */
+  /** Still used for the reduced-motion keyframe sequence. */
   still?: string;
 }
 
@@ -79,30 +79,7 @@ export interface ResponsiveImage {
   ratio: number;
 }
 
-/** One beat of an image sequence: its own desktop and mobile crop. */
-export interface SequenceFrame {
-  cue: string;
-  desktop: ResponsiveImage;
-  mobile: ResponsiveImage;
-}
-
-/**
- * Scroll-driven like a scrub chapter, but the picture is a stack of HD stills that cross-fade on
- * each cue instead of a video. Sharper than a montage encode and a fraction of the weight.
- */
-export interface SequenceChapter extends ChapterBase {
-  type: 'sequence';
-  track: { desktop: number; mobile: number };
-  joinPrevious?: boolean;
-  videoSpan?: [number, number];
-  cues: ChapterCue[];
-  frames: SequenceFrame[];
-}
-
-/** Chapters whose cues follow the scroll position. */
-export type TrackedChapter = ScrubChapter | SequenceChapter;
-
-export type Chapter = ScrubChapter | SequenceChapter | AutoplayChapter | StaticChapter;
+export type Chapter = ScrubChapter | AutoplayChapter | StaticChapter;
 
 export type StatStatus = 'confirmed' | 'unconfirmed';
 

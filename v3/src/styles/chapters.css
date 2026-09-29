@@ -15,7 +15,8 @@
 
 .chapter_component { position: relative; }
 .chapter_component.is-scrub,
-.chapter_component.is-autoplay { background: var(--ink); color: var(--text-inverse); }
+.chapter_component.is-autoplay,
+.chapter_component.is-intro { background: var(--ink); color: var(--text-inverse); }
 
 .chapter_track { position: relative; height: calc(var(--track) * 1vh); }
 .chapter_sticky {
@@ -95,30 +96,6 @@
 .js .chapter_overlay [data-show].is-active,
 .js .chapter_overlay [data-cue].is-current { opacity: 1; transform: none; }
 
-/* HUD: chapter + beat label, counter, progress rule. */
-.chapter_hud {
-  position: absolute;
-  top: calc(var(--header-h) + 24px); left: var(--gutter); right: var(--gutter);
-  display: flex; justify-content: space-between; align-items: baseline; gap: 24px;
-  font-size: var(--fs-meta); font-weight: 500; letter-spacing: var(--eyebrow-tracking); text-transform: uppercase;
-  font-variant-numeric: tabular-nums;
-}
-.chapter_hud-label { display: flex; gap: 16px; align-items: baseline; }
-.chapter_hud-chapter { color: var(--text-inverse-secondary); }
-.chapter_hud-beats { display: inline-grid; }
-.chapter_hud-beats > span { grid-area: 1 / 1; white-space: nowrap; }
-.js .chapter_hud-beats > [data-cue] { transform: translate3d(0, 8px, 0); }
-.chapter_progress {
-  position: absolute; left: var(--gutter); right: var(--gutter); bottom: 32px;
-  height: 1px; background: var(--line-inverse);
-}
-.chapter_progress span {
-  display: block; height: 100%;
-  background: var(--text-inverse);
-  transform-origin: left;
-  transform: scaleX(var(--p, 0));
-}
-
 /* Markers are positioned in video-frame space by the runtime (see lib/viewport.ts). */
 .chapter_markers { position: absolute; inset: 0; }
 .chapter_marker { position: absolute; left: 0; top: 0; transform: translate3d(var(--mx, -999px), var(--my, -999px), 0) translateY(-50%); }
@@ -145,18 +122,6 @@
 .chapter_marker.is-highlight .chapter_marker-label,
 .chapter_marker > a:hover .chapter_marker-label { background: var(--text-inverse); color: var(--ink); }
 
-/* Sequence chapters: HD stills cross-fade on each cue while the stage settles from a slight
-   push-in to rest over the chapter (transform only, so it stays on the compositor). */
-.sequence_stage {
-  position: absolute; inset: 0;
-  transform: scale(calc(1.06 - var(--p, 0) * 0.06));
-  will-change: transform;
-}
-.sequence_frame, .sequence_frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.js .sequence_frame { opacity: 0; transition: opacity var(--t-narrative) ease; }
-.js .sequence_frame.is-current { opacity: 1; }
-html:not(.js) .sequence_frame:not(:first-child) { display: none; }
-
 /* Keyframe sequence: only used by the reduced-motion experience. */
 .chapter_keyframes { display: none; }
 
@@ -172,9 +137,6 @@ html:not(.js) .sequence_frame:not(:first-child) { display: none; }
   .chapter_track { height: calc(var(--track-mobile) * 1vh); }
   .js .chapter_component.is-joined > .chapter_track { height: calc(var(--track-mobile) * 1vh + var(--join)); }
   .chapter_overlay { padding: calc(var(--header-h) + 20px) var(--gutter) 28px; }
-  .chapter_hud { top: calc(var(--header-h) + 16px); }
-  .chapter_hud-chapter { display: none; }
-  .chapter_progress { bottom: 20px; }
   .chapter_marker-label { font-size: 11px; padding: 5px 8px; }
 }
 
@@ -198,12 +160,7 @@ html:not(.js) .sequence_frame:not(:first-child) { display: none; }
   }
   .js .chapter_overlay [data-show],
   .js .chapter_overlay [data-cue] { opacity: 1; transform: none; transition: none; }
-  .chapter_overlay > *,
-  .chapter_hud { position: relative; inset: auto; transform: none; }
-  .chapter_hud-beats > * { grid-area: auto; }
-  .chapter_hud, .chapter_progress { display: none; }
-  .sequence_stage { transform: none; }
-  .js .sequence_frame:first-child { opacity: 1; }
+  .chapter_overlay > * { position: relative; inset: auto; transform: none; }
   .chapter_markers { position: absolute; inset: 0; }
 
   .chapter_keyframes {

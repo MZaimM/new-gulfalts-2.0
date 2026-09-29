@@ -3,11 +3,10 @@
  *
  * Every chapter with a `.chapter_track` gets a ChapterTrack: it measures the track, turns the
  * scroll position into a story progress (0–1), toggles the overlay states and, for scrub
- * chapters, maps that progress onto the video's currentTime (sequence chapters cross-fade stills
- * on each cue instead). Native scrolling is never
+ * chapters, maps that progress onto the video's currentTime. Native scrolling is never
  * intercepted; the stage is plain `position: sticky`.
  */
-import type { ChapterCue, ScrubChapter, TrackedChapter } from '../content/types';
+import type { ChapterCue, ScrubChapter } from '../content/types';
 import { ChapterMedia } from './media-loader';
 import { clamp, coverPoint, isMobile, objectAlign, sourceFrame } from './viewport';
 
@@ -32,7 +31,7 @@ const PRELOAD_NEXT_AT = 0.55;
 
 export class ChapterTrack {
   readonly section: HTMLElement;
-  readonly config?: TrackedChapter;
+  readonly config?: ScrubChapter;
   readonly media?: ChapterMedia;
   next?: ChapterTrack | { media?: ChapterMedia };
 
@@ -44,8 +43,6 @@ export class ChapterTrack {
   private ranges: Range[];
   private cueEls: HTMLElement[];
   private markEls: HTMLElement[];
-  private frameEls: HTMLElement[];
-  private counter: HTMLElement | null;
   private cues: ChapterCue[];
   /** Named steps from `data-steps="name:0.1 other:0.5"`; `.is-<name>` is set once passed. */
   private steps: { name: string; at: number; active: boolean }[];
@@ -64,7 +61,7 @@ export class ChapterTrack {
   private smoothVideo = 0;
   private pendingSeek: number | null = null;
 
-  constructor(section: HTMLElement, config?: TrackedChapter, media?: ChapterMedia) {
+  constructor(section: HTMLElement, config?: ScrubChapter, media?: ChapterMedia) {
     this.section = section;
     this.config = config;
     this.media = media;
@@ -79,8 +76,6 @@ export class ChapterTrack {
     });
     this.cueEls = [...section.querySelectorAll<HTMLElement>('.chapter_overlay [data-cue]')];
     this.markEls = [...section.querySelectorAll<HTMLElement>('.chapter_overlay [data-cue-mark]')];
-    this.frameEls = [...section.querySelectorAll<HTMLElement>('[data-cue-frame]')];
-    this.counter = section.querySelector('.chapter_count-current');
     this.steps = (section.dataset.steps ?? '').split(' ').filter(Boolean).map(step => {
       const [name, at] = step.split(':');
       return { name, at: Number(at), active: false };
@@ -179,8 +174,6 @@ export class ChapterTrack {
     this.section.dataset.cue = cue.id;
     this.cueEls.forEach(el => el.classList.toggle('is-current', el.dataset.cue === cue.id));
     this.markEls.forEach(el => el.classList.toggle('is-current', el.dataset.cueMark === cue.id));
-    this.frameEls.forEach(el => el.classList.toggle('is-current', el.dataset.cueFrame === cue.id));
-    if (this.counter) this.counter.textContent = String(index + 1).padStart(2, '0');
   }
 
   /** Per-frame video easing, driven by the shared ticker. */
@@ -198,9 +191,8 @@ export class ChapterTrack {
 
   private seek(videoProgress: number) {
     const media = this.media!;
-    const config = this.config as ScrubChapter;
-    const duration = media.duration || config.duration;
-    const position = config.reverse ? 1 - videoProgress : videoProgress;
+    const duration = media.duration || this.config!.duration;
+    const position = this.config!.reverse ? 1 - videoProgress : videoProgress;
     const time = clamp(position) * Math.max(0, duration - 0.05);
     if (media.video.seeking) {
       this.pendingSeek = time;

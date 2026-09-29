@@ -1,41 +1,43 @@
 /*
- * Opening act: H01 Brand Reveal → H02 Dubai Arrival → H03 Brand Spectrum → H04 Brand Manifesto.
+ * Opening act: H01 Intro → H02 Dubai Arrival → H04 Brand Manifesto (The firm).
+ * H03 (brand spectrum) was removed; it is kept as a standalone file in backups/brand-spectrum.
  */
-import { h01, h02, h03, h04 } from '../content/homepage';
-import { autoplayChapter, chapterHud, scrubChapter, sequenceChapter } from '../components/chapter';
-import { logoSvg } from '../components/logo';
+import { h01, h02, h04 } from '../content/homepage';
+import { autoplayChapter, scrubChapter } from '../components/chapter';
+import { logoIntroSvg } from '../components/logo';
 import { esc, show } from '../components/markup';
 
 /**
- * H02's opening frame and scrim sit under the H01 aerial. Fading the aerial out reveals the exact
- * picture H02 starts on, so when H02 dissolves in on top there is nothing to see change.
- * The extra shade keeps the white logo legible over the bright clouds and leaves with it.
+ * H01 sits on H02's opening frame and scrim, so when H02 dissolves in on top there is nothing
+ * to see change. The shade keeps the white logo legible over the bright clouds and leaves
+ * with it. This frame is the first image on the page (the LCP), so it loads eagerly.
  */
-const h01Underlay = () => `
-    <div class="h01_next">
+const h01Stage = () => `
+    <div class="chapter_media-wrap" aria-hidden="true">
       <picture class="h01_next-frame">
         <source media="(max-width: 767px)" srcset="${h02.media.posterMobile}" width="608" height="1080" />
-        <img src="${h02.media.posterDesktop}" alt="" width="1920" height="1080" fetchpriority="low" decoding="async" />
+        <img src="${h02.media.posterDesktop}" alt="" width="1920" height="1080" fetchpriority="high" decoding="async" />
       </picture>
       <div class="chapter_scrim is-left"></div>
       <div class="h01_next-shade"></div>
     </div>`;
 
-export const renderH01 = () => autoplayChapter({
-  chapter: h01,
-  className: 'h01',
-  labelledBy: 'h01-title',
-  eager: true,
-  scrim: 'deep',
-  underlay: h01Underlay(),
-  steps: h01.steps,
-  content: `
-    <h1 class="h01_title" id="h01-title">
-      ${logoSvg('h01_logo')}
-      <span class="h01_positioning">${esc(h01.copy.positioning)}</span>
-    </h1>
-    <p class="h01_cue"><a class="h01_enter" href="#${h02.id}">${esc(h01.copy.enter)} <span aria-hidden="true">↓</span></a></p>`
-});
+export const renderH01 = () => `
+<section class="chapter_component is-intro h01" id="${h01.id}" data-chapter="${h01.id}" data-media="intro"
+  data-steps="${Object.entries(h01.steps).map(([name, at]) => `${name}:${at}`).join(' ')}" aria-labelledby="h01-title">
+  <div class="chapter_track" style="--track:${h01.track.desktop};--track-mobile:${h01.track.mobile}">
+    <div class="chapter_sticky">
+      ${h01Stage()}
+      <div class="chapter_overlay">
+        <h1 class="h01_title" id="h01-title">
+          ${logoIntroSvg('h01_logo')}
+          <span class="h01_positioning">${esc(h01.copy.positioning)}</span>
+        </h1>
+        <p class="h01_cue"><a class="h01_enter" href="#${h02.id}">${esc(h01.copy.enter)} <span aria-hidden="true">↓</span></a></p>
+      </div>
+    </div>
+  </div>
+</section>`;
 
 export const renderH02 = () => {
   const path = h02.cues.slice(0, 3);
@@ -56,19 +58,6 @@ export const renderH02 = () => {
       <p class="h02_caption" ${show(final.at)}>${esc(final.label)}</p>`
   });
 };
-
-export const renderH03 = () => sequenceChapter({
-  chapter: h03,
-  className: 'h03',
-  labelledBy: 'h03-title',
-  alts: h03.copy.alts,
-  overlay: `
-    <h2 class="visually-hidden" id="h03-title">${esc(h03.copy.heading)}</h2>
-    <div class="h03_words" aria-hidden="true">
-      ${h03.cues.map(cue => `<p class="h03_word" data-cue="${cue.id}">${esc(cue.copy!)}</p>`).join('')}
-    </div>
-    ${chapterHud('Gulfalts destinations', h03.cues)}`
-});
 
 export const renderH04 = () => autoplayChapter({
   chapter: h04,
