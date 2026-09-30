@@ -3,7 +3,7 @@ import type { AutoplayChapter, MediaSources, ResponsiveImage, ScrubChapter, Stat
 /*
  * Homepage chapters, V3: "From Space to Destination".
  *
- *   H01 Intro → H02 Dubai arrival → H04 The firm → Our destinations (portals) →
+ *   H01 Intro → H02 Dubai arrival → H04 The firm → Our destinations (slider) →
  *   H05 Dubai Creative Park → H08 Dubai Fintech District → H11 Our approach →
  *   H13 Our destinations → H14 Next destination
  *
@@ -95,28 +95,36 @@ export const h04 = {
 } satisfies AutoplayChapter & { copy: unknown };
 
 // ---------------------------------------------------------------------------
-// Our destinations — portals (after gulfalts-homepage-preview.html). Two floating logo discs
-// that open into a view of each destination on hover and carry the visitor through on click.
+// Our destinations — slider. One destination at a time, seen through a circle with a gold
+// ring that doubles as the autoplay timer; arrows, numbered tabs and swipe move between them.
 // ---------------------------------------------------------------------------
-export const portals = {
+export const slider = {
   id: 'our-destinations',
   copy: { eyebrow: 'Our destinations' },
   items: [
     {
       destination: 'creative-park',
-      tag: 'Sport · Wellness · F&B',
-      name: 'Dubai Creative Park',
-      cta: 'Step inside',
-      mark: { src: '/media/images/mark-creative-park.svg', width: 1704, height: 968, className: 'is-dcp' },
-      image: image('portal-creative-park', [480, 800], 1)
+      location: 'Dubai · Al Quoz',
+      name: 'Creative Park',
+      pillars: ['Work', 'Train', 'Dine', 'Play'],
+      body: 'A new kind of neighbourhood built around how people actually spend their day.',
+      cta: 'Explore Creative Park',
+      image: {
+        ...image('slide-creative-park', [640, 1100], 1),
+        alt: 'Dubai Creative Park at dusk: food trucks, string lights and long tables along a tree-lined walk.'
+      }
     },
     {
       destination: 'fintech-district',
-      tag: 'Office · Showroom · Wellness',
-      name: 'Dubai Fintech District',
-      cta: 'Step inside',
-      mark: { src: '/media/images/mark-fintech-district.svg', width: 1607, height: 498, className: 'is-dfd' },
-      image: image('portal-fintech-district', [480, 800], 1)
+      location: 'Dubai · Al Quoz',
+      name: 'Fintech District',
+      pillars: ['Work', 'Meet', 'Showcase', 'Dine'],
+      body: 'A design-led business park built for high-growth companies, with natural light in every unit.',
+      cta: 'Explore Fintech District',
+      image: {
+        ...image('slide-fintech-district', [640, 788], 1),
+        alt: 'Dubai Fintech District: double-height glass frontages around a landscaped courtyard.'
+      }
     }
   ]
 };

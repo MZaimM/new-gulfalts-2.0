@@ -108,4 +108,11 @@ export interface Destination {
    * a 608×1080 crop of that frame, so it has its own x.
    */
   marker: { x: number; y: number; xMobile: number };
+  /** Drive times shown in the H13 marker card. */
+  commute: { times: CommuteTime[]; status: StatStatus };
+}
+
+export interface CommuteTime {
+  place: string;
+  minutes: number;
 }

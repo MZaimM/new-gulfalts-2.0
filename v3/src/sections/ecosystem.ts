@@ -7,6 +7,7 @@ import { h11, h13, h14 } from '../content/homepage';
 import { allDestinationsUrl, destinationById, destinations } from '../content/destinations';
 import { scrubChapter } from '../components/chapter';
 import { arrow, chapterKeyframes, esc, externalLink, pad, show } from '../components/markup';
+import type { Destination } from '../content/types';
 
 export const renderH11 = () => {
   const [raw, curate, ...layers] = h11.cues;
@@ -32,6 +33,23 @@ export const renderH11 = () => {
   });
 };
 
+/**
+ * Hover / focus card on an H13 marker: the dot opens into a photo of the venue, with its name and
+ * drive times beside it. It lives inside the marker link, so moving onto it keeps it open.
+ */
+const markerCard = (destination: Destination) => `
+            <span class="marker_card" id="marker-card-${destination.id}">
+              <span class="marker_card-thumb" aria-hidden="true">${destination.preview ? `<img src="${destination.preview}" alt="" width="320" height="180" loading="lazy" decoding="async" />` : ''}</span>
+              <span class="marker_card-panel">
+                <span class="marker_card-name" aria-hidden="true">${esc(destination.fullName)}</span>
+                <span class="marker_card-times">
+                  ${destination.commute.times.map(time => `
+                  <span class="marker_card-time"><span class="marker_card-place">${esc(time.place)}</span> <span class="marker_card-minutes">${time.minutes} minutes</span></span>`).join('')}
+                  ${destination.commute.status === 'unconfirmed' ? '<span class="marker_card-flag" title="Indicative drive times, pending confirmation by Gulfalts">To be confirmed</span>' : ''}
+                </span>
+              </span>
+            </span>`;
+
 export const renderH13 = () => {
   const [, alQuoz, dubai] = h13.cues;
   const hold = h13.videoSpan[1] + 0.03;
@@ -48,9 +66,10 @@ export const renderH13 = () => {
       <ul class="chapter_markers h13_markers" ${show(hold)} aria-label="Destination markers">
         ${destinations.map(destination => `
         <li class="chapter_marker" data-x="${destination.marker.x}" data-y="${destination.marker.y}" data-x-mobile="${destination.marker.xMobile}" data-destination="${destination.id}">
-          <a href="${destination.url}" ${externalLink} aria-label="${esc(destination.fullName)}">
+          <a href="${destination.url}" ${externalLink} aria-label="${esc(destination.fullName)}" aria-describedby="marker-card-${destination.id}">
             <span class="chapter_marker-dot" aria-hidden="true"></span>
             <span class="chapter_marker-label"><span aria-hidden="true">${destination.index}</span> ${esc(destination.name)}</span>
+            ${markerCard(destination)}
           </a>
         </li>`).join('')}
       </ul>

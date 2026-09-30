@@ -16,7 +16,7 @@ import { initAnchors, initFooter, initHeader, initMenu, initNavDropdown, initNav
 import { initReveals, playBrandReveal } from './components/reveals';
 import { initDirectory } from './components/destination-directory';
 import { initContact } from './components/contact';
-import { initPortals } from './components/portals';
+import { initSlider } from './components/slider';
 
 gsap.registerPlugin(ScrollTrigger);
 const reduced = prefersReducedMotion();
@@ -128,7 +128,7 @@ initNavState({
 });
 initFooter(lenis);
 initContact(lenis);
-initPortals(reduced);
+initSlider(reduced);
 initDirectory(document.querySelector<HTMLElement>('.h13')!);
 
 // ---------------------------------------------------------------------------

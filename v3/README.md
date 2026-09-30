@@ -22,14 +22,14 @@ npm run media      # render ulang semua video + gambar (butuh ffmpeg)
 | 2 | H02 Dubai arrival | Video diganti `video concept/DFD/scene1&2.mp4` (awan → pesisir Dubai → Al Quoz → Fintech District). 1080p, tanpa marker |
 | 3 | H03 Brand spectrum | **Dihapus dari landing page.** Disimpan sebagai komponen HTML mandiri di `backups/brand-spectrum/` (lihat di bawah) |
 | 4 | H04 The firm | Seluruh teks rata tengah, scrim lebih kuat. Masuk dengan wipe ala floema.com di atas frame akhir H02 |
-| 4b | Our destinations | **Baru**: portal dari `gulfalts-homepage-preview.html` — dua cakram logo (DCP, DFD) yang melayang, terbuka menjadi foto destinasi saat hover/fokus/tap pertama, dan membesar memenuhi layar saat diklik |
+| 4b | Our destinations | **Slider**: satu destinasi per slide di dalam lingkaran bercincin emas (DCP, DFD), panah kiri/kanan, tab 01/02, swipe, autoplay. Menggantikan portal dari `gulfalts-homepage-preview.html` |
 | 5 | H05 Dubai Creative Park | Gambar potret `Block 5 Padel - side.png` + metrik 160,000+ sq ft & 54 spaces + satu CTA |
 | 6–7 | H06 journey, H07 snapshot | Dihapus |
 | 8 | H08 Dubai Fintech District | Match cut diganti feature seperti H05 (dicerminkan) dengan copy DFD, 50,000 sq ft & 65 units |
 | 9 | H09 journey, H10 snapshot | Dihapus |
 | 10 | H11 Our approach | Video diganti `video concept/DCP/DCP-Video.mp4` (32 dtk), 1080p, cue disesuaikan |
 | 11 | H12 curation | Dihapus; H13 Our destinations dipertahankan |
-| 11 | H13 Our destinations | Video diganti `video concept/DFD/Scene-2.mp4` (7,7 dtk pertama, diputar mundur: situs DFD → Al Quoz → pesisir Dubai). Marker di Al Quoz dengan label di kiri titik |
+| 11 | H13 Our destinations | Video diganti `video concept/DFD/Scene-2.mp4` (7,7 dtk pertama, diputar mundur: situs DFD → Al Quoz → pesisir Dubai). Marker di Al Quoz dengan label di kiri titik; hover/fokus marker (atau baris directory) membuka card detail: foto venue, nama, dan waktu tempuh |
 
 ## Style
 
@@ -38,11 +38,12 @@ Mengikuti style guide gulfalts.com (https://www.gulfalts.com/style/style-guide),
 - **Typography**: heading Season Serif 400, line-height 1.2, tracking -0.01em (H1 63→40, H2 48→32, H3 40→28 px); body, nav, dan button Season Sans 300; eyebrow 12px/500/uppercase/1.2px; input form Guardian Sans.
 - **Color**: `--primary-color` #101010, `--secondary-color` #4B4B4B, `--text-color` #FFF (teks di atas gelap), `--off-white` #F3E9E3, `--off-white-secondary` #E0D3CC, `--button-primary` #801B2B (hover #6B1624, pressed #5F1420).
 - **Button**: pill 999px, 14px Season Sans Light, padding 12px 18px (16px di mobile), transisi 0.3s, selebar isinya (tidak full width di mobile). `.primary-button` = `.button.is-alternate` (burgundy), `.button` = putih untuk latar gelap (CTA "Inquire" di navbar), `.text-link` = `.button-view-more`.
-- **Radius**: `--radius-sm` 8 · `--radius-input` 12 · `--radius-card` 16 (gambar feature, panel directory, navbar) · `--radius-pill` 999.
+- **Radius**: `--radius-sm` 8 · `--radius-input` 12 · `--radius-card` 16 (gambar feature, panel directory, card marker) · `--radius-pill` 999.
 - **Font**: file WOFF2 di `public/fonts` (dari `../Font`). Season adalah versi **TRIAL**; lisensi webfont harus dibeli sebelum launch.
 
 ## Navigasi
 
+- **Navbar**: minimalis dan transparan di seluruh halaman (logo, Destinations, Inquire, Menu) dengan gradasi tipis di atas footage. Di atas section terang (chapter `.is-static` di canvas off-white) berganti ke ink: logo gelap, tombol Inquire ink (`initHeaderTone` di `components/site-chrome.ts`).
 - **Navbar desktop**: `Destinations ▾` (dropdown: Creative Park, Fintech District, All destinations) + tombol `Inquire`. Dropdown terbuka lewat hover, klik, atau keyboard (Arrow Down masuk ke daftar, Escape menutup); `Destinations` dan item submenu diberi `aria-current` saat section-nya terlihat.
 - **Menu full-screen**: Home, Destinations, Our approach. `Destinations` (dan "All destinations" di dropdown) mendarat di H13 saat directory + marker sudah tampil (`anchorProgress: 0.85`).
 - **The Firm** hanya ada di footer.
@@ -52,9 +53,17 @@ Mengikuti style guide gulfalts.com (https://www.gulfalts.com/style/style-guide),
 
 - `backups/brand-spectrum/index.html` — section "For work / For movement / For culture / For life" (H03) sebagai file HTML mandiri: CSS dan JS vanilla di dalam satu file, gambar HD di `images/`, font di `fonts/`. Buka langsung di browser, atau salin blok `<section class="bs">` beserta `<style>` dan `<script>`-nya ke halaman lain. Folder ini tidak ikut di-build maupun di-deploy.
 
-## Our destinations (portal)
+## Our destinations (slider)
 
-Diport dari `../gulfalts-homepage-preview (1).html`. Foto dan logo diekstrak dari file itu ke `../Website Material/portals/`; foto dipotong kotak oleh `scripts/build-images.mjs` (`portal-*`), logo disalin ke `public/media/images/mark-*.svg`. Aksen emas (`--portal-sand`, #d8b98f) dan bingkai gradien mengikuti referensi, tidak ada di style guide gulfalts.com. Klik portal membuka halaman venue di tab yang sama setelah transisi lingkaran; di layar sentuh, tap pertama membuka portal.
+Markup di `components/destination-slider.ts`, perilaku di `components/slider.ts`, copy di `slider` (`src/content/homepage.ts`). Foto dari `../Website Material/portals/` dipotong kotak oleh `scripts/build-images.mjs` (`slide-*`; `node scripts/build-images.mjs slide-` merender ulang hanya job itu).
+
+- **Autoplay** 7 dtk (`--slide-ms`): cincin emas terisi dari arah jam 12 dan segmen tab aktif ikut terisi; `animationend` pada cincin pindah ke slide berikutnya. Berhenti saat di-hover, saat ada fokus keyboard di dalam slider, saat section di luar layar, dan saat tab browser tersembunyi. Tanpa autoplay di reduced motion.
+- **Navigasi**: panah, tab (Arrow Left/Right, Home, End), swipe di lingkaran. Klik foto atau CTA membesar lingkaran memenuhi layar lalu membuka halaman venue.
+- Aksen emas (`--sand`, #d8b98f) mengikuti referensi, tidak ada di style guide gulfalts.com. Copy Fintech District (pilar dan kalimat) masih usulan, perlu konfirmasi klien.
+
+## H13 marker card
+
+Hover/fokus marker, atau hover baris directory, membuka card: titik membesar menjadi foto venue, nama dalam pill ink, dan waktu tempuh di card off-white dengan angka burgundy (warna style guide). Card terbuka ke bawah, atau ke atas (`.is-up`) bila tidak muat. Data di `commute` (`src/content/destinations.ts`): waktu tempuh Dubai Fintech District dari referensi klien; venue lain memakai angka yang sama sebagai nilai indikatif dan diberi label "To be confirmed" sampai Gulfalts mengirim angkanya.
 
 ## Peta chapter
 
@@ -63,7 +72,7 @@ Diport dari `../gulfalts-homepage-preview (1).html`. Foto dan logo diekstrak dar
 | H01 | Intro | Tanpa video: animasi logo port dari `gulfalts-logo-reveal.html` (ikon G ter-zoom → kotak membuka ke kanan menyingkap "Gulf" → lubang A-L-T-S; G dan ALTS transparan) di atas frame awan pembuka H02. Scroll: logo slide out, lalu scrub H02 berjalan dari frame yang sama. Navbar baru muncul setelah animasi logo selesai |
 | H02 | Dubai arrival | Scrub, v01 — 1920×1080 / 608×1080, ±5 MB / 2 MB |
 | H04 | The firm | Autoplay loop (v00) di track pendek; wipe dari bawah di atas frame akhir H02 |
-| — | Our destinations | Static, portal DCP + DFD (`components/destination-portals.ts`, `components/portals.ts`) |
+| — | Our destinations | Static, slider DCP + DFD (`components/destination-slider.ts`, `components/slider.ts`) |
 | H05 | Featured destinations | Static, dua kolom sama lebar yang sejajar (CSS subgrid), gambar 4:3. Tiap kolom punya id sendiri (`#h05-creative-park`, `#h08-fintech-district`) |
 | H11 | Our approach | Scrub, v01 — 1920×1080 / 608×1080, ±12 MB / 4 MB |
 | H13 | Our destinations | Scrub mundur, v01 — 1920×1080 / 608×1080, ±5 MB / 2 MB + directory |

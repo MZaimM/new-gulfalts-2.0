@@ -96,94 +96,148 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Our destinations: portals (after gulfalts-homepage-preview.html). Floating logo discs that
-   open into a view of each destination on hover, focus or a first tap; the gold rim, the warp
-   and the wobble only run while a portal is open.
+   Our destinations: slider. One destination through a circle; the gold ring around it fills
+   as the autoplay timer (components/slider.ts). Gold (--sand) comes from the reference, not the
+   gulfalts.com style guide, as the portals it replaces did.
 --------------------------------------------------------------------------- */
-.portals {
-  --portal-size: clamp(200px, min(30vw, 42vh), 360px);
-  --portal-idle: 0.46;
-  --portal-sand: #d8b98f;
+.dslider {
+  --sand: #d8b98f;
+  --slide-ms: 7s;
+  --circle: clamp(260px, min(42vw, 52vh), 540px);
   display: grid; place-items: center;
   min-height: 100svh;
-  padding: var(--section-space) var(--gutter);
+  padding: calc(var(--header-h) + 32px) var(--gutter) clamp(64px, 8vw, 112px);
   background: var(--ink); color: var(--text-inverse);
   text-align: center;
 }
-.portals_inner { display: grid; justify-items: center; gap: clamp(32px, 6vh, 64px); width: 100%; max-width: 980px; }
-.portals_eyebrow { font-family: var(--body-font); font-size: 0.8125rem; font-weight: 500; letter-spacing: 0.16em; color: var(--portal-sand); }
-.portals_list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(16px, 4vw, 64px); width: 100%; }
-.portals_defs { position: absolute; width: 0; height: 0; overflow: hidden; }
-
-.portal { display: grid; justify-items: center; gap: 4px; color: var(--text-inverse); -webkit-tap-highlight-color: transparent; }
-.portal_stage { position: relative; width: var(--portal-size); height: var(--portal-size); }
-.portal_float { position: absolute; inset: 0; display: grid; place-items: center; animation: portal-float 6s ease-in-out infinite; }
-.portal:nth-child(2) .portal_float { animation-delay: -3s; }
-.portal_disc { position: absolute; inset: 0; transform: scale(var(--portal-idle)); transition: transform .85s cubic-bezier(.2, .8, .2, 1); }
-.portal_view {
-  position: absolute; inset: 0; overflow: hidden; isolation: isolate;
-  border-radius: 50%; background: var(--ink);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, .3), 0 40px 80px -30px rgba(0, 0, 0, .8);
-  animation: portal-wobble 6s ease-in-out infinite paused;
+.dslider_inner { display: grid; justify-items: center; width: 100%; max-width: 1240px; }
+.dslider_eyebrow {
+  margin-bottom: clamp(32px, 6vh, 64px);
+  font-family: var(--body-font); font-size: 0.8125rem; font-weight: 400; line-height: 1.4;
+  letter-spacing: 0.32em; text-transform: uppercase;
 }
-.portal_view::after {
+
+.dslider_stage { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; width: 100%; }
+.dslider_arrow {
+  display: grid; place-items: center;
+  width: 72px; height: 72px; border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--sand) 70%, transparent); color: var(--sand);
+  transition: background-color var(--t-button) ease, color var(--t-button) ease, border-color var(--t-button) ease;
+}
+.dslider_arrow.is-prev { justify-self: start; }
+.dslider_arrow.is-next { justify-self: end; }
+@media (hover: hover) { .dslider_arrow:hover { background: var(--sand); border-color: var(--sand); color: var(--ink); } }
+.dslider_arrow:focus-visible { outline: 2px solid var(--sand); outline-offset: 4px; }
+
+/* The circle: photo inset from a thin gold ring, with a soft glow behind. */
+.dslider_frame {
+  position: relative; width: var(--circle); aspect-ratio: 1;
+  margin: 0 clamp(16px, 4vw, 64px);
+  border-radius: 50%;
+  box-shadow: 0 0 80px -10px color-mix(in srgb, var(--sand) 22%, transparent), 0 40px 90px -40px rgba(0, 0, 0, .9);
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+}
+.dslider_ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; transform: rotate(-90deg); pointer-events: none; }
+.dslider_ring circle { fill: none; stroke-width: 0.45; vector-effect: none; }
+.dslider_ring-track { stroke: color-mix(in srgb, var(--sand) 26%, transparent); }
+.dslider_ring-progress { stroke: var(--sand); stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+.dslider_views { position: absolute; inset: 3.2%; overflow: hidden; border-radius: 50%; background: #1a1a1a; isolation: isolate; }
+.dslider_views::after {
   content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-  box-shadow: inset 0 0 60px 14px rgba(16, 16, 16, .85), inset 0 0 0 1px rgba(255, 255, 255, .35);
+  box-shadow: inset 0 0 40px 6px rgba(16, 16, 16, .55);
 }
-.portal_view picture { position: absolute; inset: 0; }
-.portal_img {
-  position: absolute; top: -12%; left: -12%; width: 124%; height: 124%; max-width: none; object-fit: cover;
-  opacity: 0; transform: translate3d(var(--px, 0px), var(--py, 0px), 0) scale(1.3);
-  transition: opacity .5s ease .1s, transform 1s cubic-bezier(.2, .8, .2, 1);
-}
-.portal_rim {
-  position: absolute; inset: -12px; border-radius: 50%;
-  background: conic-gradient(from 0deg, rgba(216, 185, 143, 0), rgba(216, 185, 143, .95), rgba(246, 243, 238, .7), rgba(216, 185, 143, 0) 45%, rgba(216, 185, 143, .8) 70%, rgba(216, 185, 143, 0));
-  -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 14px), #000 calc(100% - 11px), #000 calc(100% - 3px), transparent 100%);
-  mask: radial-gradient(closest-side, transparent calc(100% - 14px), #000 calc(100% - 11px), #000 calc(100% - 3px), transparent 100%);
-  opacity: 0;
-  transition: opacity .5s ease;
-  animation: portal-spin 5s linear infinite paused, portal-wobble 6s ease-in-out infinite paused;
-}
-.portal_mark { position: relative; height: auto; pointer-events: none; transition: opacity .35s ease, transform .6s cubic-bezier(.2, .8, .2, 1), filter .35s ease; }
-.portal_mark.is-dfd { width: calc(var(--portal-size) * var(--portal-idle) * .62); }
-.portal_mark.is-dcp { width: calc(var(--portal-size) * var(--portal-idle) * .56); }
+.dslider_view { position: absolute; inset: 0; display: block; }
+.dslider_view picture, .dslider_view img { display: block; width: 100%; height: 100%; }
+.dslider_view img { object-fit: cover; }
+.dslider_view:focus-visible { outline: none; }
 
-.portal_caption { display: grid; justify-items: center; gap: 6px; }
-.portal_tag { font-size: var(--fs-meta); font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--portal-sand); }
-.portal_name {
-  font-family: var(--heading-font); font-weight: 300;
-  font-size: clamp(24px, 2.4vw, 36px); line-height: 1.1; letter-spacing: var(--heading-tracking);
+/* Tabs: numbers over one hairline; the active segment fills gold with the timer. */
+.dslider_tabs { display: flex; margin-top: clamp(28px, 4vh, 44px); }
+.dslider_tab {
+  display: grid; justify-items: center; gap: 12px;
+  width: clamp(80px, 8vw, 96px); padding-top: 4px;
+  font-size: var(--fs-ui); font-weight: 300; font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, .42);
+  transition: color var(--t-quick) ease;
 }
-.portal_cta { font-size: var(--fs-ui); opacity: .7; transition: opacity .3s ease, letter-spacing .4s ease; }
-.portal_cta::after { content: ' →'; }
+.dslider_tab:hover, .dslider_tab[aria-selected='true'] { color: var(--text-inverse); }
+.dslider_tab:focus-visible { outline: 2px solid var(--sand); outline-offset: 4px; border-radius: 4px; }
+.dslider_tab-bar { position: relative; width: 100%; height: 1px; background: rgba(255, 255, 255, .22); overflow: hidden; }
+.dslider_tab-fill { position: absolute; inset: 0; background: var(--sand); transform: scaleX(0); transform-origin: left; }
+.dslider_tab[aria-selected='true'] .dslider_tab-fill { transform: scaleX(1); }
 
-/* Open: hover, keyboard focus, or a first tap on touch screens. */
-.portal:is(:hover, :focus-visible, .is-open) .portal_disc { transform: scale(1); }
-.portal:is(:hover, :focus-visible, .is-open) :is(.portal_view, .portal_rim) { animation-play-state: running; }
-.portal:is(:hover, :focus-visible, .is-open) .portal_img { opacity: 1; transform: translate3d(var(--px, 0px), var(--py, 0px), 0) scale(1.06); }
-.portal:is(:hover, :focus-visible, .is-open) .portal_rim { opacity: 1; filter: url(#portal-warp) blur(1px); }
-.portal:is(:hover, :focus-visible, .is-open) .portal_mark { opacity: 0; transform: scale(.5); filter: blur(6px); }
-.portal:is(:hover, :focus-visible, .is-open) .portal_cta { opacity: 1; letter-spacing: .02em; }
-.portal:is(:hover, :focus-visible, .is-open) .portal_float { animation-play-state: paused; }
-.portal:focus-visible { outline: none; }
-.portal:focus-visible .portal_name { text-decoration: underline; text-underline-offset: 6px; text-decoration-color: var(--portal-sand); }
+/* Copy: slides share one grid cell, so the section never changes height. */
+.dslider_panels { display: grid; width: 100%; max-width: 760px; margin-top: clamp(40px, 6vh, 72px); }
+.dslider_panel { grid-area: 1 / 1; display: grid; justify-items: center; align-content: start; }
+.dslider_location { font-size: var(--fs-ui); font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sand); }
+.dslider_name {
+  margin-top: 16px;
+  font-family: var(--body-font); font-weight: 300;
+  font-size: clamp(2.75rem, 1.6rem + 3.6vw, 5rem); line-height: 1.05; letter-spacing: -0.015em;
+}
+.dslider_pillars {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0 clamp(18px, 2.4vw, 36px);
+  margin-top: 20px;
+  font-size: var(--fs-ui); font-weight: 400; letter-spacing: 0.32em; text-transform: uppercase;
+}
+.dslider_pillars span { color: var(--text-inverse-secondary); letter-spacing: 0; }
+.dslider_body { max-width: 36ch; margin-top: 28px; font-size: var(--fs-lead); line-height: 1.55; color: var(--text-inverse-secondary); text-wrap: balance; }
+.dslider_cta {
+  display: inline-flex; align-items: center; gap: 12px;
+  min-height: 52px; margin-top: clamp(32px, 5vh, 48px); padding: 14px 40px;
+  border: 1px solid rgba(255, 255, 255, .6); border-radius: var(--radius-pill);
+  font-size: 1rem; font-weight: 300;
+  transition: background-color var(--t-button) ease, color var(--t-button) ease, border-color var(--t-button) ease;
+}
+@media (hover: hover) { .dslider_cta:hover { background: var(--text-inverse); border-color: var(--text-inverse); color: var(--ink); } }
+.dslider_cta:focus-visible { outline: 2px solid var(--sand); outline-offset: 4px; }
+
+/* Without JS only the first slide shows; the script adds .is-ready and takes over. */
+.dslider:not(.is-ready) :is(.dslider_view, .dslider_panel):not(.is-active),
+.dslider:not(.is-ready) :is(.dslider_arrow, .dslider_tabs) { display: none; }
+
+/* Slide change: the photo slides in from the side it came from and settles; the copy rises. */
+.dslider.is-ready .dslider_view {
+  opacity: 0; visibility: hidden;
+  transform: translate3d(calc(var(--dir, 1) * 8%), 0, 0) scale(1.12);
+  transition: opacity .7s ease, transform 1.1s var(--ease), visibility 0s linear 1.1s;
+}
+.dslider.is-ready .dslider_view.is-leaving {
+  z-index: 0; visibility: visible;
+  transform: translate3d(calc(var(--dir, 1) * -8%), 0, 0) scale(1.04);
+  transition: opacity .7s ease .1s, transform 1.1s var(--ease);
+}
+.dslider.is-ready .dslider_view.is-active {
+  z-index: 1; opacity: 1; visibility: visible; transform: none;
+  transition: opacity .7s ease, transform 1.1s var(--ease), visibility 0s;
+}
+.dslider.is-ready .dslider_panel > * { opacity: 0; transform: translate3d(0, 18px, 0); transition: opacity .35s ease, transform .35s ease; }
+.dslider.is-ready .dslider_panel.is-active > * {
+  opacity: 1; transform: none;
+  transition: opacity .6s ease, transform .8s var(--ease);
+}
+.dslider.is-ready .dslider_panel.is-active > :nth-child(2) { transition-delay: .06s; }
+.dslider.is-ready .dslider_panel.is-active > :nth-child(3) { transition-delay: .12s; }
+.dslider.is-ready .dslider_panel.is-active > :nth-child(4) { transition-delay: .18s; }
+.dslider.is-ready .dslider_panel.is-active > :nth-child(5) { transition-delay: .24s; }
+.dslider.is-ready .dslider_panel:not(.is-active) { pointer-events: none; }
+
+/* Autoplay timer: the ring draws round from 12 o'clock, the active tab fills with it. */
+.dslider.is-autoplay .dslider_ring-progress { stroke-dashoffset: 1; }
+.dslider.is-autoplay .dslider_tab[aria-selected='true'] .dslider_tab-fill { transform: scaleX(0); }
+.dslider.is-autoplay.is-timing .dslider_ring-progress { animation: dslider-ring var(--slide-ms) linear forwards; }
+.dslider.is-autoplay.is-timing .dslider_tab[aria-selected='true'] .dslider_tab-fill { animation: dslider-fill var(--slide-ms) linear forwards; }
+.dslider.is-paused :is(.dslider_ring-progress, .dslider_tab-fill) { animation-play-state: paused !important; }
+@keyframes dslider-ring { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes dslider-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
 /* Stepping inside: the circle grows to fill the screen before the destination opens. */
-.portal_overlay {
+.dslider_overlay {
   position: fixed; inset: 0; z-index: 9999; pointer-events: none;
   background-size: cover; background-position: center;
   clip-path: circle(var(--r, 0px) at var(--cx, 50%) var(--cy, 50%));
   transition: clip-path .8s cubic-bezier(.7, 0, .2, 1);
-}
-
-@keyframes portal-float { 0%, 100% { transform: translate3d(0, -8px, 0); } 50% { transform: translate3d(0, 8px, 0); } }
-@keyframes portal-spin { to { transform: rotate(1turn); } }
-@keyframes portal-wobble {
-  0%, 100% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
-  25% { border-radius: 54% 46% 49% 51% / 47% 55% 45% 53%; }
-  50% { border-radius: 46% 54% 56% 44% / 53% 45% 55% 47%; }
-  75% { border-radius: 52% 48% 45% 55% / 48% 54% 46% 52%; }
 }
 
 /* ---------------------------------------------------------------------------
@@ -280,6 +334,59 @@
 }
 .h13_markers .chapter_marker > a { flex-direction: row-reverse; translate: calc(-100% + 7px) 0; }
 .h13_markers .chapter_marker-dot { margin-left: 0; }
+/* Marker card (hover, focus, or the matching directory row): the dot opens into a photo of the
+   venue; its name and drive times sit to the left, clear of the directory. It opens downwards,
+   or upwards (.is-up, set by components/destination-directory.ts) when the screen runs out.
+   Colours follow the style guide: ink name pill, off-white card, burgundy times. */
+.h13_markers .chapter_marker:is(.is-highlight, :hover, :focus-within) { z-index: 3; }
+.marker_card { position: absolute; right: 7px; top: 50%; width: 0; height: 0; pointer-events: none; }
+.marker_card-thumb {
+  position: absolute; left: -40px; top: -40px; width: 80px; height: 80px;
+  overflow: hidden; border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 0 0 3px var(--canvas), 0 18px 40px -12px rgba(16, 16, 16, .7);
+  opacity: 0; transform: scale(.18);
+  transition: opacity .25s ease, transform .45s var(--ease);
+}
+.marker_card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.marker_card-panel {
+  position: absolute; right: 54px; top: -22px;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
+  opacity: 0; visibility: hidden; transform: translate3d(12px, 0, 0);
+  transition: opacity .25s ease, transform .45s var(--ease), visibility 0s linear .45s;
+}
+.chapter_marker.is-up .marker_card-panel { top: auto; bottom: -22px; flex-direction: column-reverse; }
+.marker_card-name {
+  display: flex; align-items: center; min-height: 44px; padding: 0 20px;
+  border-radius: var(--radius-pill);
+  background: var(--ink); color: var(--canvas);
+  font-family: var(--heading-font); font-size: 1.125rem; font-weight: var(--heading-weight); letter-spacing: var(--heading-tracking);
+  white-space: nowrap;
+}
+.marker_card-times {
+  display: grid; gap: 10px; min-width: 216px; padding: 18px 22px;
+  border-radius: var(--radius-card);
+  background: var(--canvas); color: var(--ink);
+  box-shadow: 0 24px 60px -24px rgba(16, 16, 16, .6);
+  text-align: left;
+}
+.marker_card-time { display: grid; }
+.marker_card-place { font-size: 0.875rem; font-weight: 400; line-height: 1.35; }
+.marker_card-minutes { font-family: var(--heading-font); font-size: 1.125rem; line-height: 1.25; color: var(--burgundy); font-variant-numeric: tabular-nums; }
+.marker_card-flag {
+  padding-top: 10px; border-top: 1px solid var(--line);
+  font-size: 0.6875rem; font-weight: 500; letter-spacing: var(--eyebrow-tracking); text-transform: uppercase;
+  color: var(--burgundy);
+}
+.chapter_marker:is(.is-highlight, :hover, :focus-within) .marker_card-thumb { opacity: 1; transform: none; }
+.chapter_marker:is(.is-highlight, :hover, :focus-within) .marker_card-panel {
+  opacity: 1; visibility: visible; transform: none; pointer-events: auto;
+  transition: opacity .3s ease .05s, transform .5s var(--ease) .05s, visibility 0s;
+}
+/* The name pill in the card takes over from the marker label while it is open. */
+.h13_markers .chapter_marker-label { transition: opacity var(--t-quick) ease, background var(--t-quick) ease, color var(--t-quick) ease; }
+.h13_markers .chapter_marker:is(.is-highlight, :hover, :focus-within) .chapter_marker-label { opacity: 0; }
+
 .h13_directory {
   position: absolute; right: var(--gutter); bottom: 40px;
   width: min(520px, 36vw);
@@ -359,11 +466,17 @@
   .h04 .chapter_overlay { padding-bottom: 64px; }
   .h04_body { margin-top: 32px; }
 
-  .portals { --portal-size: min(42vw, 30vh); --portal-idle: .56; }
-  .portals_list { gap: 12px; }
-  .portal_tag { font-size: 10px; letter-spacing: .1em; min-height: 2.8em; display: flex; align-items: flex-end; justify-content: center; }
-  .portal_name { font-size: 20px; }
-  .portal_cta { font-size: 13px; }
+  /* Slider: the circle takes the width; the arrows sit on its lower edge. */
+  .dslider { --circle: min(84vw, 52svh); padding-top: calc(var(--header-h) + 24px); }
+  .dslider_eyebrow { font-size: 0.75rem; letter-spacing: 0.24em; }
+  .dslider_stage { position: relative; display: flex; justify-content: center; }
+  .dslider_frame { margin: 0; }
+  .dslider_arrow { position: absolute; bottom: 0; z-index: 2; width: 48px; height: 48px; background: var(--ink); }
+  .dslider_arrow.is-prev { left: 0; }
+  .dslider_arrow.is-next { right: 0; }
+  .dslider_pillars { gap: 0 14px; letter-spacing: 0.22em; font-size: 0.75rem; }
+  .dslider_body { margin-top: 20px; }
+  .dslider_cta { padding: 12px 28px; }
 
   /* Featured destinations: one column, the two destinations one after the other. */
   .featured_grid { grid-template-columns: minmax(0, 1fr); row-gap: 80px; }
@@ -405,8 +518,7 @@
    Reduced motion: composition adjustments for the unpinned layout.
 --------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-  .portal_float, .portal_rim, .portal_view { animation: none !important; }
-  .portal_disc, .portal_img { transition-duration: .01s; }
+  .dslider.is-ready :is(.dslider_view, .dslider_panel > *) { transform: none !important; transition-duration: .01s !important; transition-delay: 0s !important; }
   .h01 .chapter_overlay, .h04 .chapter_overlay { justify-content: center; align-items: center; }
   .js .h04_copy { opacity: 1; transform: none; }
   .h01_title, .h01_next-shade { transition: none; }

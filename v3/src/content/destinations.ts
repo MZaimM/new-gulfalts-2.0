@@ -1,4 +1,4 @@
-import type { Destination, DestinationStat } from './types';
+import type { CommuteTime, Destination, DestinationStat } from './types';
 
 /*
  * Destination data used by H05, H13 and H14. V8 District and Motor Garten copy and previews follow
@@ -11,6 +11,19 @@ export const venueBase = 'https://www.gulfalts.com/venue';
 
 /** No all-destinations page exists yet on gulfalts.com; the live homepage lists every venue. */
 export const allDestinationsUrl = 'https://www.gulfalts.com/';
+
+/*
+ * Drive times for the H13 marker cards. Dubai Fintech District's come from the client's
+ * reference (September 2026). The other venues have no figures yet: they borrow the Al Quoz
+ * times as indicative values and the card flags them "To be confirmed".
+ */
+const alQuozTimes: CommuteTime[] = [
+  { place: 'DIFC', minutes: 12 },
+  { place: 'Downtown Dubai', minutes: 14 },
+  { place: 'Business Bay', minutes: 10 },
+  { place: 'Dubai Marina', minutes: 10 },
+  { place: 'DXB Airport', minutes: 20 }
+];
 
 /*
  * Markers sit in Al Quoz on the H13 hold frame (the Dubai coastline from DFD scene 2). The
@@ -27,7 +40,8 @@ export const destinations: Destination[] = [
     url: `${venueBase}/dubai-creative-park`,
     location: 'Al Quoz · Dubai',
     preview: '/media/images/preview-creative-park-320.jpg',
-    marker: { x: 0.56, y: 0.53, xMobile: 0.627 }
+    marker: { x: 0.56, y: 0.53, xMobile: 0.627 },
+    commute: { times: alQuozTimes, status: 'unconfirmed' }
   },
   {
     id: 'fintech-district',
@@ -39,7 +53,8 @@ export const destinations: Destination[] = [
     url: `${venueBase}/fintech-district`,
     location: 'Al Quoz · Dubai',
     preview: '/media/images/preview-fintech-district-320.jpg',
-    marker: { x: 0.545, y: 0.59, xMobile: 0.58 }
+    marker: { x: 0.545, y: 0.59, xMobile: 0.58 },
+    commute: { times: alQuozTimes, status: 'confirmed' }
   },
   {
     id: 'v8-district',
@@ -51,7 +66,8 @@ export const destinations: Destination[] = [
     url: `${venueBase}/v8-district`,
     location: 'Dubai',
     preview: '/media/images/preview-v8-district-320.jpg',
-    marker: { x: 0.575, y: 0.47, xMobile: 0.674 }
+    marker: { x: 0.575, y: 0.47, xMobile: 0.674 },
+    commute: { times: alQuozTimes, status: 'unconfirmed' }
   },
   {
     id: 'motor-garten',
@@ -63,7 +79,8 @@ export const destinations: Destination[] = [
     url: `${venueBase}/motor-garten`,
     location: 'Dubai',
     preview: '/media/images/preview-motor-garten-320.jpg',
-    marker: { x: 0.53, y: 0.65, xMobile: 0.532 }
+    marker: { x: 0.53, y: 0.65, xMobile: 0.532 },
+    commute: { times: alQuozTimes, status: 'unconfirmed' }
   }
 ];
 

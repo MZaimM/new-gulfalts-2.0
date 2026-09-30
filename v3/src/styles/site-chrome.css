@@ -1,7 +1,9 @@
 /* Header, menu and footer — carried over from V1, restyled to the gulfalts.com style guide. */
 
 /* ---------------------------------------------------------------------------
-   Header: transparent over the brand reveal, then a compact ink bar.
+   Header: minimal and transparent throughout (logo, Destinations, Inquire, Menu), with a faint
+   shade at the top for legibility over the footage. Over light sections (.is-on-light, set by
+   components/site-chrome.ts) it switches to ink.
    Layer order: chapters 0–2, header 20, native dialog top layer.
 --------------------------------------------------------------------------- */
 .site-header {
@@ -9,24 +11,25 @@
   display: grid; grid-template-columns: 1fr auto 200px; align-items: center;
   height: var(--header-h); padding: 0 var(--gutter);
   color: var(--text-inverse);
-  border: 1px solid transparent;
-  transition: inset .52s var(--ease), height .52s var(--ease), padding .52s var(--ease),
-    background .34s ease, color .34s ease, border-radius .52s var(--ease), box-shadow .34s ease, border-color .34s ease;
+  transition-property: color, opacity, translate, visibility;
+  transition-duration: .34s, .7s, .7s, 0s;
+  transition-timing-function: ease, ease, var(--ease), linear;
 }
+.site-header::before {
+  content: ''; position: absolute; inset: 0 0 -24px; z-index: -1; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(16, 16, 16, .32), rgba(16, 16, 16, 0));
+  transition: opacity .34s ease;
+}
+.site-header.is-on-light { color: var(--ink); }
+.site-header.is-on-light::before { opacity: 0; }
 /* Hidden until the intro logo animation has finished (JS only, so it never stays hidden). */
 .js .site-header.is-waiting { opacity: 0; visibility: hidden; translate: 0 -8px; pointer-events: none; }
-.site-header { transition-property: inset, height, padding, background, color, border-radius, box-shadow, border-color, opacity, translate, visibility; }
-.site-header:not(.is-waiting) { transition-duration: .52s, .52s, .52s, .34s, .34s, .52s, .34s, .34s, .7s, .7s, 0s; }
-.site-header.is-solid {
-  inset: 12px var(--gutter) auto;
-  height: 60px; padding: 0 28px;
-  background: var(--ink);
-  border-color: rgba(255, 255, 255, .12);
-  border-radius: var(--radius-card);
-  box-shadow: 0 12px 34px rgba(16, 16, 16, .14);
-}
 .brand { position: relative; display: block; width: 132px; height: 44px; }
-.brand img { position: absolute; inset: 8px 0; width: 132px; height: 28px; object-fit: contain; object-position: left; }
+.brand img { position: absolute; inset: 8px 0; width: 132px; height: 28px; object-fit: contain; object-position: left; transition: opacity .34s ease; }
+.brand_logo.is-dark, .site-header.is-on-light .brand_logo.is-light { opacity: 0; }
+.site-header.is-on-light .brand_logo.is-dark { opacity: 1; }
+/* Inquire: white pill on footage, ink pill on light sections. */
+.site-header.is-on-light .nav-cta:not(:hover) { border-color: var(--ink); background: var(--ink); color: var(--text-inverse); }
 .desktop-nav { display: flex; align-items: center; gap: 24px; font-size: var(--fs-ui); font-weight: 300; }
 .desktop-nav a { position: relative; display: flex; align-items: center; min-height: 44px; transition: opacity var(--t-quick); }
 .desktop-nav a:not(.button):hover { opacity: .65; }
@@ -76,7 +79,7 @@
 .menu-toggle { justify-self: end; display: flex; align-items: center; gap: 10px; min-height: 44px; text-transform: uppercase; font-size: var(--fs-ui); font-weight: 300; }
 .menu-glyph { position: relative; width: 20px; height: 10px; border-top: 1px solid currentColor; }
 .menu-glyph::after { content: ''; position: absolute; left: 0; top: 5px; width: 12px; border-top: 1px solid currentColor; }
-.site-header :focus-visible { outline-color: var(--text-inverse); }
+.site-header :focus-visible { outline-color: currentColor; }
 
 @media (max-width: 1199px) {
   .site-header { grid-template-columns: 1fr auto 100px; }
@@ -84,7 +87,6 @@
 }
 @media (max-width: 767px) {
   .site-header { grid-template-columns: 1fr auto; }
-  .site-header.is-solid { inset: 8px 12px auto; height: 52px; padding: 0 14px; border-radius: var(--radius-input); }
   .brand, .brand img { width: 116px; }
   .desktop-nav { display: none; }
 }

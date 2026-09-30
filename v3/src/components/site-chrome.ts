@@ -6,9 +6,9 @@ import type Lenis from 'lenis';
 type ScrollTo = (hash: string, options?: { immediate?: boolean }) => void;
 
 /**
- * The header (logo + nav) waits until the intro logo animation has finished, then fades in as
- * the solid bar (the intro sits on bright clouds). It also appears straight away if the
- * visitor scrolls past the intro first, or lands part-way down the page.
+ * The header (logo + nav) waits until the intro logo animation has finished, then fades in. It
+ * also appears straight away if the visitor scrolls past the intro first, or lands part-way down
+ * the page. It stays transparent; over light sections it switches to ink (see initHeaderTone).
  */
 export const initHeader = (hero: HTMLElement, logoDone: Promise<void>) => {
   const header = document.querySelector<HTMLElement>('.site-header')!;
@@ -18,6 +18,37 @@ export const initHeader = (hero: HTMLElement, logoDone: Promise<void>) => {
   hero.addEventListener('chapter:step', event => {
     const { name, active } = (event as CustomEvent<{ name: string; active: boolean }>).detail;
     if (name === 'brand-out' && active) show();
+  });
+  initHeaderTone(header);
+};
+
+/**
+ * Watches a one-pixel line through the middle of the header and marks the header
+ * `.is-on-light` while a light section (static chapters on the off-white canvas) passes under it.
+ */
+const initHeaderTone = (header: HTMLElement) => {
+  const light = [...document.querySelectorAll<HTMLElement>('.chapter_component.is-static')];
+  if (!light.length) return;
+  const under = new Set<Element>();
+  let observer: IntersectionObserver | null = null;
+  const observe = () => {
+    observer?.disconnect();
+    under.clear();
+    const middle = Math.round(header.offsetHeight / 2);
+    observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) under.add(entry.target);
+        else under.delete(entry.target);
+      });
+      header.classList.toggle('is-on-light', under.size > 0);
+    }, { rootMargin: `-${middle}px 0px -${Math.max(0, window.innerHeight - middle - 1)}px 0px` });
+    light.forEach(section => observer!.observe(section));
+  };
+  observe();
+  let frame = 0;
+  window.addEventListener('resize', () => {
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(observe);
   });
 };
 
