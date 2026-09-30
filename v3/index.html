@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#101010" />
+  <title>Gulfalts | Dynamic destinations in Dubai</title>
+  <meta name="description" content="Gulfalts turns raw space into living destinations in Dubai. Follow the journey from Al Quoz to Dubai Creative Park and Dubai Fintech District." />
+  <meta property="og:title" content="Gulfalts | Dynamic destinations" />
+  <meta property="og:description" content="From raw space to living destination: Dubai Creative Park, Dubai Fintech District and the Gulfalts ecosystem in Dubai." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/media/images/og-gulfalts-1200.jpg" />
+  <link rel="icon" href="/media/images/logo-dark.svg" type="image/svg+xml" />
+  <link rel="preload" href="/media/posters/gulfalts-h02-dubai-arrival-poster-desktop-v01.jpg" as="image" media="(min-width: 768px)" fetchpriority="high" />
+  <link rel="preload" href="/media/posters/gulfalts-h02-dubai-arrival-poster-mobile-v01.jpg" as="image" media="(max-width: 767px)" fetchpriority="high" />
+  <link rel="preload" href="/fonts/SeasonSans-TRIAL-Light.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/SeasonSerif-TRIAL-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <script>document.documentElement.classList.add('js');</script>
+  <script type="module" src="/src/main.ts"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header is-solid is-waiting" aria-label="Main navigation">
+    <a href="#h01-brand-reveal" class="brand" aria-label="Gulfalts home">
+      <img src="/media/images/logo-light.svg" alt="Gulfalts" width="132" height="28" />
+    </a>
+    <nav class="desktop-nav" aria-label="Primary">
+      <div class="nav-dropdown">
+        <button class="nav-dropdown_toggle" type="button" aria-expanded="false" aria-controls="nav-destinations" data-nav="destinations">
+          Destinations
+          <svg class="nav-dropdown_chevron" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </button>
+        <ul class="nav-dropdown_panel" id="nav-destinations">
+          <li><a class="nav-dropdown_link" href="#h05-creative-park" data-nav="#h05-creative-park"><span>Creative Park</span><span class="nav-dropdown_meta">01</span></a></li>
+          <li><a class="nav-dropdown_link" href="#h08-fintech-district" data-nav="#h08-fintech-district"><span>Fintech District</span><span class="nav-dropdown_meta">02</span></a></li>
+          <li><a class="nav-dropdown_link is-all" href="#h13-dubai-pull-out" data-nav="#h13-dubai-pull-out"><span>All destinations</span><span class="link-arrow" aria-hidden="true">→</span></a></li>
+        </ul>
+      </div>
+      <button type="button" class="button nav-cta" data-contact-open aria-haspopup="dialog" aria-controls="contact-dialog">Inquire</button>
+    </nav>
+    <button class="menu-toggle" aria-expanded="false" aria-controls="menu-dialog"><span class="menu-glyph" aria-hidden="true"></span><span>Menu</span></button>
+  </header>
+
+  <dialog id="menu-dialog" class="menu-dialog" aria-labelledby="menu-title">
+    <div class="menu-body">
+      <div class="menu-top"><span id="menu-title">Explore Gulfalts</span><button class="menu-close" aria-label="Close menu">Close <span aria-hidden="true">×</span></button></div>
+      <nav aria-label="Expanded navigation">
+        <a href="#h01-brand-reveal" style="--i:0">Home</a>
+        <a href="#h13-dubai-pull-out" style="--i:1">Destinations</a>
+        <a href="#h11-raw-to-destination" style="--i:2">Our approach</a>
+      </nav>
+      <a class="menu-contact" href="mailto:info@gulfalts.com">info@gulfalts.com <span aria-hidden="true">↗</span></a>
+    </div>
+  </dialog>
+
+  <dialog id="contact-dialog" class="contact-drawer" aria-labelledby="contact-title" aria-describedby="contact-intro">
+    <div class="contact-drawer_body">
+      <button type="button" class="contact-drawer_close" aria-label="Close contact form">
+        <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l16 16M20 4 4 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" /></svg>
+      </button>
+      <h2 class="contact-drawer_title" id="contact-title">Get in Touch</h2>
+      <p class="contact-drawer_intro" id="contact-intro">We work with institutions, family offices, and qualified investors seeking exposure to Dubai’s commercial real estate market. Reach out to discuss tailored investment solutions.</p>
+      <h3 class="contact-drawer_subtitle">Contact Form</h3>
+      <form class="contact-form" name="contact" method="post" novalidate>
+        <div class="contact-form_row">
+          <div class="contact-field">
+            <label class="visually-hidden" for="contact-name">Full name (required)</label>
+            <input id="contact-name" name="full-name" type="text" placeholder="Full Name" autocomplete="name" required aria-describedby="contact-name-error" />
+            <p class="contact-field_error" id="contact-name-error" hidden>Please enter your full name.</p>
+          </div>
+          <div class="contact-field">
+            <label class="visually-hidden" for="contact-phone">Phone number (optional)</label>
+            <input id="contact-phone" name="phone" type="tel" placeholder="Phone Number" autocomplete="tel" inputmode="tel" />
+          </div>
+        </div>
+        <div class="contact-field">
+          <label class="visually-hidden" for="contact-email">Email address (required)</label>
+          <input id="contact-email" name="email" type="email" placeholder="Email Address" autocomplete="email" required aria-describedby="contact-email-error" />
+          <p class="contact-field_error" id="contact-email-error" hidden>Please enter a valid email address.</p>
+        </div>
+        <div class="contact-field">
+          <label class="visually-hidden" for="contact-type">Inquiry type (required)</label>
+          <select id="contact-type" name="inquiry-type" required aria-describedby="contact-type-error">
+            <option value="">Select one...</option>
+            <option value="Investment Solutions">Investment Solutions</option>
+            <option value="Development Partnership / JV">Development Partnership / JV</option>
+            <option value="Land Opportunity / Site Request">Land Opportunity / Site Request</option>
+            <option value="Leasing / Tenant Enquiries">Leasing / Tenant Enquiries</option>
+            <option value="Media / Press">Media / Press</option>
+          </select>
+          <p class="contact-field_error" id="contact-type-error" hidden>Please choose an inquiry type.</p>
+        </div>
+        <button type="submit" class="contact-form_submit">
+          <span class="contact-form_submit-label">Submit Inquiry</span>
+          <span class="contact-form_progress" aria-hidden="true"></span>
+        </button>
+        <p class="contact-form_status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </dialog>
+
+  <main id="main">
+    <!-- homepage:sections -->
+  </main>
+
+  <div class="footer-spacer" aria-hidden="true"></div>
+  <footer class="site-footer" id="site-footer" aria-label="Site footer">
+    <div class="footer-top">
+      <div class="footer-newsletter">
+        <h2>Stay updated</h2>
+        <form class="footer-signup" action="mailto:info@gulfalts.com" method="get" novalidate>
+          <label class="visually-hidden" for="footer-email">Email address</label>
+          <input id="footer-email" name="email" type="email" placeholder="Enter your email" autocomplete="email" required />
+          <button type="submit" aria-label="Subscribe">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+          </button>
+        </form>
+        <p class="footer-signup-note" aria-live="polite">Be the first to hear about venue news, openings and Gulf Alternatives updates.</p>
+      </div>
+      <nav class="footer-col footer-col-nav" aria-labelledby="footer-nav-label">
+        <p class="footer-label" id="footer-nav-label">Navigate</p>
+        <div class="footer-links">
+          <a href="#the-firm">The firm</a>
+          <button type="button" class="footer-link-button" data-contact-open aria-haspopup="dialog" aria-controls="contact-dialog">Contact</button>
+          <a href="https://www.gulfalts.com/careers" target="_blank" rel="noopener">Careers</a>
+          <a href="https://www.gulfalts.com/thesis" target="_blank" rel="noopener">Thesis</a>
+          <a href="https://www.gulfalts.com/blogs" target="_blank" rel="noopener">Blog</a>
+        </div>
+      </nav>
+      <nav class="footer-col" aria-labelledby="footer-venue-label">
+        <p class="footer-label" id="footer-venue-label">Our Venue</p>
+        <div class="footer-links">
+          <a href="https://www.gulfalts.com/venue/dubai-creative-park" target="_blank" rel="noopener">Dubai Creative Park</a>
+          <a href="https://www.gulfalts.com/venue/fintech-district" target="_blank" rel="noopener">Dubai Fintech District</a>
+          <a href="https://www.gulfalts.com/venue/v8-district" target="_blank" rel="noopener">V8 District</a>
+          <a href="https://www.gulfalts.com/venue/motor-garten" target="_blank" rel="noopener">Motor Garten</a>
+        </div>
+      </nav>
+      <div class="footer-col">
+        <p class="footer-label">Connect</p>
+        <div class="footer-links">
+          <a href="mailto:info@gulfalts.com">info@gulfalts.com</a>
+          <a href="https://www.linkedin.com/company/gulfalts" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://x.com/gulfaltsdubai" target="_blank" rel="noopener" aria-label="X (Twitter)">X</a>
+        </div>
+      </div>
+    </div>
+    <img class="footer-brand" src="/media/images/gulfalts-wordmark-white.svg" alt="Gulfalts" width="3044" height="537" loading="lazy" />
+    <div class="footer-bottom">
+      <span>© 2026 Gulf Alternatives. All rights reserved.</span>
+      <span>Dynamic destinations · Dubai</span>
+    </div>
+  </footer>
+</body>
+</html>

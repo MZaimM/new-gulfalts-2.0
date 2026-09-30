@@ -1,0 +1,178 @@
+/*
+ * Chapter engine: scrub, autoplay and static shells.
+ *
+ * chapter_component
+ * └── chapter_track        (scroll length, --track in vh)
+ *     └── chapter_sticky   (one viewport, sticks while the track scrolls past)
+ *         ├── chapter_media-wrap  poster → video → scrim
+ *         └── chapter_overlay     HTML copy, markers, HUD
+ *
+ * Visibility inside the overlay is driven by the runtime (src/lib/scroll-scrub.ts):
+ *   [data-show="a-b"]  visible while chapter progress is within a–b   → .is-active
+ *   [data-cue="id"]    visible only while that cue is current         → .is-current
+ *   [data-cue-mark]    emphasised while that cue is current            → .is-current
+ */
+
+.chapter_component { position: relative; }
+.chapter_component.is-scrub,
+.chapter_component.is-autoplay,
+.chapter_component.is-intro { background: var(--ink); color: var(--text-inverse); }
+
+.chapter_track { position: relative; height: calc(var(--track) * 1vh); }
+.chapter_sticky {
+  position: sticky; top: 0;
+  height: 100lvh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* A joined chapter slides under the tail of the previous one and dissolves in over --join
+   (--join-p runs 0 → 1 across it; see ChapterTrack). */
+.js .chapter_component.is-joined { margin-top: calc(-100lvh - var(--join)); background: transparent; }
+.js .chapter_component.is-joined > .chapter_track { height: calc(var(--track) * 1vh + var(--join)); }
+.js .chapter_component.is-joined .chapter_sticky { opacity: var(--join-p, 0); }
+
+/* Wipe join (after floema.com): the incoming chapter is uncovered bottom-up with a hard edge
+   and its picture rises into place, while the outgoing picture drifts up faster, grows a
+   touch and dims. Transform, opacity and clip-path only, all driven by scroll. */
+.js .chapter_component.is-joined.is-wipe .chapter_sticky {
+  opacity: 1;
+  clip-path: inset(calc((1 - var(--join-p, 0)) * 100%) 0 0 0);
+}
+.js .chapter_component.is-joined.is-wipe .chapter_media-wrap {
+  transform: translate3d(0, calc((1 - var(--join-p, 0)) * 18vh), 0);
+}
+.js .chapter_component.has-wipe-next .chapter_media-wrap {
+  transform: translate3d(0, calc(var(--exit, 0) * -22vh), 0) scale(calc(1 + var(--exit, 0) * 0.05));
+}
+.js .chapter_component.has-wipe-next .chapter_sticky::after {
+  content: ''; position: absolute; inset: 0; z-index: 2;
+  background: var(--ink); opacity: calc(var(--exit, 0) * 0.55);
+  pointer-events: none;
+}
+
+/* Media: poster is always underneath, the video fades in once it has a decoded frame. */
+.chapter_media-wrap { position: absolute; inset: 0; z-index: 0; background: var(--ink); }
+.chapter_poster,
+.chapter_poster img,
+.chapter_video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.chapter_video { opacity: 0; transition: opacity var(--t-narrative) ease; }
+.chapter_component.has-frame .chapter_video { opacity: 1; }
+.chapter_component[data-state='fallback'] .chapter_video,
+.chapter_component[data-state='error'] .chapter_video { display: none; }
+
+.chapter_scrim { position: absolute; inset: 0; pointer-events: none; }
+.chapter_scrim.is-even { background: var(--scrim); }
+.chapter_scrim.is-soft { background: rgba(16, 16, 16, 0.18); }
+.chapter_scrim.is-focus { background: rgba(16, 16, 16, 0.46); }
+.chapter_scrim.is-deep { background: rgba(16, 16, 16, 0.58); }
+.chapter_scrim.is-left {
+  background: linear-gradient(90deg, rgba(16, 16, 16, 0.66) 0%, rgba(16, 16, 16, 0.28) 52%, rgba(16, 16, 16, 0.12) 100%);
+}
+.chapter_scrim.is-bottom {
+  background: linear-gradient(to top, rgba(16, 16, 16, 0.76) 0%, rgba(16, 16, 16, 0.2) 55%, rgba(16, 16, 16, 0.32) 100%);
+}
+
+/* Overlay sits in the small-viewport box so nothing hides behind mobile browser bars. */
+.chapter_overlay {
+  position: absolute; inset: 0 0 auto; z-index: 1;
+  height: 100svh;
+  padding: calc(var(--header-h) + 32px) var(--gutter) 40px;
+  pointer-events: none;
+}
+.chapter_overlay a, .chapter_overlay button { pointer-events: auto; }
+
+/* Scroll-state visibility (JS only; without JS everything stays visible). */
+.js .chapter_overlay [data-show],
+.js .chapter_overlay [data-cue] {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+  transition: opacity var(--t-standard) ease, transform var(--t-narrative) var(--ease);
+}
+.js .chapter_overlay [data-show].is-active,
+.js .chapter_overlay [data-cue].is-current { opacity: 1; transform: none; }
+
+/* Markers are positioned in video-frame space by the runtime (see lib/viewport.ts). */
+.chapter_markers { position: absolute; inset: 0; }
+.chapter_marker { position: absolute; left: 0; top: 0; transform: translate3d(var(--mx, -999px), var(--my, -999px), 0) translateY(-50%); }
+.chapter_marker > a, .chapter_marker { display: flex; align-items: center; gap: 10px; }
+.chapter_marker > a { min-height: 44px; }
+.chapter_marker-dot {
+  position: relative; flex: none;
+  width: 14px; height: 14px; margin-left: -7px;
+  border-radius: 50%;
+  background: var(--burgundy);
+  box-shadow: 0 0 0 2px var(--text-inverse);
+  transition: transform var(--t-quick) var(--ease);
+}
+.chapter_marker-label {
+  padding: 6px 12px; border-radius: var(--radius-pill);
+  background: var(--ink); color: var(--text-inverse);
+  font-size: var(--fs-meta); font-weight: 500; letter-spacing: var(--eyebrow-tracking); text-transform: uppercase;
+  white-space: nowrap;
+  transition: background var(--t-quick) ease, color var(--t-quick) ease;
+}
+.chapter_marker.is-highlight .chapter_marker-dot,
+.chapter_marker > a:hover .chapter_marker-dot,
+.chapter_marker > a:focus-visible .chapter_marker-dot { transform: scale(1.35); }
+.chapter_marker.is-highlight .chapter_marker-label,
+.chapter_marker > a:hover .chapter_marker-label { background: var(--text-inverse); color: var(--ink); }
+
+/* Keyframe sequence: only used by the reduced-motion experience. */
+.chapter_keyframes { display: none; }
+
+/* Autoplay chapter without a track: one full viewport. */
+.chapter_component.is-autoplay:not(.has-track) { min-height: 100svh; overflow: hidden; isolation: isolate; }
+.chapter_component.is-autoplay:not(.has-track) > .chapter_media-wrap { position: absolute; inset: 0; }
+.chapter_content { position: relative; z-index: 1; }
+
+/* Static chapters sit on the warm canvas. */
+.chapter_component.is-static { background: var(--canvas); color: var(--ink); }
+
+@media (max-width: 767px) {
+  .chapter_track { height: calc(var(--track-mobile) * 1vh); }
+  .js .chapter_component.is-joined > .chapter_track { height: calc(var(--track-mobile) * 1vh + var(--join)); }
+  .chapter_overlay { padding: calc(var(--header-h) + 20px) var(--gutter) 28px; }
+  .chapter_marker-label { font-size: 11px; padding: 5px 8px; }
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion: no pinning, no scrub. Every chapter shows its poster and its full copy;
+   the long journeys become a still sequence.
+--------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .js .chapter_component.is-joined { margin-top: 0; }
+  .js .chapter_component.is-joined .chapter_sticky { opacity: 1; clip-path: none; }
+  .js .chapter_component.is-joined.is-wipe .chapter_media-wrap,
+  .js .chapter_component.has-wipe-next .chapter_media-wrap { transform: none; }
+  .js .chapter_component.has-wipe-next .chapter_sticky::after { content: none; }
+  .chapter_track,
+  .js .chapter_component.is-joined > .chapter_track { height: auto; }
+  .chapter_sticky { position: relative; height: auto; min-height: 100svh; }
+  .chapter_video { display: none; }
+  .chapter_overlay {
+    position: relative; height: auto; min-height: 100svh;
+    display: flex; flex-direction: column; justify-content: flex-end; gap: 24px;
+  }
+  .js .chapter_overlay [data-show],
+  .js .chapter_overlay [data-cue] { opacity: 1; transform: none; transition: none; }
+  .chapter_overlay > * { position: relative; inset: auto; transform: none; }
+  .chapter_markers { position: absolute; inset: 0; }
+
+  .chapter_keyframes {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 32px 24px;
+    padding: 64px var(--gutter) var(--section-space);
+    background: var(--ink); color: var(--text-inverse);
+  }
+  .chapter_keyframe img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+  .chapter_keyframe p {
+    display: flex; gap: 12px; margin-top: 12px;
+    font-size: var(--fs-body); line-height: 1.4;
+  }
+  .chapter_keyframe span { color: var(--text-inverse-secondary); font-variant-numeric: tabular-nums; }
+}

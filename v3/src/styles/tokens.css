@@ -1,0 +1,103 @@
+/*
+ * Gulfalts design tokens — mirrors the live style guide:
+ * https://www.gulfalts.com/style/style-guide (base collection variables).
+ * Components use the short aliases below; change a value here, never in a component.
+ */
+
+/* Fonts ship from /public/fonts. Only the weights a page actually renders are downloaded. */
+@font-face { font-family: 'Seasonserif Trial'; src: url('/fonts/SeasonSerif-TRIAL-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Seasonserif Trial'; src: url('/fonts/SeasonSerif-TRIAL-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Seasonsans Trial'; src: url('/fonts/SeasonSans-TRIAL-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Seasonsans Trial'; src: url('/fonts/SeasonSans-TRIAL-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Seasonsans Trial'; src: url('/fonts/SeasonSans-TRIAL-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Seasonsans Trial'; src: url('/fonts/SeasonSans-TRIAL-SemiBold.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Guardian Sans'; src: url('/fonts/GuardianSans-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+
+:root {
+  /* Base collection (style guide §01 / §03) */
+  --primary-color: #101010;
+  --secondary-color: #4b4b4b;
+  --text-color: #ffffff;
+  --secondary-text-color: rgba(255, 255, 255, 0.7);
+  --off-white: #f3e9e3;
+  --off-white-secondary: #e0d3cc;
+  --button-primary: #801b2b;
+  /* Hover / pressed: the hard-coded values the style guide proposes as tokens. */
+  --button-primary-hover: #6b1624;
+  --button-primary-pressed: #5f1420;
+
+  --heading-font: 'Seasonserif Trial', Georgia, serif;
+  --body-font: 'Seasonsans Trial', Arial, sans-serif;
+  --form-font: 'Guardian Sans', Arial, sans-serif;
+
+  /* Radius scale (style guide §09): 8 → 12 → 16 → 28 → pill */
+  --radius-sm: 8px;
+  --radius-input: 12px;
+  --radius-card: 16px;
+  --radius-landing: 28px;
+  --radius-pill: 999px;
+
+  /* Aliases used by the V3 components */
+  --ink: var(--primary-color);
+  --canvas: var(--off-white);
+  --surface: var(--off-white-secondary);
+  --burgundy: var(--button-primary);
+  --burgundy-hover: var(--button-primary-hover);
+  --burgundy-pressed: var(--button-primary-pressed);
+  --paper: var(--text-color);
+
+  --text: var(--primary-color);
+  --text-secondary: var(--secondary-color);
+  --text-inverse: var(--text-color);
+  --text-inverse-secondary: var(--secondary-text-color);
+  --line: var(--off-white-secondary);
+  --line-inverse: rgba(255, 255, 255, 0.22);
+  --scrim: rgba(16, 16, 16, 0.3);
+
+  /*
+   * Type scale (style guide §02). Headings step from the XL size at 1440px down to the mobile
+   * size at 479px; clamp() interpolates in between.
+   *   H1 63 → 40 · H2 48 → 32 · H3 40 → 28 · H5 24 → 20 · text-size-large 20 → 16
+   */
+  --fs-hero: clamp(2.5rem, 1.784rem + 2.393vw, 3.9375rem);
+  --fs-section: clamp(2rem, 1.502rem + 1.665vw, 3rem);
+  --fs-feature: clamp(1.75rem, 1.376rem + 1.249vw, 2.5rem);
+  --fs-row: clamp(1.25rem, 1.125rem + 0.416vw, 1.5rem);
+  --fs-lead: clamp(1rem, 0.875rem + 0.416vw, 1.25rem);
+  --fs-body: 1.125rem;
+  --fs-ui: 0.875rem;
+  --fs-meta: 0.75rem;
+
+  /* Headings: serif, regular weight, 1.2 leading, -0.01em tracking. */
+  --heading-weight: 400;
+  --heading-leading: 1.2;
+  --heading-tracking: -0.01em;
+  /* Eyebrows: 12px · 500 · uppercase · 1.2px tracking. */
+  --eyebrow-tracking: 0.1em;
+
+  /* Layout */
+  --max: 1440px;
+  --gutter: clamp(16px, 4.7vw, 96px);
+  --section-space: clamp(6rem, 10vw, 10rem);
+  --header-h: 84px;
+
+  /* Motion */
+  --t-instant: 120ms;
+  --t-quick: 220ms;
+  --t-standard: 480ms;
+  --t-narrative: 700ms;
+  --t-button: 300ms;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Chapter joins: how much scroll a dissolve between two pinned chapters takes. */
+  --join: 60vh;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --gutter: 16px;
+    --header-h: 68px;
+    --join: 40vh;
+    --fs-body: 1rem;
+  }
+}
