@@ -40,8 +40,8 @@ export const renderH01 = () => `
 </section>`;
 
 export const renderH02 = () => {
-  const path = h02.cues.slice(0, 3);
-  const final = h02.cues[3];
+  const path = h02.cues.slice(0, -1);
+  const final = h02.cues[h02.cues.length - 1];
   return scrubChapter({
     chapter: h02,
     className: 'h02',

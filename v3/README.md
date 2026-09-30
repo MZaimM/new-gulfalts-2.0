@@ -19,7 +19,7 @@ npm run media      # render ulang semua video + gambar (butuh ffmpeg)
 | # | Section | V3 |
 |---|---|---|
 | 1 | H01 Intro | Animasi logo baru (SVG mask, timeline dan easing dari `gulfalts-logo-reveal.html`; `components/logo.ts` + `reveals.ts`), background langsung frame awan scrub H02, tagline "Dynamic Destinations" (title case), navbar tersembunyi sampai animasi logo selesai |
-| 2 | H02 Dubai arrival | Video diganti `video concept/DFD/scene1&2.mp4` (awan → pesisir Dubai → Al Quoz → Fintech District). 1080p, tanpa marker |
+| 2 | H02 Dubai arrival | Video `video concept/homepage/gulfalts-intro.mp4` (awan → pesisir Teluk/UAE → peta Dubai). Frame akhirnya sama dengan frame pertama outro H13. 1080p, tanpa marker |
 | 3 | H03 Brand spectrum | **Dihapus dari landing page.** Disimpan sebagai komponen HTML mandiri di `backups/brand-spectrum/` (lihat di bawah) |
 | 4 | H04 The firm | Seluruh teks rata tengah, scrim lebih kuat. Masuk dengan wipe ala floema.com di atas frame akhir H02 |
 | 4b | Our destinations | **Slider**: satu destinasi per slide di dalam lingkaran bercincin emas (DCP, DFD), panah kiri/kanan, tab 01/02, swipe, autoplay. Menggantikan portal dari `gulfalts-homepage-preview.html` |
@@ -29,7 +29,7 @@ npm run media      # render ulang semua video + gambar (butuh ffmpeg)
 | 9 | H09 journey, H10 snapshot | Dihapus |
 | 10 | H11 Our approach | Video diganti `video concept/DCP/DCP-Video.mp4` (32 dtk), 1080p, cue disesuaikan |
 | 11 | H12 curation | Dihapus; H13 Our destinations dipertahankan |
-| 11 | H13 Our destinations | Video diganti `video concept/DFD/Scene-2.mp4` (7,7 dtk pertama, diputar mundur: situs DFD → Al Quoz → pesisir Dubai). Marker di Al Quoz dengan label di kiri titik; hover/fokus marker (atau baris directory) membuka card detail: foto venue, nama, dan waktu tempuh |
+| 11 | H13 Our destinations | Video `video concept/homepage/gulfalts-outro.mp4` (frame 0–141, diputar mundur: drone di atas Al Quoz → peta Dubai). Marker presisi dari pin Google Maps (lihat "Marker H13"), label berjejer di kiri dengan garis penghubung; hover/fokus marker (atau baris directory) membuka card detail: foto venue, nama, dan waktu tempuh |
 
 ## Style
 
@@ -70,12 +70,12 @@ Hover/fokus marker, atau hover baris directory, membuka card: titik membesar men
 | ID | Chapter | Media |
 |---|---|---|
 | H01 | Intro | Tanpa video: animasi logo port dari `gulfalts-logo-reveal.html` (ikon G ter-zoom → kotak membuka ke kanan menyingkap "Gulf" → lubang A-L-T-S; G dan ALTS transparan) di atas frame awan pembuka H02. Scroll: logo slide out, lalu scrub H02 berjalan dari frame yang sama. Navbar baru muncul setelah animasi logo selesai |
-| H02 | Dubai arrival | Scrub, v01 — 1920×1080 / 608×1080, ±5 MB / 2 MB |
+| H02 | Dubai arrival | Scrub, v02 — 1920×1080 / 608×1080, 3,7 MB / 1,2 MB (sumber 2560×1440, 14,8 MB) |
 | H04 | The firm | Autoplay loop (v00) di track pendek; wipe dari bawah di atas frame akhir H02 |
 | — | Our destinations | Static, slider DCP + DFD (`components/destination-slider.ts`, `components/slider.ts`) |
 | H05 | Featured destinations | Static, dua kolom sama lebar yang sejajar (CSS subgrid), gambar 4:3. Tiap kolom punya id sendiri (`#h05-creative-park`, `#h08-fintech-district`) |
 | H11 | Our approach | Scrub, v01 — 1920×1080 / 608×1080, ±12 MB / 4 MB |
-| H13 | Our destinations | Scrub mundur, v01 — 1920×1080 / 608×1080, ±5 MB / 2 MB + directory |
+| H13 | Our destinations | Scrub mundur, v02 — 1920×1080 / 608×1080, 4,9 MB / 1,9 MB (sumber 2560×1440, 20,9 MB) + directory |
 | H14 | Next destination + footer | Static |
 
 Kode chapter mengikuti story map, jadi H06/H07, H09/H10, dan H12 memang tidak ada.
@@ -92,8 +92,8 @@ Kode chapter mengikuti story map, jadi H06/H07, H09/H10, dan H12 memang tidak ad
 v3/
 ├── index.html                  header, menu, footer (V1) + slot <!-- homepage:sections -->
 ├── vite.config.ts              plugin yang merender H01–H14 ke HTML statis saat dev/build
-├── scripts/build-media.sh      video v01 + salinan aset V2 yang dipakai; build-images.mjs untuk still
-├── public/media/{video,posters,images}  aset (v01 = footage produksi, v00 = placeholder dari V2)
+├── scripts/build-media.sh      video v01/v02 + salinan aset V2 yang dipakai (`npm run media -- h02 h13` untuk sebagian); build-images.mjs untuk still
+├── public/media/{video,posters,images}  aset (v02 = intro/outro homepage, v01 = footage produksi, v00 = placeholder dari V2)
 └── src/
     ├── content/                homepage.ts (chapter, media, cue, copy), destinations.ts, types.ts
     ├── sections/               renderer per babak: opening, creative-park, fintech-district, ecosystem
@@ -129,7 +129,8 @@ Semua copy, statistik, marker, dan CTA adalah HTML statis (dirender saat build d
 Angka di H05/H08 diambil dari brief V3 (September 2026) dan ditandai `confirmed`. Angka yang diubah ke `'unconfirmed'` di `src/content/destinations.ts` otomatis tampil dengan penanda **"To be confirmed"**.
 
 - V8 District dan Motor Garten memakai kategori dari gulfalts.com ("Specialized commercial facilities"); thumbnail dari render project di gulfalts.com (`../Website Material/gulfalts.com`).
-- Posisi marker H13 bersifat indikatif: footage adalah render bergaya, jadi titik ditempatkan di koridor Al Quoz (antara Palm Jumeirah dan The World, di pedalaman), bukan koordinat survei. Di layar landscape frame di-anchor kanan (`object-position: 100%`) agar cluster tidak tertutup panel; di mobile marker disembunyikan karena tertutup directory.
+- **Marker H13**: diletakkan di frame pertama outro (peta Dubai). Pin Google Maps tiap venue diproyeksikan ke frame itu lewat homografi yang dicocokkan ke jalan dan garis pantai OpenStreetMap (Sheikh Zayed Road, Al Khail Road dan interchange-nya, pantai Palm–Jumeirah Bay), akurat beberapa piksel di lebar 1920. Koordinat pin tercatat di `src/content/destinations.ts`. Kalau video outro dirender ulang dengan kamera berbeda, posisi harus dihitung ulang.
+- Keempat venue berdekatan (V8 District dan Creative Park ±1,3 km), jadi titik tetap di posisi aslinya dan label disusun dalam satu kolom di kiri dengan garis penghubung (`spreadLabels` di `lib/scroll-scrub.ts`). Marker yang jatuh di bawah panel directory (`data-marker-avoid`) disembunyikan; panel dibuat lebih ramping (maks. 460px, 32vw) agar cluster tetap terlihat di layar 1280–1536px. Di layar landscape frame di-anchor kanan (`object-position: 100%`); di mobile marker disembunyikan karena tertutup directory.
 - Belum ada halaman "semua destination" di gulfalts.com; `allDestinationsUrl` sementara mengarah ke homepage gulfalts.com.
 
 ## QA dev

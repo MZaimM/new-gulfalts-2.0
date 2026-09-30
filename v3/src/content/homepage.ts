@@ -10,8 +10,8 @@ import type { AutoplayChapter, MediaSources, ResponsiveImage, ScrubChapter, Stat
  * Chapter codes keep the story-map numbering, so H06/H07, H09/H10 and H12 are simply absent
  * (removed in V3: their content now lives in H05, H08 and H11).
  *
- * Media versions: v01 = production footage (scripts/build-media.sh), v00 = V2 placeholder
- * (H04 manifesto only).
+ * Media versions: v02 = homepage intro / outro renders (H02, H13), v01 = production footage
+ * (H11), v00 = V2 placeholder (H04 manifesto only). All built by scripts/build-media.sh.
  */
 
 const media = (name: string, version: string): MediaSources => ({
@@ -48,27 +48,28 @@ export const h01 = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// H02 Dubai Arrival — SCRUB (DFD scene 1 & 2: clouds → Dubai coast → Al Quoz → Fintech District)
+// H02 Dubai Arrival — SCRUB (homepage intro: clouds → the Gulf coast → the Dubai map). Its last
+// frame is the first frame of the H13 outro, so the story opens and closes on the same map.
 // ---------------------------------------------------------------------------
 export const h02 = {
   id: 'h02-dubai-arrival',
   code: 'H02',
   title: 'Dubai arrival',
   type: 'scrub',
-  media: media('h02-dubai-arrival', 'v01'),
-  duration: 9.08,
+  media: media('h02-dubai-arrival', 'v02'),
+  duration: 6.58,
   // Its last ~100vh is H04 wiping in over the final frame, so the track carries that too.
   track: { desktop: 440, mobile: 340 },
   // Dissolves in from H01's final state, which already shows this chapter's first frame.
   joinPrevious: true,
+  // The last cue is the caption on the final frame; the others build the path on the left.
   cues: [
-    { at: 0.03, id: 'uae', label: 'UAE' },
-    { at: 0.33, id: 'dubai', label: 'Dubai' },
-    { at: 0.72, id: 'al-quoz', label: 'Al Quoz' },
-    { at: 0.9, id: 'destinations', label: 'Dubai Fintech District · Al Quoz' }
+    { at: 0.34, id: 'uae', label: 'UAE' },
+    { at: 0.69, id: 'dubai', label: 'Dubai' },
+    { at: 0.86, id: 'caption', label: 'Dubai · United Arab Emirates' }
   ],
   copy: {
-    heading: 'From the UAE to Al Quoz, Dubai'
+    heading: 'From the clouds to Dubai'
   }
 } satisfies ScrubChapter & { copy: unknown };
 
@@ -210,17 +211,17 @@ export const h11 = {
 } satisfies ScrubChapter & { copy: unknown };
 
 // ---------------------------------------------------------------------------
-// H13 Dubai Pull Out and Our Destinations — SCRUB (DFD scene 2, reversed)
-// Starts on the Fintech District site, rises through Al Quoz and the clouds, and lands on the
-// Dubai coastline, where the directory and the destination markers appear.
+// H13 Dubai Pull Out and Our Destinations — SCRUB (homepage outro, reversed)
+// Starts on the drone view over Al Quoz, pulls up into the map and lands on the Dubai map
+// (the same frame H02 ends on), where the directory and the destination markers appear.
 // ---------------------------------------------------------------------------
 export const h13 = {
   id: 'h13-dubai-pull-out',
   code: 'H13',
   title: 'Our destinations',
   type: 'scrub',
-  media: media('h13-dubai-pull-out', 'v01'),
-  duration: 7.71,
+  media: media('h13-dubai-pull-out', 'v02'),
+  duration: 5.875,
   reverse: true,
   joinPrevious: true,
   track: { desktop: 400, mobile: 320 },
@@ -230,8 +231,8 @@ export const h13 = {
   anchorProgress: 0.85,
   cues: [
     { at: 0, id: 'exterior', label: 'Destination' },
-    { at: 0.22, id: 'al-quoz', label: 'Al Quoz' },
-    { at: 0.62, id: 'dubai', label: 'Dubai' }
+    { at: 0.02, id: 'al-quoz', label: 'Al Quoz' },
+    { at: 0.4, id: 'dubai', label: 'Dubai' }
   ],
   copy: {
     eyebrow: 'The Gulfalts ecosystem · Dubai',

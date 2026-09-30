@@ -223,13 +223,57 @@ export const layoutMarkers = (section: HTMLElement) => {
   const frame = video?.videoWidth ? { width: video.videoWidth, height: video.videoHeight } : sourceFrame();
   const mobile = isMobile();
   const align = objectAlign(video);
+  const avoid = avoidZone(section, stage);
+  const placed: PlacedMarker[] = [];
   markers.forEach(marker => {
     // The mobile file is a crop of the desktop frame, so a marker can carry its own x for it.
     const x = mobile && marker.dataset.xMobile ? marker.dataset.xMobile : marker.dataset.x;
     const point = coverPoint(box, frame, { x: Number(x), y: Number(marker.dataset.y) }, align);
     marker.style.setProperty('--mx', `${point.left}px`);
     marker.style.setProperty('--my', `${point.top}px`);
-    marker.hidden = !point.visible;
+    const covered = !!avoid && point.left > avoid.left && point.left < avoid.right && point.top > avoid.top && point.top < avoid.bottom;
+    marker.hidden = !point.visible || covered;
+    if (!marker.hidden) placed.push({ marker, left: point.left, top: point.top });
+  });
+  if (section.querySelector('.chapter_markers[data-leaders]')) spreadLabels(placed);
+};
+
+interface PlacedMarker { marker: HTMLElement; left: number; top: number }
+
+/** The box of an overlay panel markers must not sit under (`[data-marker-avoid]`), in stage pixels. */
+const avoidZone = (section: HTMLElement, stage: HTMLElement) => {
+  const panel = section.querySelector<HTMLElement>('[data-marker-avoid]');
+  if (!panel || getComputedStyle(panel).position !== 'absolute') return null;
+  const origin = stage.getBoundingClientRect();
+  const rect = panel.getBoundingClientRect();
+  const margin = 12;
+  return {
+    left: rect.left - origin.left - margin, right: rect.right - origin.left + margin,
+    top: rect.top - origin.top - margin, bottom: rect.bottom - origin.top + margin
+  };
+};
+
+const LABEL_GAP = 36;
+const LABEL_OFFSET = 56;
+
+/**
+ * Markers that sit close together (H13: four venues within a few hundred metres of each other in
+ * Al Quoz) keep their dots on the exact spot, and move their labels into one column to the left,
+ * in the dots' top-to-bottom order, each tied to its dot by a leader line (--lx/--ly: the label's
+ * right edge relative to the dot).
+ */
+const spreadLabels = (placed: PlacedMarker[]) => {
+  if (!placed.length) return;
+  const sorted = [...placed].sort((a, b) => a.top - b.top);
+  const column = Math.min(...sorted.map(item => item.left)) - LABEL_OFFSET;
+  const middle = sorted.reduce((sum, item) => sum + item.top, 0) / sorted.length;
+  sorted.forEach(({ marker, left, top }, index) => {
+    const x = column - left;
+    const y = middle + (index - (sorted.length - 1) / 2) * LABEL_GAP - top;
+    marker.style.setProperty('--lx', `${x.toFixed(1)}px`);
+    marker.style.setProperty('--ly', `${y.toFixed(1)}px`);
+    marker.style.setProperty('--leader', `${Math.hypot(x, y).toFixed(1)}px`);
+    marker.style.setProperty('--leader-angle', `${Math.atan2(y, x).toFixed(4)}rad`);
   });
 };
 

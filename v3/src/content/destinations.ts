@@ -26,8 +26,12 @@ const alQuozTimes: CommuteTime[] = [
 ];
 
 /*
- * Markers sit in Al Quoz on the H13 hold frame (the Dubai coastline from DFD scene 2). The
- * footage is a stylised render, so positions are indicative, not surveyed.
+ * Markers sit on the H13 hold frame: the first frame of the homepage outro (the Dubai map), which
+ * is also H02's last frame. Positions are the venues' Google Maps pins (Sept 2026) projected onto
+ * that frame with a homography fitted to OpenStreetMap roads and coastline (Sheikh Zayed Road,
+ * Al Khail Road, their interchanges, the coast from the Palm to Jumeirah Bay), accurate to a few
+ * pixels at 1920 wide. Pins: Creative Park 25.12257, 55.23549 · Fintech District 25.13684,
+ * 55.25110 · Motör Garten 25.13056, 55.22356 · V8 District 25.11879, 55.23079.
  */
 export const destinations: Destination[] = [
   {
@@ -40,7 +44,7 @@ export const destinations: Destination[] = [
     url: `${venueBase}/dubai-creative-park`,
     location: 'Al Quoz · Dubai',
     preview: '/media/images/preview-creative-park-320.jpg',
-    marker: { x: 0.56, y: 0.53, xMobile: 0.627 },
+    marker: { x: 0.5894, y: 0.4921, xMobile: 0.593 },
     commute: { times: alQuozTimes, status: 'unconfirmed' }
   },
   {
@@ -53,7 +57,7 @@ export const destinations: Destination[] = [
     url: `${venueBase}/fintech-district`,
     location: 'Al Quoz · Dubai',
     preview: '/media/images/preview-fintech-district-320.jpg',
-    marker: { x: 0.545, y: 0.59, xMobile: 0.58 },
+    marker: { x: 0.615, y: 0.4496, xMobile: 0.674 },
     commute: { times: alQuozTimes, status: 'confirmed' }
   },
   {
@@ -66,7 +70,7 @@ export const destinations: Destination[] = [
     url: `${venueBase}/v8-district`,
     location: 'Dubai',
     preview: '/media/images/preview-v8-district-320.jpg',
-    marker: { x: 0.575, y: 0.47, xMobile: 0.674 },
+    marker: { x: 0.5817, y: 0.5033, xMobile: 0.569 },
     commute: { times: alQuozTimes, status: 'unconfirmed' }
   },
   {
@@ -79,7 +83,7 @@ export const destinations: Destination[] = [
     url: `${venueBase}/motor-garten`,
     location: 'Dubai',
     preview: '/media/images/preview-motor-garten-320.jpg',
-    marker: { x: 0.53, y: 0.65, xMobile: 0.532 },
+    marker: { x: 0.571, y: 0.4683, xMobile: 0.535 },
     commute: { times: alQuozTimes, status: 'unconfirmed' }
   }
 ];

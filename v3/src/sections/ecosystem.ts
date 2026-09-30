@@ -63,17 +63,18 @@ export const renderH13 = () => {
         <p class="h13_place" data-cue="${alQuoz.id}">${esc(alQuoz.label)}</p>
         <p class="h13_place" data-cue="${dubai.id}">${esc(dubai.label)}</p>
       </div>
-      <ul class="chapter_markers h13_markers" ${show(hold)} aria-label="Destination markers">
+      <ul class="chapter_markers h13_markers" ${show(hold)} aria-label="Destination markers" data-leaders>
         ${destinations.map(destination => `
         <li class="chapter_marker" data-x="${destination.marker.x}" data-y="${destination.marker.y}" data-x-mobile="${destination.marker.xMobile}" data-destination="${destination.id}">
           <a href="${destination.url}" ${externalLink} aria-label="${esc(destination.fullName)}" aria-describedby="marker-card-${destination.id}">
             <span class="chapter_marker-dot" aria-hidden="true"></span>
+            <span class="chapter_marker-leader" aria-hidden="true"></span>
             <span class="chapter_marker-label"><span aria-hidden="true">${destination.index}</span> ${esc(destination.name)}</span>
             ${markerCard(destination)}
           </a>
         </li>`).join('')}
       </ul>
-      <div class="h13_directory" ${show(hold + 0.02)}>
+      <div class="h13_directory" ${show(hold + 0.02)} data-marker-avoid>
         <p class="chapter_eyebrow">${esc(h13.copy.eyebrow)}</p>
         <h2 class="feature-heading h13_heading" id="h13-title">${esc(h13.copy.heading)}</h2>
         <ol class="destination_directory">
