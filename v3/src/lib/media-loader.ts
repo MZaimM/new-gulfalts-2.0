@@ -13,6 +13,14 @@ export type MediaState = 'idle' | 'loading' | 'ready' | 'active' | 'paused' | 'e
 
 const LOAD_TIMEOUT = 20000;
 
+/**
+ * Chapter markup is rendered at build time with root-relative paths, and Vite only rewrites
+ * those in `src`/`href`, not in `data-src-*`. Prefix the deploy base here so the page also
+ * works under a sub-path (Webflow Cloud mounts it at `/new-home/`).
+ */
+const withBase = (path: string) =>
+  path.startsWith('/') ? `${import.meta.env.BASE_URL.replace(/\/$/, '')}${path}` : path;
+
 export class ChapterMedia {
   readonly section: HTMLElement;
   readonly video: HTMLVideoElement;
@@ -20,6 +28,7 @@ export class ChapterMedia {
   state: MediaState = 'idle';
   duration = 0;
   private timeout = 0;
+  private objectUrl = '';
   private readyCallbacks: Array<() => void> = [];
 
   constructor(section: HTMLElement) {
@@ -57,8 +66,35 @@ export class ChapterMedia {
     this.video.addEventListener('loadedmetadata', this.handleMetadata, { once: true });
     this.video.addEventListener('loadeddata', this.handleData, { once: true });
     this.video.addEventListener('error', this.handleError, { once: true });
-    this.timeout = window.setTimeout(this.handleError, LOAD_TIMEOUT);
     this.video.preload = 'auto';
+    this.fetchWhole(withBase(src));
+  }
+
+  /**
+   * Some hosts (Webflow Cloud among them) answer byte-range requests with the whole file and a
+   * 200, which leaves Safari unable to play and Chrome unable to seek outside what is buffered.
+   * Downloading the file once and playing it from a blob makes every frame seekable everywhere.
+   * If the fetch itself fails, fall back to streaming from the URL. The poster stays up while
+   * the download runs; the decode timeout only starts once there is something to decode.
+   */
+  private fetchWhole(url: string) {
+    fetch(url)
+      .then(response => {
+        if (!response.ok) throw new Error(`${response.status} ${url}`);
+        return response.blob();
+      })
+      .then(blob => {
+        if (this.state !== 'loading') return;
+        this.objectUrl = URL.createObjectURL(blob.type ? blob : new Blob([blob], { type: 'video/mp4' }));
+        this.play(this.objectUrl);
+      })
+      .catch(() => {
+        if (this.state === 'loading') this.play(url);
+      });
+  }
+
+  private play(src: string) {
+    this.timeout = window.setTimeout(this.handleError, LOAD_TIMEOUT);
     this.video.src = src;
     this.video.load();
   }
@@ -83,6 +119,8 @@ export class ChapterMedia {
     this.setState('error');
     this.video.removeAttribute('src');
     this.video.load();
+    if (this.objectUrl) URL.revokeObjectURL(this.objectUrl);
+    this.objectUrl = '';
     this.setState('fallback');
   };
 
