@@ -1,6 +1,7 @@
 /*
  * Our destinations: one destination at a time, seen through a circle. The gold ring around it
- * doubles as the autoplay timer; arrows, numbered tabs and swipe move between slides.
+ * doubles as the autoplay timer; arrows, numbered tabs (between the eyebrow and the circle) and
+ * swipe move between slides.
  * Behaviour in components/slider.ts. Every view and CTA is a real link, so it works without JS
  * (only the first slide shows until the script takes over).
  */
@@ -13,7 +14,6 @@ interface SlideItem {
   location: string;
   name: string;
   pillars: string[];
-  body: string;
   cta: string;
   image: ResponsiveImage & { alt: string };
 }
@@ -46,7 +46,6 @@ const panel = (id: string, item: SlideItem, index: number) => {
         <p class="dslider_location">${esc(item.location)}</p>
         <h3 class="dslider_name">${esc(item.name)}</h3>
         <p class="dslider_pillars">${item.pillars.map(esc).join('<span aria-hidden="true">·</span>')}</p>
-        <p class="dslider_body">${esc(item.body)}</p>
         <a class="dslider_cta" href="${destination.url}" data-slide-cta>${esc(item.cta)} <span class="link-arrow" aria-hidden="true">→</span></a>
       </div>`;
 };
@@ -55,6 +54,13 @@ export const destinationSlider = ({ id, eyebrow, items }: { id: string; eyebrow:
 <section class="chapter_component is-slider dslider" id="${id}" data-chapter="${id}" data-media="static" aria-labelledby="${id}-title" aria-roledescription="carousel" data-slider>
   <div class="dslider_inner">
     <h2 class="dslider_eyebrow" id="${id}-title" data-reveal>${esc(eyebrow)}</h2>
+    <div class="dslider_tabs" role="tablist" aria-label="${esc(eyebrow)}">
+      ${items.map((item, index) => `
+      <button class="dslider_tab" type="button" role="tab" id="${id}-tab-${index}" aria-controls="${id}-panel-${index}" aria-selected="${index === 0}" tabindex="${index ? -1 : 0}" aria-label="${esc(item.name)}" data-slide-tab>
+        <span class="dslider_tab-index" aria-hidden="true">${pad(index + 1)}</span>
+        <span class="dslider_tab-bar" aria-hidden="true"><span class="dslider_tab-fill"></span></span>
+      </button>`).join('')}
+    </div>
     <div class="dslider_stage" data-reveal>
       <button class="dslider_arrow is-prev" type="button" aria-label="Previous destination" data-slide-prev>${chevron('prev')}</button>
       <div class="dslider_frame" data-slide-frame>
@@ -66,13 +72,6 @@ export const destinationSlider = ({ id, eyebrow, items }: { id: string; eyebrow:
         </div>
       </div>
       <button class="dslider_arrow is-next" type="button" aria-label="Next destination" data-slide-next>${chevron('next')}</button>
-    </div>
-    <div class="dslider_tabs" role="tablist" aria-label="${esc(eyebrow)}">
-      ${items.map((item, index) => `
-      <button class="dslider_tab" type="button" role="tab" id="${id}-tab-${index}" aria-controls="${id}-panel-${index}" aria-selected="${index === 0}" tabindex="${index ? -1 : 0}" aria-label="${esc(item.name)}" data-slide-tab>
-        <span class="dslider_tab-index" aria-hidden="true">${pad(index + 1)}</span>
-        <span class="dslider_tab-bar" aria-hidden="true"><span class="dslider_tab-fill"></span></span>
-      </button>`).join('')}
     </div>
     <div class="dslider_panels" aria-live="polite">${items.map((item, index) => panel(id, item, index)).join('')}
     </div>

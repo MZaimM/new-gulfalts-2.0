@@ -107,8 +107,7 @@ export const slider = {
       destination: 'creative-park',
       location: 'Dubai · Al Quoz',
       name: 'Creative Park',
-      pillars: ['Work', 'Train', 'Dine', 'Play'],
-      body: 'A new kind of neighbourhood built around how people actually spend their day.',
+      pillars: ['Work', 'Train', 'Play', 'Dine', 'Heal'],
       cta: 'Explore Creative Park',
       image: {
         ...image('slide-creative-park', [640, 1100], 1),
@@ -119,8 +118,7 @@ export const slider = {
       destination: 'fintech-district',
       location: 'Dubai · Al Quoz',
       name: 'Fintech District',
-      pillars: ['Work', 'Meet', 'Showcase', 'Dine'],
-      body: 'A design-led business park built for high-growth companies, with natural light in every unit.',
+      pillars: ['Work', 'Eat', 'Train', 'Unwind'],
       cta: 'Explore Fintech District',
       image: {
         ...image('slide-fintech-district', [640, 788], 1),

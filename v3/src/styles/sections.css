@@ -112,7 +112,7 @@
 }
 .dslider_inner { display: grid; justify-items: center; width: 100%; max-width: 1240px; }
 .dslider_eyebrow {
-  margin-bottom: clamp(32px, 6vh, 64px);
+  margin-bottom: clamp(20px, 3vh, 32px);
   font-family: var(--body-font); font-size: 0.8125rem; font-weight: 400; line-height: 1.4;
   letter-spacing: 0.32em; text-transform: uppercase;
 }
@@ -152,8 +152,9 @@
 .dslider_view img { object-fit: cover; }
 .dslider_view:focus-visible { outline: none; }
 
-/* Tabs: numbers over one hairline; the active segment fills gold with the timer. */
-.dslider_tabs { display: flex; margin-top: clamp(28px, 4vh, 44px); }
+/* Tabs: under the eyebrow, above the circle. Numbers over one hairline; the active segment
+   fills gold with the timer. */
+.dslider_tabs { display: flex; margin-bottom: clamp(28px, 4.5vh, 48px); }
 .dslider_tab {
   display: grid; justify-items: center; gap: 12px;
   width: clamp(80px, 8vw, 96px); padding-top: 4px;
@@ -168,7 +169,7 @@
 .dslider_tab[aria-selected='true'] .dslider_tab-fill { transform: scaleX(1); }
 
 /* Copy: slides share one grid cell, so the section never changes height. */
-.dslider_panels { display: grid; width: 100%; max-width: 760px; margin-top: clamp(40px, 6vh, 72px); }
+.dslider_panels { display: grid; width: 100%; max-width: 760px; margin-top: clamp(32px, 5vh, 56px); }
 .dslider_panel { grid-area: 1 / 1; display: grid; justify-items: center; align-content: start; }
 .dslider_location { font-size: var(--fs-ui); font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sand); }
 .dslider_name {
@@ -182,7 +183,6 @@
   font-size: var(--fs-ui); font-weight: 400; letter-spacing: 0.32em; text-transform: uppercase;
 }
 .dslider_pillars span { color: var(--text-inverse-secondary); letter-spacing: 0; }
-.dslider_body { max-width: 36ch; margin-top: 28px; font-size: var(--fs-lead); line-height: 1.55; color: var(--text-inverse-secondary); text-wrap: balance; }
 .dslider_cta {
   display: inline-flex; align-items: center; gap: 12px;
   min-height: 52px; margin-top: clamp(32px, 5vh, 48px); padding: 14px 40px;
@@ -488,7 +488,6 @@
   .dslider_arrow.is-prev { left: 0; }
   .dslider_arrow.is-next { right: 0; }
   .dslider_pillars { gap: 0 14px; letter-spacing: 0.22em; font-size: 0.75rem; }
-  .dslider_body { margin-top: 20px; }
   .dslider_cta { padding: 12px 28px; }
 
   /* Featured destinations: one column, the two destinations one after the other. */
