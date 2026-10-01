@@ -14,7 +14,7 @@
 }
 .h01_logo { display: block; width: min(64vw, 620px); height: auto; overflow: visible; }
 /* Logo layers (components/logo.ts): the white tile with G and ALTS cut out (transparent), and the
-   white "Gulf" shown left of the tile. Nothing is filled dark: the letters show the clouds. */
+   white "Gulf" shown left of the tile. Nothing is filled dark: the letters show the map. */
 .h01_logo .logo_tile, .h01_logo .logo_word { fill: var(--text-inverse); }
 .h01_positioning {
   font-family: var(--body-font); font-size: clamp(1rem, 1.4vw, 1.25rem); font-weight: 400;

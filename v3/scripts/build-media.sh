@@ -2,7 +2,7 @@
 # Builds the V3 media set from the production sources in ../video concept and ../Website Material.
 #
 #   H01 Intro              no video: it sits on H02's first frame (its poster)
-#   H02 Dubai arrival      video concept/homepage/gulfalts-intro.mp4 → scrub, v02 (clouds → Gulf → Dubai)
+#   H02 Dubai arrival      video concept/homepage/gulfalts-new-intro.mp4 → scrub, v03 (the Gulf → Dubai coast)
 #   H11 Our approach       video concept/DCP/DCP-Video.mp4           → scrub, v01 (+ reduced-motion stills)
 #   H13 Our destinations   video concept/homepage/gulfalts-outro.mp4 → scrub, v02, played in reverse (pull-out)
 #   Images (H03, H05, H08) → scripts/build-images.mjs (AVIF + JPEG, responsive widths)
@@ -65,8 +65,10 @@ frames() {
 }
 
 if want h02; then
-  log "H02 Dubai arrival (homepage intro: clouds → Gulf → Dubai)"
-  scrub "$SRC/homepage/gulfalts-intro.mp4" h02-dubai-arrival v02 0.5 29 1.5:1.5:4:4
+  log "H02 Dubai arrival (homepage intro: the Gulf → Dubai coast)"
+  # 1920x1080 at its native 30 fps (426 frames, 14.2 s). The mobile crop sits right of centre,
+  # on the UAE coast early on and Downtown Dubai at the end.
+  scrub "$SRC/homepage/gulfalts-new-intro.mp4" h02-dubai-arrival v03 0.6 29 1.5:1.5:4:4
 fi
 
 if want h11; then

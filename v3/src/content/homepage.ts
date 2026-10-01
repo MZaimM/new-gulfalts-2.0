@@ -10,7 +10,7 @@ import type { AutoplayChapter, MediaSources, ResponsiveImage, ScrubChapter, Stat
  * Chapter codes keep the story-map numbering, so H06/H07, H09/H10 and H12 are simply absent
  * (removed in V3: their content now lives in H05, H08 and H11).
  *
- * Media versions: v02 = homepage intro / outro renders (H02, H13), v01 = production footage
+ * Media versions: v03 = new homepage intro (H02), v02 = homepage outro (H13), v01 = production footage
  * (H11), v00 = V2 placeholder (H04 manifesto only). All built by scripts/build-media.sh.
  */
 
@@ -28,7 +28,7 @@ const still = (name: string, frame: number, version: string) =>
 const image = (name: string, widths: number[], ratio: number): ResponsiveImage => ({ name, widths, ratio });
 
 // ---------------------------------------------------------------------------
-// H01 Intro — the logo animation over H02's opening frame (clouds), on a short pinned track.
+// H01 Intro — the logo animation over H02's opening frame (the Gulf), on a short pinned track.
 //   1. The Gulfalts logo animates in (components/reveals.ts); the header waits for it.
 //   2. First scroll: the logo slides out and H02's scrub takes over from the same frame.
 // The step is scroll-triggered but time-animated (CSS transitions) and reverses on the way up.
@@ -48,28 +48,28 @@ export const h01 = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// H02 Dubai Arrival — SCRUB (homepage intro: clouds → the Gulf coast → the Dubai map). Its last
-// frame is the first frame of the H13 outro, so the story opens and closes on the same map.
+// H02 Dubai Arrival — SCRUB (new homepage intro: the Gulf and the UAE coast → down onto Dubai →
+// along the coast from the Palms to Downtown).
 // ---------------------------------------------------------------------------
 export const h02 = {
   id: 'h02-dubai-arrival',
   code: 'H02',
   title: 'Dubai arrival',
   type: 'scrub',
-  media: media('h02-dubai-arrival', 'v02'),
-  duration: 6.58,
+  media: media('h02-dubai-arrival', 'v03'),
+  duration: 14.2,
   // Its last ~100vh is H04 wiping in over the final frame, so the track carries that too.
   track: { desktop: 440, mobile: 340 },
   // Dissolves in from H01's final state, which already shows this chapter's first frame.
   joinPrevious: true,
   // The last cue is the caption on the final frame; the others build the path on the left.
   cues: [
-    { at: 0.34, id: 'uae', label: 'UAE' },
-    { at: 0.69, id: 'dubai', label: 'Dubai' },
+    { at: 0.08, id: 'uae', label: 'UAE' },
+    { at: 0.52, id: 'dubai', label: 'Dubai' },
     { at: 0.86, id: 'caption', label: 'Dubai · United Arab Emirates' }
   ],
   copy: {
-    heading: 'From the clouds to Dubai'
+    heading: 'From the Gulf to Dubai'
   }
 } satisfies ScrubChapter & { copy: unknown };
 
@@ -210,8 +210,8 @@ export const h11 = {
 
 // ---------------------------------------------------------------------------
 // H13 Dubai Pull Out and Our Destinations — SCRUB (homepage outro, reversed)
-// Starts on the drone view over Al Quoz, pulls up into the map and lands on the Dubai map
-// (the same frame H02 ends on), where the directory and the destination markers appear.
+// Starts on the drone view over Al Quoz, pulls up into the map and lands on the Dubai map,
+// where the directory and the destination markers appear.
 // ---------------------------------------------------------------------------
 export const h13 = {
   id: 'h13-dubai-pull-out',

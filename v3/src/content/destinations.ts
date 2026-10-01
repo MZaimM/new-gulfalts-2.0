@@ -26,8 +26,8 @@ const alQuozTimes: CommuteTime[] = [
 ];
 
 /*
- * Markers sit on the H13 hold frame: the first frame of the homepage outro (the Dubai map), which
- * is also H02's last frame. Positions are the venues' Google Maps pins (Sept 2026) projected onto
+ * Markers sit on the H13 hold frame: the first frame of the homepage outro (the Dubai map).
+ * Positions are the venues' Google Maps pins (Sept 2026) projected onto
  * that frame with a homography fitted to OpenStreetMap roads and coastline (Sheikh Zayed Road,
  * Al Khail Road, their interchanges, the coast from the Palm to Jumeirah Bay), accurate to a few
  * pixels at 1920 wide. Pins: Creative Park 25.12257, 55.23549 · Fintech District 25.13684,

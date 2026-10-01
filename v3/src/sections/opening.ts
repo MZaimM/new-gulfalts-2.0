@@ -9,7 +9,7 @@ import { esc, show } from '../components/markup';
 
 /**
  * H01 sits on H02's opening frame and scrim, so when H02 dissolves in on top there is nothing
- * to see change. The shade keeps the white logo legible over the bright clouds and leaves
+ * to see change. The shade keeps the white logo legible over the bright map and leaves
  * with it. This frame is the first image on the page (the LCP), so it loads eagerly.
  */
 const h01Stage = () => `
