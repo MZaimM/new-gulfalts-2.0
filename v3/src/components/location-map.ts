@@ -9,16 +9,17 @@
  * the homepage: dot, leader label and hover card with drive times); they are handed to Mapbox and
  * their labels lined up in a column with leader lines. Without them, plain dots are drawn.
  *
- * Route mode (the Fintech District page, per gulfalts-mapbox-dev-instructions.md): when the panel
- * has `[data-route]` rows and the stage a `data-origin` venue with times, picking a key location
- * draws the road route from that venue and reframes the camera; one route at a time. Drive times
- * are the client's fixed copy; routes are precomputed geometry (src/content/routes.json).
+ * Route mode (venue pages, per gulfalts-mapbox-dev-instructions.md): when the panel has
+ * `[data-route]` rows and the stage a `data-origin` venue, picking a key location draws the road
+ * route from that venue and reframes the camera; one route at a time. Drive times are Mapbox ETAs
+ * and the routes their geometry, both precomputed (drive-times.json, routes.json).
  *
  * mapbox-gl (~540 kB gz) loads only once the visitor is part-way through H13 (`map-near` step),
  * or near the section under reduced motion.
  */
 import type { LngLatBounds, Map as MapboxMap } from 'mapbox-gl';
 import { destinationById } from '../content/destinations';
+import { driveTime } from '../content/drive-times';
 import { keyLocations, mapbox, mapCamera, mapVenues } from '../content/location-map';
 import type { KeyLocationId, LngLat, RouteSet } from '../content/types';
 import { spreadLabels } from '../lib/scroll-scrub';
@@ -50,7 +51,7 @@ export const initLocationMap = (section: HTMLElement, reduced: boolean) => {
   const origin = mapVenues.find(venue => venue.id === stage.dataset.origin);
 
   const rows = [...panel.querySelectorAll<HTMLButtonElement>('[data-route]')];
-  const routeMode = !!origin?.times && rows.length > 0;
+  const routeMode = !!origin && rows.length > 0;
   const status = panel.querySelector<HTMLElement>('[data-route-status]');
   const places = routeMode ? rows.map(row => row.dataset.route as KeyLocationId) : [];
   const venueMarkers = [...stage.querySelectorAll<HTMLElement>('[data-map-markers] .chapter_marker[data-destination]')];
@@ -174,7 +175,7 @@ export const initLocationMap = (section: HTMLElement, reduced: boolean) => {
     });
     if (status && origin) {
       status.textContent = id
-        ? `Route to ${keyLocations[id].name}: ${origin.times![id]} from ${destinationById(origin.id).fullName}.`
+        ? `Route to ${keyLocations[id].name}: ${driveTime(origin.id, id)} from ${destinationById(origin.id).fullName}.`
         : 'Route cleared.';
     }
     showRoute(id);
@@ -280,7 +281,7 @@ export const initLocationMap = (section: HTMLElement, reduced: boolean) => {
       element.className = 'map_place';
       element.tabIndex = -1;
       element.setAttribute('aria-hidden', 'true');
-      element.innerHTML = `<span class="map_place-label">${esc(keyLocations[id].name)} <span>${esc(origin!.times![id]!)}</span></span>`;
+      element.innerHTML = `<span class="map_place-label">${esc(keyLocations[id].name)} <span>${esc(driveTime(origin!.id, id))}</span></span>`;
       element.addEventListener('click', () => select(selected === id ? null : id));
       placeMarkers.set(id, element);
       new gl.Marker({ element }).setLngLat(keyLocations[id].coordinates).addTo(map!);

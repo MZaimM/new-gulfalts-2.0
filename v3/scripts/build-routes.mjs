@@ -1,8 +1,9 @@
 /*
- * Precomputes the H13 map routes (Mapbox Directions, driving profile) for every venue that has
- * drive times in src/content/location-map.ts, and writes the road geometry to
- * src/content/routes.json. Only the geometry is kept: the drive times on the page are the
- * client's fixed copy, never Mapbox's ETA.
+ * Precomputes the location-map routes with Mapbox Directions (driving profile: typical traffic,
+ * not the traffic at the moment the script runs) from every venue in src/content/location-map.ts
+ * to every key location, and writes:
+ *   src/content/drive-times.json  Mapbox's ETA in whole minutes (small; marker cards, route rows)
+ *   src/content/routes.json       the road geometry (loaded only by the route mode of the map)
  *
  *   npm run routes   (reads VITE_MAPBOX_TOKEN from v3/.env or the environment)
  */
@@ -12,7 +13,8 @@ import { keyLocations, mapVenues } from '../src/content/location-map.ts';
 const token = process.env.VITE_MAPBOX_TOKEN;
 if (!token) throw new Error('Set VITE_MAPBOX_TOKEN (v3/.env) to the Mapbox public token.');
 
-const out = new URL('../src/content/routes.json', import.meta.url);
+const routesFile = new URL('../src/content/routes.json', import.meta.url);
+const timesFile = new URL('../src/content/drive-times.json', import.meta.url);
 
 /** Douglas–Peucker in degrees; 0.00001° ≈ 1 m, invisible at any zoom the section uses. */
 const simplify = (points, tolerance = 0.00001) => {
@@ -34,9 +36,11 @@ const simplify = (points, tolerance = 0.00001) => {
 const round = ([lng, lat]) => [Number(lng.toFixed(6)), Number(lat.toFixed(6))];
 
 const routes = {};
-for (const venue of mapVenues.filter(item => item.times)) {
+const times = {};
+for (const venue of mapVenues) {
   routes[venue.id] = {};
-  for (const id of Object.keys(venue.times)) {
+  times[venue.id] = {};
+  for (const id of Object.keys(keyLocations)) {
     const to = keyLocations[id].coordinates;
     const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${venue.coordinates.join(',')};${to.join(',')}`
       + `?geometries=geojson&overview=full&access_token=${token}`;
@@ -46,9 +50,11 @@ for (const venue of mapVenues.filter(item => item.times)) {
     // Start and end on the exact pins; the route snaps to the nearest road in between.
     const line = [venue.coordinates, ...body.routes[0].geometry.coordinates, to].map(round);
     routes[venue.id][id] = simplify(line);
-    console.log(`${venue.id} → ${id}: ${line.length} → ${routes[venue.id][id].length} points`);
+    times[venue.id][id] = Math.max(1, Math.round(body.routes[0].duration / 60));
+    console.log(`${venue.id} → ${id}: ${times[venue.id][id]} min, ${line.length} → ${routes[venue.id][id].length} points`);
   }
 }
 
-await writeFile(out, `${JSON.stringify(routes)}\n`);
-console.log(`Wrote ${out.pathname}`);
+await writeFile(routesFile, `${JSON.stringify(routes)}\n`);
+await writeFile(timesFile, `${JSON.stringify(times, null, 2)}\n`);
+console.log(`Wrote ${decodeURIComponent(routesFile.pathname)} and drive-times.json`);

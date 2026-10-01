@@ -1,0 +1,30 @@
+{
+  "fintech-district": {
+    "difc": 19,
+    "downtown": 16,
+    "businessBay": 13,
+    "dubaiMarina": 20,
+    "dxb": 24
+  },
+  "creative-park": {
+    "difc": 19,
+    "downtown": 17,
+    "businessBay": 14,
+    "dubaiMarina": 15,
+    "dxb": 25
+  },
+  "v8-district": {
+    "difc": 17,
+    "downtown": 18,
+    "businessBay": 16,
+    "dubaiMarina": 13,
+    "dxb": 26
+  },
+  "motor-garten": {
+    "difc": 16,
+    "downtown": 16,
+    "businessBay": 17,
+    "dubaiMarina": 15,
+    "dxb": 24
+  }
+}

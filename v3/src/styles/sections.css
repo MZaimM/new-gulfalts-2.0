@@ -464,10 +464,11 @@
 .marker_card-time { display: grid; }
 .marker_card-place { font-size: 0.875rem; font-weight: 400; line-height: 1.35; }
 .marker_card-minutes { font-family: var(--heading-font); font-size: 1.125rem; line-height: 1.25; color: var(--burgundy); font-variant-numeric: tabular-nums; }
+/* Source note under the times: they are Mapbox estimates (driving, typical traffic). */
 .marker_card-flag {
   padding-top: 10px; border-top: 1px solid var(--line);
   font-size: 0.6875rem; font-weight: 500; letter-spacing: var(--eyebrow-tracking); text-transform: uppercase;
-  color: var(--burgundy);
+  color: var(--text-secondary);
 }
 .chapter_marker:is(.is-highlight, :hover, :focus-within) .marker_card-thumb { opacity: 1; transform: none; }
 .chapter_marker:is(.is-highlight, :hover, :focus-within) .marker_card-panel {

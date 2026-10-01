@@ -103,8 +103,8 @@ export interface Destination {
   url: string;
   location: string;
   preview?: string;
-  /** Drive times shown in the H13 map marker card. */
-  commute: { times: CommuteTime[]; status: StatStatus };
+  /** Mapbox drive times shown in the H13 map marker card. */
+  commute: CommuteTime[];
 }
 
 export interface CommuteTime {
@@ -122,14 +122,15 @@ export interface KeyLocation {
   coordinates: LngLat;
 }
 
-/** A venue on the H13 location map. With `times` it is a route origin. */
+/** A venue on the location map (and a route origin). */
 export interface MapVenue {
   /** Matches a Destination id. */
   id: string;
   coordinates: LngLat;
-  /** Fixed marketing drive times per key location, shown exactly as written. */
-  times?: Partial<Record<KeyLocationId, string>>;
 }
 
-/** Precomputed road geometry: venue id → key location id → line coordinates. */
+/** Mapbox ETA in minutes: venue id → key location id → minutes. */
+export type DriveTimes = Record<string, Partial<Record<KeyLocationId, number>>>;
+
+/** Precomputed road geometry (Mapbox Directions): venue id → key location id → line coordinates. */
 export type RouteSet = Record<string, Partial<Record<KeyLocationId, LngLat[]>>>;

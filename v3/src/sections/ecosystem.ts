@@ -43,9 +43,9 @@ const markerCard = (destination: Destination) => `
               <span class="marker_card-panel">
                 <span class="marker_card-name" aria-hidden="true">${esc(destination.fullName)}</span>
                 <span class="marker_card-times">
-                  ${destination.commute.times.map(time => `
+                  ${destination.commute.map(time => `
                   <span class="marker_card-time"><span class="marker_card-place">${esc(time.place)}</span> <span class="marker_card-minutes">${time.minutes} minutes</span></span>`).join('')}
-                  ${destination.commute.status === 'unconfirmed' ? '<span class="marker_card-flag" title="Indicative drive times, pending confirmation by Gulfalts">To be confirmed</span>' : ''}
+                  <span class="marker_card-flag" title="Estimated drive times, Mapbox Directions (typical traffic)">Mapbox estimate</span>
                 </span>
               </span>
             </span>`;

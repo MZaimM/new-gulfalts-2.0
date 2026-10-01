@@ -1,15 +1,15 @@
 /*
- * H13 location map (Mapbox). Brief: ../gulfalts-mapbox-dev-instructions.md (client, October 2026).
+ * Location map (Mapbox). Brief: ../gulfalts-mapbox-dev-instructions.md (client, October 2026).
  *
  * Coordinates are Mapbox order: [longitude, latitude].
- * Drive times are fixed marketing copy from the client and are shown exactly as written; they are
- * never replaced by a Mapbox ETA. Route geometry is precomputed once by `npm run routes`
- * (scripts/build-routes.mjs → src/content/routes.json), so the page makes no Directions calls.
+ * Drive times are Mapbox Directions ETAs (driving, typical traffic), not the brief's fixed copy:
+ * `npm run routes` (scripts/build-routes.mjs) computes them for every venue × key location into
+ * drive-times.json (read through drive-times.ts), with the route geometry in routes.json, so the
+ * page makes no Directions calls.
  *
- * To add a venue as a route origin: add an entry to `mapVenues` with its coordinates and times,
- * then run `npm run routes`. The map, panel and route switching pick it up without code changes.
+ * To add a venue: add it to `mapVenues` (and destinations.ts), then run `npm run routes`.
  */
-import type { MapVenue, KeyLocation, KeyLocationId } from './types';
+import type { KeyLocation, KeyLocationId, MapVenue } from './types';
 
 /**
  * Custom style supplied by the client (account gius03). The public access token is not in the
@@ -37,26 +37,12 @@ export const keyLocations: Record<KeyLocationId, KeyLocation> = {
 };
 
 /**
- * Gulfalts venues on the map. Every venue gets a marker; only venues with `times` are route
- * origins. Fintech District uses the client's exact coordinates; the others are their Google Maps
- * pins (September 2026, see destinations.ts).
+ * Gulfalts venues on the map; every one is also a route origin. Fintech District uses the client's
+ * exact coordinates; the others are their Google Maps pins (September 2026).
  */
 export const mapVenues: MapVenue[] = [
-  {
-    id: 'fintech-district',
-    coordinates: [55.25108498757604, 25.13674033759347],
-    times: {
-      difc: '12 minutes',
-      downtown: '14 minutes',
-      businessBay: '10 minutes',
-      dubaiMarina: '10 minutes',
-      dxb: '20 minutes'
-    }
-  },
+  { id: 'fintech-district', coordinates: [55.25108498757604, 25.13674033759347] },
   { id: 'creative-park', coordinates: [55.23549, 25.12257] },
   { id: 'v8-district', coordinates: [55.23079, 25.11879] },
   { id: 'motor-garten', coordinates: [55.22356, 25.13056] }
 ];
-
-/** The venue the homepage map routes from. */
-export const mapOrigin = 'fintech-district';

@@ -12,7 +12,7 @@ npm run dev        # http://127.0.0.1:5175
 npm run build      # typecheck + build ke dist/
 npm run preview    # http://127.0.0.1:4175
 npm run media      # render ulang semua video + gambar (butuh ffmpeg)
-npm run routes     # hitung ulang geometri rute peta H13 (Mapbox Directions)
+npm run routes     # hitung ulang rute + waktu tempuh peta H13 (Mapbox Directions)
 ```
 
 ## Perubahan dari V2
@@ -68,7 +68,7 @@ Data di `src/content/location-map.ts`, perilaku di `components/location-map.ts`,
 
 - **Alur**: video outro di-scrub sampai frame terakhir (peta Dubai, top-down). Pada step `map` (progress 0.6) peta Mapbox live dissolve masuk di atas frame itu lalu kamera turun dari top-down ke overview miring (pitch 52°, bearing −24°) yang membingkai keempat venue dalam konteks Dubai. Navbar berganti ke ink selama peta tampil. Bila Mapbox gagal dimuat, frame terakhir video dan directory tetap tampil.
 - **Marker venue**: dirender statis di HTML (`[data-map-markers]`) lalu diserahkan ke Mapbox, jadi tetap menempel di koordinat venue. Label disusun dalam satu kolom di kiri dengan garis penghubung (`spreadLabels`, dihitung ulang saat kamera bergerak).
-- **Card waktu tempuh**: hover/fokus marker, atau hover baris directory, membuka card: titik membesar menjadi foto venue, nama dalam pill ink, dan waktu tempuh di card off-white dengan angka burgundy. Card terbuka ke bawah, atau ke atas (`.is-up`) bila tidak muat. Data di `commute` (`src/content/destinations.ts`): waktu tempuh Dubai Fintech District dari referensi klien; venue lain memakai angka yang sama sebagai nilai indikatif dan diberi label "To be confirmed" sampai Gulfalts mengirim angkanya.
+- **Card waktu tempuh**: hover/fokus marker, atau hover baris directory, membuka card: titik membesar menjadi foto venue, nama dalam pill ink, dan waktu tempuh di card off-white dengan angka burgundy. Card terbuka ke bawah, atau ke atas (`.is-up`) bila tidak muat. Waktu tempuh tiap venue adalah **perkiraan Mapbox** (lihat "Waktu tempuh" di bawah), dengan catatan "Mapbox estimate" di card.
 - **Mobile**: peta di atas, directory di bawah (peta berhenti di tepi atas directory agar logo dan atribusi Mapbox terlihat). Marker hanya titik (tap → halaman venue); nama ada di directory.
 - **Scroll tidak dibajak**: zoom scroll mati, pan hanya untuk mouse. **Reduced motion**: peta statis tanpa animasi kamera.
 - **Loading**: `mapbox-gl` (±540 KB gzip) baru dimuat saat pengunjung sudah 25% masuk H13 (step `map-near`).
@@ -76,7 +76,11 @@ Data di `src/content/location-map.ts`, perilaku di `components/location-map.ts`,
 
 ### Map distance (untuk halaman Fintech District)
 
-Brief klien: `../gulfalts-mapbox-dev-instructions.md`. Interaksi rute sudah ada di `components/location-map.ts` (mode rute) tapi tidak dipakai di homepage. Aktif bila stage peta punya `data-origin="fintech-district"` dan panel (`[data-map-panel]`) berisi tombol `<button class="route_row" data-route="difc" aria-pressed="false">` per lokasi kunci (+ `<p data-route-status aria-live="polite">`). Klik → rute jalan dari venue asal digambar (burgundy + casing cream), kamera `fitBounds` ke rute, satu rute saja. Waktu tempuh adalah copy tetap klien (`mapVenues[].times`), bukan ETA Mapbox. Geometri rute dihitung sekali dengan Mapbox Directions ke `src/content/routes.json`; jalankan `npm run routes` setelah mengubah koordinat atau menambah venue asal.
+Brief klien: `../gulfalts-mapbox-dev-instructions.md`. Interaksi rute sudah ada di `components/location-map.ts` (mode rute) tapi tidak dipakai di homepage. Aktif bila stage peta punya `data-origin="fintech-district"` dan panel (`[data-map-panel]`) berisi tombol `<button class="route_row" data-route="difc" aria-pressed="false">` per lokasi kunci (+ `<p data-route-status aria-live="polite">`). Klik → rute jalan dari venue asal digambar (burgundy + casing cream), kamera `fitBounds` ke rute, satu rute saja. Berlaku untuk keempat venue (rute dan waktu tempuh sudah dihitung semua). Tampilkan waktu tempuh di tombol dengan `driveTime(venue, lokasi)` dari `src/content/drive-times.ts`.
+
+### Waktu tempuh
+
+Semua waktu tempuh (card marker homepage dan mode rute) adalah **ETA Mapbox Directions** (profil `driving`, lalu lintas tipikal), dibulatkan ke menit, untuk keempat venue × lima lokasi kunci. Ini menggantikan angka tetap dari brief klien (Fintech District: DIFC 12, Downtown 14, Business Bay 10, Dubai Marina 10, DXB 20 menit), atas instruksi Oktober 2026, meskipun brief meminta angka tetap. `npm run routes` menghitung ulang `src/content/drive-times.json` (menit) dan `src/content/routes.json` (geometri) sekaligus; jalankan setelah mengubah koordinat atau menambah venue. Halaman tidak memanggil Directions API saat dibuka, jadi angka hanya berubah saat skrip dijalankan.
 
 ## Peta chapter
 

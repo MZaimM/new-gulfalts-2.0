@@ -1,4 +1,6 @@
-import type { CommuteTime, Destination, DestinationStat } from './types';
+import { driveTimes } from './drive-times';
+import { keyLocations } from './location-map';
+import type { CommuteTime, Destination, DestinationStat, KeyLocationId } from './types';
 
 /*
  * Destination data used by H05, H13 (map markers and directory) and H14. V8 District and Motor
@@ -12,18 +14,11 @@ export const venueBase = 'https://www.gulfalts.com/venue';
 /** No all-destinations page exists yet on gulfalts.com; the live homepage lists every venue. */
 export const allDestinationsUrl = 'https://www.gulfalts.com/';
 
-/*
- * Drive times for the H13 map marker cards. Dubai Fintech District's come from the client's
- * reference (September 2026). The other venues have no figures yet: they borrow the Al Quoz
- * times as indicative values and the card flags them "To be confirmed".
- */
-const alQuozTimes: CommuteTime[] = [
-  { place: 'DIFC', minutes: 12 },
-  { place: 'Downtown Dubai', minutes: 14 },
-  { place: 'Business Bay', minutes: 10 },
-  { place: 'Dubai Marina', minutes: 10 },
-  { place: 'DXB Airport', minutes: 20 }
-];
+/** Mapbox drive times from a venue to each key location, for the H13 map marker cards. */
+const commute = (venue: string): CommuteTime[] =>
+  (Object.keys(keyLocations) as KeyLocationId[])
+    .filter(place => driveTimes[venue]?.[place] !== undefined)
+    .map(place => ({ place: keyLocations[place].name, minutes: driveTimes[venue]![place]! }));
 
 /* Map pins (Google Maps, September 2026) for the H13 map are in location-map.ts. */
 export const destinations: Destination[] = [
@@ -37,7 +32,7 @@ export const destinations: Destination[] = [
     url: `${venueBase}/dubai-creative-park`,
     location: 'Al Quoz · Dubai',
     preview: '/media/images/preview-creative-park-320.jpg',
-    commute: { times: alQuozTimes, status: 'unconfirmed' }
+    commute: commute('creative-park')
   },
   {
     id: 'fintech-district',
@@ -49,7 +44,7 @@ export const destinations: Destination[] = [
     url: `${venueBase}/fintech-district`,
     location: 'Al Quoz · Dubai',
     preview: '/media/images/preview-fintech-district-320.jpg',
-    commute: { times: alQuozTimes, status: 'confirmed' }
+    commute: commute('fintech-district')
   },
   {
     id: 'v8-district',
@@ -61,7 +56,7 @@ export const destinations: Destination[] = [
     url: `${venueBase}/v8-district`,
     location: 'Dubai',
     preview: '/media/images/preview-v8-district-320.jpg',
-    commute: { times: alQuozTimes, status: 'unconfirmed' }
+    commute: commute('v8-district')
   },
   {
     id: 'motor-garten',
@@ -73,7 +68,7 @@ export const destinations: Destination[] = [
     url: `${venueBase}/motor-garten`,
     location: 'Dubai',
     preview: '/media/images/preview-motor-garten-320.jpg',
-    commute: { times: alQuozTimes, status: 'unconfirmed' }
+    commute: commute('motor-garten')
   }
 ];
 
