@@ -260,9 +260,9 @@ const LABEL_OFFSET = 56;
  * Markers that sit close together (H13: four venues within a few hundred metres of each other in
  * Al Quoz) keep their dots on the exact spot, and move their labels into one column to the left,
  * in the dots' top-to-bottom order, each tied to its dot by a leader line (--lx/--ly: the label's
- * right edge relative to the dot).
+ * right edge relative to the dot). Also used for the venue markers on the H13 Mapbox map.
  */
-const spreadLabels = (placed: PlacedMarker[]) => {
+export const spreadLabels = (placed: PlacedMarker[]) => {
   if (!placed.length) return;
   const sorted = [...placed].sort((a, b) => a.top - b.top);
   const column = Math.min(...sorted.map(item => item.left)) - LABEL_OFFSET;

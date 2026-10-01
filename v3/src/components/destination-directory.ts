@@ -1,5 +1,5 @@
 /*
- * H13: hovering or focusing a destination row highlights its marker on the aerial (which opens
+ * H13: hovering or focusing a destination row highlights its marker on the map (which opens
  * its card) and swaps the preview still. Touch devices simply follow the links.
  */
 

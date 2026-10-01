@@ -1,8 +1,8 @@
 import type { CommuteTime, Destination, DestinationStat } from './types';
 
 /*
- * Destination data used by H05, H13 and H14. V8 District and Motor Garten copy and previews follow
- * gulfalts.com (category "Specialized Commercial Facilities").
+ * Destination data used by H05, H13 (map markers and directory) and H14. V8 District and Motor
+ * Garten copy and previews follow gulfalts.com (category "Specialized Commercial Facilities").
  * Figures come from the client's V3 brief (September 2026). Any figure set to `unconfirmed`
  * renders with a visible "To be confirmed" flag until Gulfalts verifies it.
  */
@@ -13,7 +13,7 @@ export const venueBase = 'https://www.gulfalts.com/venue';
 export const allDestinationsUrl = 'https://www.gulfalts.com/';
 
 /*
- * Drive times for the H13 marker cards. Dubai Fintech District's come from the client's
+ * Drive times for the H13 map marker cards. Dubai Fintech District's come from the client's
  * reference (September 2026). The other venues have no figures yet: they borrow the Al Quoz
  * times as indicative values and the card flags them "To be confirmed".
  */
@@ -25,14 +25,7 @@ const alQuozTimes: CommuteTime[] = [
   { place: 'DXB Airport', minutes: 20 }
 ];
 
-/*
- * Markers sit on the H13 hold frame: the first frame of the homepage outro (the Dubai map).
- * Positions are the venues' Google Maps pins (Sept 2026) projected onto
- * that frame with a homography fitted to OpenStreetMap roads and coastline (Sheikh Zayed Road,
- * Al Khail Road, their interchanges, the coast from the Palm to Jumeirah Bay), accurate to a few
- * pixels at 1920 wide. Pins: Creative Park 25.12257, 55.23549 · Fintech District 25.13684,
- * 55.25110 · Motör Garten 25.13056, 55.22356 · V8 District 25.11879, 55.23079.
- */
+/* Map pins (Google Maps, September 2026) for the H13 map are in location-map.ts. */
 export const destinations: Destination[] = [
   {
     id: 'creative-park',
@@ -44,7 +37,6 @@ export const destinations: Destination[] = [
     url: `${venueBase}/dubai-creative-park`,
     location: 'Al Quoz · Dubai',
     preview: '/media/images/preview-creative-park-320.jpg',
-    marker: { x: 0.5894, y: 0.4921, xMobile: 0.593 },
     commute: { times: alQuozTimes, status: 'unconfirmed' }
   },
   {
@@ -57,7 +49,6 @@ export const destinations: Destination[] = [
     url: `${venueBase}/fintech-district`,
     location: 'Al Quoz · Dubai',
     preview: '/media/images/preview-fintech-district-320.jpg',
-    marker: { x: 0.615, y: 0.4496, xMobile: 0.674 },
     commute: { times: alQuozTimes, status: 'confirmed' }
   },
   {
@@ -70,7 +61,6 @@ export const destinations: Destination[] = [
     url: `${venueBase}/v8-district`,
     location: 'Dubai',
     preview: '/media/images/preview-v8-district-320.jpg',
-    marker: { x: 0.5817, y: 0.5033, xMobile: 0.569 },
     commute: { times: alQuozTimes, status: 'unconfirmed' }
   },
   {
@@ -83,7 +73,6 @@ export const destinations: Destination[] = [
     url: `${venueBase}/motor-garten`,
     location: 'Dubai',
     preview: '/media/images/preview-motor-garten-320.jpg',
-    marker: { x: 0.571, y: 0.4683, xMobile: 0.535 },
     commute: { times: alQuozTimes, status: 'unconfirmed' }
   }
 ];

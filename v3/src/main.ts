@@ -15,6 +15,7 @@ import { prefersReducedMotion } from './lib/viewport';
 import { initAnchors, initFooter, initHeader, initMenu, initNavDropdown, initNavState } from './components/site-chrome';
 import { initReveals, playBrandReveal } from './components/reveals';
 import { initDirectory } from './components/destination-directory';
+import { initLocationMap } from './components/location-map';
 import { initContact } from './components/contact';
 import { initSlider } from './components/slider';
 
@@ -130,6 +131,7 @@ initFooter(lenis);
 initContact(lenis);
 initSlider(reduced);
 initDirectory(document.querySelector<HTMLElement>('.h13')!);
+initLocationMap(document.querySelector<HTMLElement>('.h13')!, reduced);
 
 // ---------------------------------------------------------------------------
 // Motion

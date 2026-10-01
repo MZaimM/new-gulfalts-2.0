@@ -17,5 +17,9 @@ const homepageSections = (): Plugin => ({
 
 export default defineConfig({
   plugins: [homepageSections()],
-  build: { assetsInlineLimit: 0 }
+  build: {
+    assetsInlineLimit: 0,
+    // mapbox-gl is one ~1.9 MB chunk, loaded on demand by the H13 location map only.
+    chunkSizeWarningLimit: 2000
+  }
 });

@@ -25,11 +25,16 @@ export const initHeader = (hero: HTMLElement, logoDone: Promise<void>) => {
 /**
  * Watches a one-pixel line through the middle of the header and marks the header
  * `.is-on-light` while a light section (static chapters on the off-white canvas) passes under it.
+ * `[data-light-stage]` elements (the H13 map) count as light only while they carry `.is-light`.
  */
 const initHeaderTone = (header: HTMLElement) => {
-  const light = [...document.querySelectorAll<HTMLElement>('.chapter_component.is-static')];
+  const light = [...document.querySelectorAll<HTMLElement>('.chapter_component.is-static, [data-light-stage]')];
   if (!light.length) return;
-  const under = new Set<Element>();
+  const under = new Set<HTMLElement>();
+  const isLight = (element: HTMLElement) => !element.hasAttribute('data-light-stage') || element.classList.contains('is-light');
+  const apply = () => header.classList.toggle('is-on-light', [...under].some(isLight));
+  const stages = new MutationObserver(apply);
+  light.filter(element => element.hasAttribute('data-light-stage')).forEach(element => stages.observe(element, { attributeFilter: ['class'] }));
   let observer: IntersectionObserver | null = null;
   const observe = () => {
     observer?.disconnect();
@@ -37,10 +42,10 @@ const initHeaderTone = (header: HTMLElement) => {
     const middle = Math.round(header.offsetHeight / 2);
     observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) under.add(entry.target);
-        else under.delete(entry.target);
+        if (entry.isIntersecting) under.add(entry.target as HTMLElement);
+        else under.delete(entry.target as HTMLElement);
       });
-      header.classList.toggle('is-on-light', under.size > 0);
+      apply();
     }, { rootMargin: `-${middle}px 0px -${Math.max(0, window.innerHeight - middle - 1)}px 0px` });
     light.forEach(section => observer!.observe(section));
   };

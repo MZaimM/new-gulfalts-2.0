@@ -103,12 +103,7 @@ export interface Destination {
   url: string;
   location: string;
   preview?: string;
-  /**
-   * Marker position on the H13 hold frame, in video-frame coordinates (0–1). The mobile file is
-   * a 608×1080 crop of that frame, so it has its own x.
-   */
-  marker: { x: number; y: number; xMobile: number };
-  /** Drive times shown in the H13 marker card. */
+  /** Drive times shown in the H13 map marker card. */
   commute: { times: CommuteTime[]; status: StatStatus };
 }
 
@@ -116,3 +111,25 @@ export interface CommuteTime {
   place: string;
   minutes: number;
 }
+
+/** [longitude, latitude], Mapbox order. */
+export type LngLat = [number, number];
+
+export type KeyLocationId = 'difc' | 'downtown' | 'businessBay' | 'dubaiMarina' | 'dxb';
+
+export interface KeyLocation {
+  name: string;
+  coordinates: LngLat;
+}
+
+/** A venue on the H13 location map. With `times` it is a route origin. */
+export interface MapVenue {
+  /** Matches a Destination id. */
+  id: string;
+  coordinates: LngLat;
+  /** Fixed marketing drive times per key location, shown exactly as written. */
+  times?: Partial<Record<KeyLocationId, string>>;
+}
+
+/** Precomputed road geometry: venue id → key location id → line coordinates. */
+export type RouteSet = Record<string, Partial<Record<KeyLocationId, LngLat[]>>>;

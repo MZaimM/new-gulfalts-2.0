@@ -1,6 +1,6 @@
 /*
  * Closing act: H11 Our approach (raw space to living destination) →
- * H13 Dubai Pull Out and Our Destinations → H14 Next Destination.
+ * H13 Dubai Pull Out, the location map and Our Destinations → H14 Next Destination.
  * V3 drops H12: its four words (architecture, operators, experiences, community) are H11's layers.
  */
 import { h11, h13, h14 } from '../content/homepage';
@@ -34,8 +34,8 @@ export const renderH11 = () => {
 };
 
 /**
- * Hover / focus card on an H13 marker: the dot opens into a photo of the venue, with its name and
- * drive times beside it. It lives inside the marker link, so moving onto it keeps it open.
+ * Hover / focus card on an H13 map marker: the dot opens into a photo of the venue, with its name
+ * and drive times beside it. It lives inside the marker link, so moving onto it keeps it open.
  */
 const markerCard = (destination: Destination) => `
             <span class="marker_card" id="marker-card-${destination.id}">
@@ -50,31 +50,43 @@ const markerCard = (destination: Destination) => `
               </span>
             </span>`;
 
+/*
+ * H13: the outro pulls out from Al Quoz to the Dubai map; on its last frame the live Mapbox map
+ * (components/location-map.ts) dissolves in at the `map` step and holds with the directory.
+ * The venue markers ship here as static HTML (hidden) and are handed to Mapbox once the map
+ * loads; if it never does, the directory alone still lists every destination.
+ */
 export const renderH13 = () => {
   const [, alQuoz, dubai] = h13.cues;
-  const hold = h13.videoSpan[1] + 0.03;
+  const hold = h13.videoSpan[1];
   return scrubChapter({
     chapter: h13,
     className: 'h13',
     labelledBy: 'h13-title',
     scrim: 'soft',
+    // map-near: start loading Mapbox while the pull-out plays; map: dissolve it in.
+    steps: { 'map-near': 0.25, map: hold },
+    stage: `
+      <div class="h13_map" data-location-map data-light-stage>
+        <div class="h13_map-canvas" role="img" aria-label="Map of Dubai showing the four Gulfalts destinations in Al Quoz"></div>
+        <div class="h13_markers" hidden data-map-markers>
+          ${destinations.map(destination => `
+          <div class="chapter_marker" data-destination="${destination.id}">
+            <a href="${destination.url}" ${externalLink} aria-label="${esc(destination.fullName)}" aria-describedby="marker-card-${destination.id}">
+              <span class="chapter_marker-dot" aria-hidden="true"></span>
+              <span class="chapter_marker-leader" aria-hidden="true"></span>
+              <span class="chapter_marker-label"><span aria-hidden="true">${destination.index}</span> ${esc(destination.name)}</span>
+              ${markerCard(destination)}
+            </a>
+          </div>`).join('')}
+        </div>
+      </div>`,
     overlay: `
       <div class="h13_places" aria-hidden="true" ${show(0, hold - 0.02)}>
         <p class="h13_place" data-cue="${alQuoz.id}">${esc(alQuoz.label)}</p>
         <p class="h13_place" data-cue="${dubai.id}">${esc(dubai.label)}</p>
       </div>
-      <ul class="chapter_markers h13_markers" ${show(hold)} aria-label="Destination markers" data-leaders>
-        ${destinations.map(destination => `
-        <li class="chapter_marker" data-x="${destination.marker.x}" data-y="${destination.marker.y}" data-x-mobile="${destination.marker.xMobile}" data-destination="${destination.id}">
-          <a href="${destination.url}" ${externalLink} aria-label="${esc(destination.fullName)}" aria-describedby="marker-card-${destination.id}">
-            <span class="chapter_marker-dot" aria-hidden="true"></span>
-            <span class="chapter_marker-leader" aria-hidden="true"></span>
-            <span class="chapter_marker-label"><span aria-hidden="true">${destination.index}</span> ${esc(destination.name)}</span>
-            ${markerCard(destination)}
-          </a>
-        </li>`).join('')}
-      </ul>
-      <div class="h13_directory" ${show(hold + 0.02)} data-marker-avoid>
+      <div class="h13_directory" ${show(hold + 0.02)} data-map-panel>
         <p class="chapter_eyebrow">${esc(h13.copy.eyebrow)}</p>
         <h2 class="feature-heading h13_heading" id="h13-title">${esc(h13.copy.heading)}</h2>
         <ol class="destination_directory">

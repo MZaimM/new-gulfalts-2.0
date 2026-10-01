@@ -223,9 +223,10 @@ export const h13 = {
   reverse: true,
   joinPrevious: true,
   track: { desktop: 400, mobile: 320 },
-  // The pull-out plays over the first 60% of the track; the directory sits on the hold frame.
+  // The pull-out plays over the first 60% of the track; at its last frame (the Dubai map) the
+  // live Mapbox map dissolves in and holds for the rest, with the directory.
   videoSpan: [0, 0.6],
-  // Menu / nav links land on the hold frame with the directory and markers showing.
+  // Menu / nav links land on the map with the directory and markers showing.
   anchorProgress: 0.85,
   cues: [
     { at: 0, id: 'exterior', label: 'Destination' },

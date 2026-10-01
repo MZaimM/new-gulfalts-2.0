@@ -12,6 +12,7 @@ npm run dev        # http://127.0.0.1:5175
 npm run build      # typecheck + build ke dist/
 npm run preview    # http://127.0.0.1:4175
 npm run media      # render ulang semua video + gambar (butuh ffmpeg)
+npm run routes     # hitung ulang geometri rute peta H13 (Mapbox Directions)
 ```
 
 ## Perubahan dari V2
@@ -29,7 +30,7 @@ npm run media      # render ulang semua video + gambar (butuh ffmpeg)
 | 9 | H09 journey, H10 snapshot | Dihapus |
 | 10 | H11 Our approach | Video diganti `video concept/DCP/DCP-Video.mp4` (32 dtk), 1080p, cue disesuaikan |
 | 11 | H12 curation | Dihapus; H13 Our destinations dipertahankan |
-| 11 | H13 Our destinations | Video `video concept/homepage/gulfalts-outro.mp4` (frame 0–141, diputar mundur: drone di atas Al Quoz → peta Dubai). Marker presisi dari pin Google Maps (lihat "Marker H13"), label berjejer di kiri dengan garis penghubung; hover/fokus marker (atau baris directory) membuka card detail: foto venue, nama, dan waktu tempuh |
+| 11 | H13 Our destinations | Video `video concept/homepage/gulfalts-outro.mp4` (frame 0–141, diputar mundur: drone di atas Al Quoz → peta Dubai). Di frame terakhir **peta Mapbox live** muncul otomatis (lihat "Peta lokasi H13") dengan marker keempat venue; label berjejer di kiri dengan garis penghubung; hover/fokus marker (atau baris directory) membuka card detail: foto venue, nama, dan waktu tempuh |
 
 ## Style
 
@@ -45,7 +46,7 @@ Mengikuti style guide gulfalts.com (https://www.gulfalts.com/style/style-guide),
 
 - **Navbar**: minimalis dan transparan di seluruh halaman (logo, Destinations, Inquire, Menu) dengan gradasi tipis di atas footage. Di atas section terang (chapter `.is-static` di canvas off-white) berganti ke ink: logo gelap, tombol Inquire ink (`initHeaderTone` di `components/site-chrome.ts`).
 - **Navbar desktop**: `Destinations ▾` (dropdown: Creative Park, Fintech District, All destinations) + tombol `Inquire`. Dropdown terbuka lewat hover, klik, atau keyboard (Arrow Down masuk ke daftar, Escape menutup); `Destinations` dan item submenu diberi `aria-current` saat section-nya terlihat.
-- **Menu full-screen**: Home, Destinations, Our approach. `Destinations` (dan "All destinations" di dropdown) mendarat di H13 saat directory + marker sudah tampil (`anchorProgress: 0.85`).
+- **Menu full-screen**: Home, Destinations, Our approach. `Destinations` (dan "All destinations" di dropdown) mendarat di H13 saat peta, directory, dan marker sudah tampil (`anchorProgress: 0.85`).
 - **The Firm** hanya ada di footer.
 - **Contact drawer**: `Inquire` (navbar) dan `Contact` (footer) membuka panel putih dari kanan seperti gulfalts.com: Get in Touch, Contact Form (Full Name, Phone Number, Email Address, jenis inquiry dengan 5 opsi yang sama), Submit Inquiry. Validasi + state loading/berhasil/gagal ada. **Belum mengirim data**: `CONTACT_ENDPOINT` di `src/components/contact.ts` masih `null`, jadi setelah submit pengunjung diminta email ke info@gulfalts.com. Isi endpoint (mis. Netlify Forms atau backend lain) untuk mengaktifkan.
 
@@ -61,9 +62,21 @@ Markup di `components/destination-slider.ts`, perilaku di `components/slider.ts`
 - **Navigasi**: panah, tab (Arrow Left/Right, Home, End), swipe di lingkaran. Klik foto atau CTA membesar lingkaran memenuhi layar lalu membuka halaman venue.
 - Aksen emas (`--sand`, #d8b98f) mengikuti referensi, tidak ada di style guide gulfalts.com. Copy Fintech District (pilar dan kalimat) masih usulan, perlu konfirmasi klien.
 
-## H13 marker card
+## Peta lokasi H13 (Mapbox)
 
-Hover/fokus marker, atau hover baris directory, membuka card: titik membesar menjadi foto venue, nama dalam pill ink, dan waktu tempuh di card off-white dengan angka burgundy (warna style guide). Card terbuka ke bawah, atau ke atas (`.is-up`) bila tidak muat. Data di `commute` (`src/content/destinations.ts`): waktu tempuh Dubai Fintech District dari referensi klien; venue lain memakai angka yang sama sebagai nilai indikatif dan diberi label "To be confirmed" sampai Gulfalts mengirim angkanya.
+Data di `src/content/location-map.ts`, perilaku di `components/location-map.ts`, card + directory di `components/destination-directory.ts`.
+
+- **Alur**: video outro di-scrub sampai frame terakhir (peta Dubai, top-down). Pada step `map` (progress 0.6) peta Mapbox live dissolve masuk di atas frame itu lalu kamera turun dari top-down ke overview miring (pitch 52°, bearing −24°) yang membingkai keempat venue dalam konteks Dubai. Navbar berganti ke ink selama peta tampil. Bila Mapbox gagal dimuat, frame terakhir video dan directory tetap tampil.
+- **Marker venue**: dirender statis di HTML (`[data-map-markers]`) lalu diserahkan ke Mapbox, jadi tetap menempel di koordinat venue. Label disusun dalam satu kolom di kiri dengan garis penghubung (`spreadLabels`, dihitung ulang saat kamera bergerak).
+- **Card waktu tempuh**: hover/fokus marker, atau hover baris directory, membuka card: titik membesar menjadi foto venue, nama dalam pill ink, dan waktu tempuh di card off-white dengan angka burgundy. Card terbuka ke bawah, atau ke atas (`.is-up`) bila tidak muat. Data di `commute` (`src/content/destinations.ts`): waktu tempuh Dubai Fintech District dari referensi klien; venue lain memakai angka yang sama sebagai nilai indikatif dan diberi label "To be confirmed" sampai Gulfalts mengirim angkanya.
+- **Mobile**: peta di atas, directory di bawah (peta berhenti di tepi atas directory agar logo dan atribusi Mapbox terlihat). Marker hanya titik (tap → halaman venue); nama ada di directory.
+- **Scroll tidak dibajak**: zoom scroll mati, pan hanya untuk mouse. **Reduced motion**: peta statis tanpa animasi kamera.
+- **Loading**: `mapbox-gl` (±540 KB gzip) baru dimuat saat pengunjung sudah 25% masuk H13 (step `map-near`).
+- **Token**: style `gius03/cmuolk2l0005001sk1j6jg3ku` dari klien. Public token **tidak ada di repo** (GitHub push protection menolaknya): isi `VITE_MAPBOX_TOKEN=pk.…` di `v3/.env` (di-ignore git) untuk lokal, dan di environment variables Webflow Cloud untuk build produksi. Tanpa token peta tidak dimuat; frame terakhir video dan directory tetap tampil. Token dari klien ada di `../gulfalts-mapbox-dev-instructions.md`. Sebaiknya token dibatasi (URL restriction) ke domain produksi, domain Webflow Cloud, dan `localhost`/`127.0.0.1`.
+
+### Map distance (untuk halaman Fintech District)
+
+Brief klien: `../gulfalts-mapbox-dev-instructions.md`. Interaksi rute sudah ada di `components/location-map.ts` (mode rute) tapi tidak dipakai di homepage. Aktif bila stage peta punya `data-origin="fintech-district"` dan panel (`[data-map-panel]`) berisi tombol `<button class="route_row" data-route="difc" aria-pressed="false">` per lokasi kunci (+ `<p data-route-status aria-live="polite">`). Klik → rute jalan dari venue asal digambar (burgundy + casing cream), kamera `fitBounds` ke rute, satu rute saja. Waktu tempuh adalah copy tetap klien (`mapVenues[].times`), bukan ETA Mapbox. Geometri rute dihitung sekali dengan Mapbox Directions ke `src/content/routes.json`; jalankan `npm run routes` setelah mengubah koordinat atau menambah venue asal.
 
 ## Peta chapter
 
@@ -75,7 +88,7 @@ Hover/fokus marker, atau hover baris directory, membuka card: titik membesar men
 | — | Our destinations | Static, slider DCP + DFD (`components/destination-slider.ts`, `components/slider.ts`) |
 | H05 | Featured destinations | Static, dua kolom sama lebar yang sejajar (CSS subgrid), gambar 4:3. Tiap kolom punya id sendiri (`#h05-creative-park`, `#h08-fintech-district`) |
 | H11 | Our approach | Scrub, v01 — 1920×1080 / 608×1080, ±12 MB / 4 MB |
-| H13 | Our destinations | Scrub mundur, v02 — 1920×1080 / 608×1080, 4,9 MB / 1,9 MB (sumber 2560×1440, 20,9 MB) + directory |
+| H13 | Our destinations | Scrub mundur, v02 — 1920×1080 / 608×1080, 4,9 MB / 1,9 MB (sumber 2560×1440, 20,9 MB), lalu peta Mapbox + directory |
 | H14 | Next destination + footer | Static |
 
 Kode chapter mengikuti story map, jadi H06/H07, H09/H10, dan H12 memang tidak ada.
@@ -129,8 +142,7 @@ Semua copy, statistik, marker, dan CTA adalah HTML statis (dirender saat build d
 Angka di H05/H08 diambil dari brief V3 (September 2026) dan ditandai `confirmed`. Angka yang diubah ke `'unconfirmed'` di `src/content/destinations.ts` otomatis tampil dengan penanda **"To be confirmed"**.
 
 - V8 District dan Motor Garten memakai kategori dari gulfalts.com ("Specialized commercial facilities"); thumbnail dari render project di gulfalts.com (`../Website Material/gulfalts.com`).
-- **Marker H13**: diletakkan di frame pertama outro (peta Dubai). Pin Google Maps tiap venue diproyeksikan ke frame itu lewat homografi yang dicocokkan ke jalan dan garis pantai OpenStreetMap (Sheikh Zayed Road, Al Khail Road dan interchange-nya, pantai Palm–Jumeirah Bay), akurat beberapa piksel di lebar 1920. Koordinat pin tercatat di `src/content/destinations.ts`. Kalau video outro dirender ulang dengan kamera berbeda, posisi harus dihitung ulang.
-- Keempat venue berdekatan (V8 District dan Creative Park ±1,3 km), jadi titik tetap di posisi aslinya dan label disusun dalam satu kolom di kiri dengan garis penghubung (`spreadLabels` di `lib/scroll-scrub.ts`). Marker yang jatuh di bawah panel directory (`data-marker-avoid`) disembunyikan; panel dibuat lebih ramping (maks. 460px, 32vw) agar cluster tetap terlihat di layar 1280–1536px. Di layar landscape frame di-anchor kanan (`object-position: 100%`); di mobile marker disembunyikan karena tertutup directory.
+- **Pin venue** (Google Maps, September 2026) dan koordinat lokasi kunci ada di `src/content/location-map.ts`; Fintech District memakai koordinat persis dari brief Mapbox klien.
 - Belum ada halaman "semua destination" di gulfalts.com; `allDestinationsUrl` sementara mengarah ke homepage gulfalts.com.
 
 ## QA dev
