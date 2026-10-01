@@ -3,3 +3,5 @@ dist/
 .wrangler/
 .DS_Store
 .env*
+# macOS AppleDouble files written on exFAT/FAT drives
+._*

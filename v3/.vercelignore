@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.vercel/
+.netlify/
+.wrangler/
+.DS_Store
+.env*
+# macOS AppleDouble files written on exFAT/FAT volumes; Vite would copy them out of public/.
+._*
+# Standalone component backup, never built or deployed (see README).
+backups/
