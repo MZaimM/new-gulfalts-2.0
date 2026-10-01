@@ -1,14 +1,14 @@
 # Gulfalts Homepage (V3)
 
-The Gulfalts homepage: one scroll-driven film, *From Space to Destination*, that starts in the clouds above the Gulf and ends at Gulfalts' destinations in Al Quoz, Dubai.
+The Gulfalts homepage: one scroll-driven film, *From Space to Destination*, that starts over the Gulf and ends on a live map of Gulfalts' destinations in Al Quoz, Dubai.
 
-**Live:** [gulfalts-homepage.vercel.app](https://gulfalts-homepage.vercel.app) · **Stack:** Vite 7, TypeScript, GSAP ScrollTrigger, Lenis · **Hosting:** Vercel (static)
+**Live:** [gulfalts-homepage.vercel.app](https://gulfalts-homepage.vercel.app) · **Stack:** Vite 7, TypeScript, GSAP ScrollTrigger, Lenis, Mapbox GL JS · **Hosting:** Vercel (static)
 
 | | |
 |---|---|
 | **What it is** | A single static page. All copy, stats and links are real HTML rendered at build time, so the page reads without video; video adds motion on top. |
 | **Framework** | None at runtime. Vite compiles plain TypeScript and CSS; there is no React or Vue. |
-| **Runtime dependencies** | `gsap` (ScrollTrigger) and `lenis` (wheel smoothing) |
+| **Runtime dependencies** | `gsap` (ScrollTrigger), `lenis` (wheel smoothing) and `mapbox-gl` (H13 location map, loaded on demand) |
 | **Source** | [`v3/`](v3) |
 | **Production** | Vercel project `gulfalts-team/gulfalts-homepage`, Node 22.x |
 | **Design rules** | [`GULFALTS-DESIGN.md`](GULFALTS-DESIGN.md), with type and colour following the gulfalts.com style guide ([`tokens.css`](v3/src/styles/tokens.css)) |
@@ -20,6 +20,7 @@ You need Node 20.19 or newer (Vite 7). Production runs Node 22.
 ```bash
 cd v3
 npm ci
+echo "VITE_MAPBOX_TOKEN=pk.…" > .env   # Mapbox public token, see Location map
 npm run dev    # http://127.0.0.1:5175
 ```
 
@@ -30,6 +31,7 @@ npm run dev    # http://127.0.0.1:5175
 | `npm run preview` | Serves the production build on `127.0.0.1:4175` |
 | `npm run typecheck` | Runs `tsc --noEmit` only |
 | `npm run media` | Re-encodes video and images from the source masters (needs ffmpeg; see [Media](#media)) |
+| `npm run routes` | Recomputes the location map's routes and drive times with Mapbox Directions (needs the token in `.env`; see [Location map](#location-map)) |
 
 ## How it works
 
@@ -59,18 +61,19 @@ flowchart LR
 - **Mobile (under 768px).** Phones get separate 608×1080 encodes and shorter scroll tracks.
 - **Reduced motion.** There is no pinning, scrubbing or video. Every chapter shows its poster with the full copy, and H11 becomes a sequence of stills.
 - **Sub-path hosting.** Media URLs are prefixed with Vite's `BASE_URL` at load time, so the same build also works when mounted under a path such as `/new-home/`.
+- **Location map (H13).** When the outro reaches its last frame, a live Mapbox map dissolves in over it. See [Location map](#location-map).
 
 ### Chapter map
 
 | ID | Chapter | Media | Video size (desktop / mobile) |
 |---|---|---|---|
 | H01 | Intro: logo reveal | None; it sits on H02's first frame | — |
-| H02 | Dubai arrival | Scrub | 3.7 MB / 1.2 MB |
+| H02 | Dubai arrival | Scrub | 5.0 MB / 2.0 MB |
 | H04 | The firm (brand manifesto) | Autoplay loop, wipe join | 1.5 MB / 0.6 MB |
 | — | Our destinations (slider) | Static | — |
 | H05 · H08 | Featured: Dubai Creative Park, Dubai Fintech District | Static | — |
 | H11 | Our approach: raw space to living destination | Scrub | 12.2 MB / 3.8 MB |
-| H13 | Our destinations: Dubai pull-out and directory | Scrub, played in reverse | 4.9 MB / 1.9 MB |
+| H13 | Our destinations: Dubai pull-out, then a live Mapbox map with the directory | Scrub, played in reverse, then Mapbox | 4.9 MB / 1.9 MB |
 | H14 | Next destination and footer | Static | — |
 
 Codes follow the story map, so the missing numbers (H03, H06–H07, H09–H10, H12) are chapters that were cut. H03 survives as a standalone component in [`v3/backups/brand-spectrum/`](v3/backups/brand-spectrum), which is not built or deployed.
@@ -80,7 +83,9 @@ Codes follow the story map, so the missing numbers (H03, H06–H07, H09–H10, H
 | To change | Edit |
 |---|---|
 | Copy, CTAs, cue timings, scroll lengths | [`v3/src/content/homepage.ts`](v3/src/content/homepage.ts) |
-| Venues, stats, commute times, map pins | [`v3/src/content/destinations.ts`](v3/src/content/destinations.ts) |
+| Venues, stats | [`v3/src/content/destinations.ts`](v3/src/content/destinations.ts) |
+| Map style, venue pins, key locations | [`v3/src/content/location-map.ts`](v3/src/content/location-map.ts) |
+| Drive times and routes | Generated: run `npm run routes` (writes [`drive-times.json`](v3/src/content/drive-times.json) and [`routes.json`](v3/src/content/routes.json)) |
 | The data contract between video and site | [`v3/src/content/types.ts`](v3/src/content/types.ts) |
 | Header, menu, contact drawer, footer | [`v3/index.html`](v3/index.html) |
 | Colours, typography, radii | [`v3/src/styles/tokens.css`](v3/src/styles/tokens.css) |
@@ -100,8 +105,19 @@ To replace a video:
 
 1. Put the new master in place and update `build-media.sh` if the source path changed.
 2. Run `npm run media`, or `npm run media -- h02 h13` to rebuild only those chapters.
-3. Give the file a new version suffix (`-v03`, and so on). `/media` is cached for a week, so a changed file under an old name can be served stale.
+3. Give the file a new version suffix (`-v04`, and so on). `/media` is cached for a week, so a changed file under an old name can be served stale.
 4. Update `duration` and `cues[].at` in `homepage.ts`.
+
+## Location map
+
+H13 ends on a live map in the client's custom Mapbox style (`gius03/cmuolk2l0005001sk1j6jg3ku`), driven by [`location-map.ts`](v3/src/components/location-map.ts).
+
+- **Flow.** At the end of the outro scrub the map dissolves in over the video's last frame, then the camera settles from top-down into a pitched overview of the four venues. The header turns dark while the light map is on screen.
+- **Markers.** The four venue markers are rendered as static HTML and handed to Mapbox. Hovering or focusing a marker, or a directory row, opens a card with the venue photo and drive times to DIFC, Downtown Dubai, Business Bay, Dubai Marina and DXB Airport. On phones the markers are dots that link to the venue.
+- **Drive times.** Mapbox Directions estimates (driving, typical traffic, rounded to the minute), labelled "Mapbox estimate" on the card. They replace the fixed times from the client's map brief. `npm run routes` computes them, with the road geometry, for every venue to every key location. The page never calls the Directions API.
+- **Route mode.** Not used on the homepage; meant for venue pages. Clicking a key location draws the road route from the venue and reframes the camera. How to wire it up is in [`v3/README.md`](v3/README.md) under "Map distance".
+- **Loading.** `mapbox-gl` (about 540 KB gzipped) loads only once the visitor is a quarter of the way into H13. Scroll and touch always scroll the page; only a mouse can pan the map.
+- **Token.** The public token is **not in the repo** (GitHub push protection rejects it). It is read from `VITE_MAPBOX_TOKEN`: `v3/.env` locally (git-ignored), and the Vercel project's environment variables in production (see [Deployment](#deployment)). Without it the map is skipped, and the video's last frame and the directory stay on screen. Restrict the token to the production domains and `localhost` in the Mapbox account.
 
 ## Deployment
 
@@ -113,6 +129,13 @@ vercel deploy --prod --scope gulfalts-team
 ```
 
 The CLI uploads the source (filtered by [`.vercelignore`](v3/.vercelignore)). Vercel then runs `npm ci` and `npm run build` on Node 22 and serves `v3/dist`.
+
+**Environment.** `.vercelignore` keeps `.env` out of the upload, so the Mapbox token must be set on the Vercel project before deploying. Without it the build succeeds but the map does not appear:
+
+```bash
+vercel env add VITE_MAPBOX_TOKEN production --scope gulfalts-team
+vercel env add VITE_MAPBOX_TOKEN preview --scope gulfalts-team
+```
 
 | Task (from `v3/`) | Command |
 |---|---|
@@ -157,7 +180,8 @@ macOS writes `._*` metadata files next to every file on these drives. Git (`.git
 - [ ] **Fonts.** Season Sans and Season Serif are TRIAL files. Buy webfont licences and replace the files in `v3/public/fonts`.
 - [ ] **Contact form.** `CONTACT_ENDPOINT` in [`contact.ts`](v3/src/components/contact.ts) is `null`. The drawer validates the form, then asks visitors to email info@gulfalts.com. Connect a form backend.
 - [ ] **Newsletter.** The footer sign-up opens a pre-filled email; no mailing service is connected.
-- [ ] **Data.** Commute times for three of the four venues are placeholders marked "To be confirmed", and the Fintech District slider copy is awaiting client sign-off.
+- [ ] **Data.** Drive times are Mapbox estimates, which replace the fixed times in the client's map brief (Fintech District: DIFC 12, Downtown 14, Business Bay 10, Dubai Marina 10, DXB 20 minutes). Confirm this with the client. The Fintech District slider copy is awaiting client sign-off.
+- [ ] **Mapbox.** Set `VITE_MAPBOX_TOKEN` on the Vercel project, and restrict the token to the production domains.
 - [ ] **Links.** `allDestinationsUrl` points to the gulfalts.com homepage until an all-destinations page exists.
 
 ## Repository layout
@@ -172,12 +196,12 @@ macOS writes `._*` metadata files next to every file on these drives. Git (`.git
     ├── public/
     │   ├── fonts/                 WOFF2: Season (trial), Guardian Sans
     │   └── media/                 video/, posters/, images/
-    ├── scripts/                   build-media.sh (ffmpeg), build-images.mjs (sharp)
+    ├── scripts/                   build-media.sh (ffmpeg), build-images.mjs (sharp), build-routes.mjs (Mapbox)
     ├── backups/brand-spectrum/    Standalone H03 component, not deployed
     └── src/
-        ├── content/               Copy, cues, venues, data contract
+        ├── content/               Copy, cues, venues, map data, generated drive times and routes, data contract
         ├── sections/              Chapter renderers that return HTML strings
-        ├── components/            Chapter shell, slider, directory, logo, site chrome, contact
+        ├── components/            Chapter shell, slider, directory, location map, logo, site chrome, contact
         ├── lib/                   Scroll engine, media loader, viewport helpers
         ├── styles/                Tokens, global, site chrome, chapters, sections
         └── main.ts                Runtime entry point

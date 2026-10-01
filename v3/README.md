@@ -72,7 +72,7 @@ Data di `src/content/location-map.ts`, perilaku di `components/location-map.ts`,
 - **Mobile**: peta di atas, directory di bawah (peta berhenti di tepi atas directory agar logo dan atribusi Mapbox terlihat). Marker hanya titik (tap → halaman venue); nama ada di directory.
 - **Scroll tidak dibajak**: zoom scroll mati, pan hanya untuk mouse. **Reduced motion**: peta statis tanpa animasi kamera.
 - **Loading**: `mapbox-gl` (±540 KB gzip) baru dimuat saat pengunjung sudah 25% masuk H13 (step `map-near`).
-- **Token**: style `gius03/cmuolk2l0005001sk1j6jg3ku` dari klien. Public token **tidak ada di repo** (GitHub push protection menolaknya): isi `VITE_MAPBOX_TOKEN=pk.…` di `v3/.env` (di-ignore git) untuk lokal, dan di environment variables Webflow Cloud untuk build produksi. Tanpa token peta tidak dimuat; frame terakhir video dan directory tetap tampil. Token dari klien ada di `../gulfalts-mapbox-dev-instructions.md`. Sebaiknya token dibatasi (URL restriction) ke domain produksi, domain Webflow Cloud, dan `localhost`/`127.0.0.1`.
+- **Token**: style `gius03/cmuolk2l0005001sk1j6jg3ku` dari klien. Public token **tidak ada di repo** (GitHub push protection menolaknya): isi `VITE_MAPBOX_TOKEN=pk.…` di `v3/.env` (di-ignore git) untuk lokal, dan di environment variables project Vercel (`vercel env add VITE_MAPBOX_TOKEN production`) untuk build produksi; `.vercelignore` tidak mengunggah `.env`. Tanpa token peta tidak dimuat; frame terakhir video dan directory tetap tampil. Token dari klien ada di `../gulfalts-mapbox-dev-instructions.md`. Sebaiknya token dibatasi (URL restriction) ke domain produksi (Vercel, Webflow Cloud) dan `localhost`/`127.0.0.1`.
 
 ### Map distance (untuk halaman Fintech District)
 
