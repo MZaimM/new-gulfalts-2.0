@@ -18,7 +18,7 @@ const LOAD_TIMEOUT = 20000;
  * those in `src`/`href`, not in `data-src-*`. Prefix the deploy base here so the page also
  * works under a sub-path (Webflow Cloud mounts it at `/new-home/`).
  */
-const withBase = (path: string) =>
+export const withBase = (path: string) =>
   path.startsWith('/') ? `${import.meta.env.BASE_URL.replace(/\/$/, '')}${path}` : path;
 
 export class ChapterMedia {

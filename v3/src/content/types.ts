@@ -100,6 +100,7 @@ export interface Destination {
   tags: string;
   /** False when the short copy is still to be supplied by the client. */
   tagsConfirmed: boolean;
+  /** Another site's URL, or a path on this one (e.g. `fintech-district/`) resolved against the base. */
   url: string;
   location: string;
   preview?: string;
@@ -134,3 +135,88 @@ export type DriveTimes = Record<string, Partial<Record<KeyLocationId, number>>>;
 
 /** Precomputed road geometry (Mapbox Directions): venue id → key location id → line coordinates. */
 export type RouteSet = Record<string, Partial<Record<KeyLocationId, LngLat[]>>>;
+
+/*
+ * Venue pages (dubai-creative-park/, fintech-district/). Their scrub sections time copy in video
+ * SECONDS rather than track progress, so lines can be read straight off the footage's timecode.
+ */
+
+/** Overlay copy shown once the video reaches `from` seconds and hidden again at `to` (if set). */
+export interface TimedCopy {
+  from: number;
+  to?: number;
+  text: string;
+}
+
+export interface VenueHero {
+  /** Short facts above the heading, joined with a middle dot. */
+  eyebrow: string[];
+  heading: string;
+  lead: string;
+  stats: DestinationStat[];
+  /** Ambient loop behind the copy: always muted, no controls. */
+  media: MediaSources;
+  /** Link to the first scroll section; left out on a hero-only page. */
+  enter?: { label: string; target: string };
+  /**
+   * Arriving from the previous venue's next-venue footer, the hero picks its video up from the
+   * frame the footer was showing. Only works when both use the same files.
+   */
+  handoff?: boolean;
+}
+
+interface VenueScrub {
+  /** Section id, also the anchor. */
+  id: string;
+  /** Visually hidden section heading. */
+  title: string;
+  /** Seconds; replaced by the real duration once the video's metadata loads. */
+  duration: number;
+  /** Scroll length in viewport heights. */
+  track: { desktop: number; mobile: number };
+  media: MediaSources;
+  /**
+   * The next section slides up over this one: the stage stays pinned on its last frame for one
+   * more screen and dims as it's covered.
+   */
+  coverNext?: boolean;
+}
+
+export interface VenueApproach extends VenueScrub {
+  statements: TimedCopy[];
+  /** "For <word>": the lead word holds still while the words roll up through a clipped window. */
+  roll: { lead: string; from: number; to?: number; words: TimedCopy[] };
+}
+
+/** One beat of the tour story: a headline and a line, at the left of the screen. */
+export interface VenueTourStory {
+  from: number;
+  to?: number;
+  headline: string;
+  text: string;
+}
+
+export interface VenueTour extends VenueScrub {
+  /** Centred title over a darkened first frame, shown as the section slides in. */
+  intro: TimedCopy;
+  stories: VenueTourStory[];
+}
+
+export interface NextVenue {
+  /** Destination id of the venue the footer hands over to. */
+  destination: string;
+  /** Shown in the ring; `reducedKicker` replaces it when there is nothing to scroll for. */
+  kicker: string;
+  reducedKicker: string;
+  /** Must be the same files as the next venue's hero video so playback can carry over. */
+  media: MediaSources;
+}
+
+export interface Venue {
+  /** Destination id (content/destinations.ts). */
+  id: string;
+  hero: VenueHero;
+  approach?: VenueApproach;
+  tour?: VenueTour;
+  next?: NextVenue;
+}
