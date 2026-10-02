@@ -6,7 +6,7 @@
 import { destinationById } from '../content/destinations';
 import { venueById } from '../content/venues';
 import type { DestinationStat, MediaSources, TimedCopy, Venue, VenueApproach, VenueTour } from '../content/types';
-import { esc, href, pad } from '../components/markup';
+import { esc, href } from '../components/markup';
 
 const dot = ' <span aria-hidden="true">·</span> ';
 
@@ -58,7 +58,7 @@ const renderHero = ({ hero }: Venue) => `
 /** Shell shared by the scrub sections: a tall track with a sticky stage of video and overlay. */
 const scrubSection = (section: VenueApproach | VenueTour, className: string, name: string, overlay: string) => `
     <section class="scrub ${className}" id="${section.id}" aria-labelledby="${section.id}-title"
-      data-scrub="${esc(name)}" data-duration="${section.duration}" style="--track: ${section.track.desktop}; --track-mobile: ${section.track.mobile}">
+      data-scrub="${esc(name)}" data-duration="${section.duration}"${section.coverNext ? ' data-cover-next' : ''} style="--track: ${section.track.desktop}; --track-mobile: ${section.track.mobile}">
       <div class="scrub_track">
         <div class="scrub_sticky">
           <div class="scrub_media" aria-hidden="true">${poster(section.media)}${deferredVideo(section.media, 'scrub_video')}
@@ -85,20 +85,13 @@ const renderApproach = (approach: VenueApproach) => scrubSection(approach, 'appr
 const renderTour = (tour: VenueTour, venueName: string) => scrubSection(tour, 'tour', `${venueName} tour`, `
             <div class="tour_progress" aria-hidden="true"><span></span></div>
 
-            <div class="tour_stops">${tour.stops.map((stop, index) => `
-              <div class="tour_stop" ${timed(stop)}>
-                <p class="tour_label"><span class="tour_index">${pad(index + 1)}</span>${esc(stop.label)}</p>
-                <p class="tour_line">${esc(stop.line)}</p>
-              </div>${stop.walk ? `
-              <p class="tour_walk" ${timed(stop.walk)} aria-hidden="true">${esc(stop.walk.text)}</p>` : ''}`).join('')}
-            </div>
+            <p class="tour_intro" ${timed(tour.intro)} aria-hidden="true">${esc(tour.intro.text)}</p>
 
-            <div class="tour_finale" ${timed(tour.finale)}>
-              <p class="tour_finale-line">${esc(tour.finale.line)}</p>
-              <div class="tour_actions">${tour.finale.actions.map(action => action.primary ? `
-                <a class="button" href="${href(action.href)}">${esc(action.label)}</a>` : `
-                <a class="tour_link" href="${href(action.href)}">${esc(action.label)} <span aria-hidden="true">→</span></a>`).join('')}
-              </div>
+            <div class="tour_stories">${tour.stories.map(story => `
+              <div class="tour_story" ${timed(story)}>
+                <h3 class="tour_headline">${esc(story.headline)}</h3>
+                <p class="tour_text">${esc(story.text)}</p>
+              </div>`).join('')}
             </div>`);
 
 export const renderVenueSections = (id: string) => {

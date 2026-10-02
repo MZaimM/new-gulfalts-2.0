@@ -5,3 +5,6 @@ dist/
 .env*
 # macOS AppleDouble files written on exFAT/FAT drives
 ._*
+
+# Source video masters (see README: Media)
+video concept/

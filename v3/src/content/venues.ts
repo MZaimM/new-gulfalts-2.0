@@ -11,12 +11,20 @@ import type { MediaSources, Venue } from './types';
  * Add ?debug to the URL to see the current video time while scrolling.
  */
 
-/** PLACEHOLDER footage (slow push-in on a DFD still): the DFD hero and the DCP footer share it. */
+/** DFD hero loop: the DCP footer shares it so playback carries over. */
 const fintechDistrictLoop: MediaSources = {
-  desktop: '/media/video/dfd-placeholder-desktop.mp4',
-  mobile: '/media/video/dfd-placeholder-mobile.mp4',
-  posterDesktop: '/media/posters/dfd-placeholder-poster-desktop.jpg',
-  posterMobile: '/media/posters/dfd-placeholder-poster-mobile.jpg'
+  desktop: '/media/video/dfd-hero-desktop.mp4',
+  mobile: '/media/video/dfd-hero-mobile.mp4',
+  posterDesktop: '/media/posters/dfd-hero-poster-desktop.jpg',
+  posterMobile: '/media/posters/dfd-hero-poster-mobile.jpg'
+};
+
+/** DCP hero loop: the DFD footer hands back to it. */
+const creativeParkLoop: MediaSources = {
+  desktop: '/media/video/dcp-hero-desktop.mp4',
+  mobile: '/media/video/dcp-hero-mobile.mp4',
+  posterDesktop: '/media/posters/dcp-hero-poster-desktop.jpg',
+  posterMobile: '/media/posters/dcp-hero-poster-mobile.jpg'
 };
 
 const creativePark: Venue = {
@@ -26,73 +34,62 @@ const creativePark: Venue = {
     heading: 'A destination built around movement.',
     lead: 'Sport, wellness, family activities, creative studios and F&B, brought together in one connected, walkable community.',
     stats: [...creativeParkStats, { value: '25+', label: 'Activation zones', status: 'confirmed' }],
-    media: {
-      desktop: '/media/video/dcp-hero-desktop.mp4',
-      mobile: '/media/video/dcp-hero-mobile.mp4',
-      posterDesktop: '/media/posters/dcp-hero-poster-desktop.jpg',
-      posterMobile: '/media/posters/dcp-hero-poster-mobile.jpg'
-    },
-    enter: { label: 'Scroll to enter', target: 'our-approach' }
+    media: creativeParkLoop,
+    enter: { label: 'Scroll to enter', target: 'our-approach' },
+    handoff: true
   },
 
-  // PLACEHOLDER footage and timings: the homepage H11 film until the DCP cut is ready.
+  // Roll timings set against the footage; the two statements before it are still provisional.
+  // The tour slides up over this section's last frame (coverNext).
   approach: {
     id: 'our-approach',
     title: 'Most places are built for one thing. This one was built for all of it.',
-    duration: 32.74,
+    duration: 12.05,
     track: { desktop: 1000, mobile: 680 },
+    coverNext: true,
     media: {
-      desktop: '/media/video/gulfalts-h11-raw-to-destination-desktop-v01.mp4',
-      mobile: '/media/video/gulfalts-h11-raw-to-destination-mobile-v01.mp4',
-      posterDesktop: '/media/posters/gulfalts-h11-raw-to-destination-poster-desktop-v01.jpg',
-      posterMobile: '/media/posters/gulfalts-h11-raw-to-destination-poster-mobile-v01.jpg'
+      desktop: '/media/video/gulfalts-dcp-built-for-all-desktop-v01.mp4',
+      mobile: '/media/video/gulfalts-dcp-built-for-all-mobile-v01.mp4',
+      posterDesktop: '/media/posters/gulfalts-dcp-built-for-all-poster-desktop-v01.jpg',
+      posterMobile: '/media/posters/gulfalts-dcp-built-for-all-poster-mobile-v01.jpg'
     },
     statements: [
-      { from: 0, to: 6, text: 'Most places are built for one thing.' },
-      { from: 6, to: 12.1, text: 'This one was built for all of it.' },
-      { from: 28.4, text: 'Come and see.' }
+      { from: 0, to: 2.2, text: 'Most places are built for one thing.' },
+      { from: 2.2, to: 4.45, text: 'This one was built for all of it.' }
     ],
     roll: {
       lead: 'For',
-      from: 12.1,
-      to: 28,
+      from: 4.45,
       words: [
-        { from: 12.1, to: 14.1, text: 'Work' },
-        { from: 14.1, to: 18, text: 'Movement' },
-        { from: 18, to: 23.6, text: 'Culture' },
-        { from: 23.6, to: 28, text: 'Life' }
+        { from: 4.45, to: 6.5, text: 'Work' },
+        { from: 6.5, to: 8.8, text: 'Movement' },
+        { from: 8.8, to: 11, text: 'Culture' },
+        { from: 11, text: 'Life' }
       ]
     }
   },
 
-  // PLACEHOLDER footage (hero video re-encoded for scrubbing), copy and timings.
-  // One stop per place: it shows while the camera is settled there; the walk covers the move on.
+  // Story timings set against the footage; the intro's end and the first story's start are provisional.
+  // The intro sits over a darkened first frame while the section slides in; the stories follow.
   tour: {
     id: 'tour',
-    title: 'A walk through Dubai Creative Park',
-    duration: 10.05,
+    title: 'Take a Journey to Dubai Creative Park',
+    duration: 12.05,
     track: { desktop: 800, mobile: 600 },
     media: {
-      desktop: '/media/video/dcp-tour-placeholder-desktop.mp4',
-      mobile: '/media/video/dcp-tour-placeholder-mobile.mp4',
-      posterDesktop: '/media/posters/dcp-hero-poster-desktop.jpg',
-      posterMobile: '/media/posters/dcp-hero-poster-mobile.jpg'
+      desktop: '/media/video/gulfalts-dcp-final-tour-desktop-v01.mp4',
+      mobile: '/media/video/gulfalts-dcp-final-tour-mobile-v01.mp4',
+      posterDesktop: '/media/posters/gulfalts-dcp-final-tour-poster-desktop-v01.jpg',
+      posterMobile: '/media/posters/gulfalts-dcp-final-tour-poster-mobile-v01.jpg'
     },
-    stops: [
-      { from: 0, to: 1.7, label: 'The Loop', line: 'A morning run that starts at your office door.', walk: { from: 1.7, to: 2.3, text: '2 min walk' } },
-      { from: 2.3, to: 3.7, label: 'Studios & Offices', line: 'Work where the energy is.', walk: { from: 3.7, to: 4.3, text: '1 min walk' } },
-      { from: 4.3, to: 5.7, label: 'The Courtyard', line: 'Lunch is a two-minute walk.', walk: { from: 5.7, to: 6.3, text: '3 min walk' } },
-      { from: 6.3, to: 7.7, label: 'The Courts', line: '[x] courts, open early till late.', walk: { from: 7.7, to: 8.3, text: '2 min walk' } },
-      { from: 8.3, to: 9.1, label: 'Fitness & Wellness', line: 'Train, recover, reset.' }
-    ],
-    finale: {
-      from: 9.2,
-      line: '54 spaces. 25+ activation zones. One walk.',
-      actions: [
-        { label: 'Enquire about space', href: 'mailto:info@gulfalts.com?subject=Space%20enquiry%20%E2%80%94%20Dubai%20Creative%20Park', primary: true },
-        { label: 'Book a visit', href: 'mailto:info@gulfalts.com?subject=Book%20a%20visit%20%E2%80%94%20Dubai%20Creative%20Park' }
-      ]
-    }
+    intro: { from: 0, to: 1.5, text: 'Take a Journey to Dubai Creative Park' },
+    stories: [
+      { from: 1.8, to: 5.2, headline: 'Located in Al Quoz, Dubai.', text: "Right in the city's creative and industrial heartland." },
+      { from: 5.2, to: 6.5, headline: 'Offices to Support Productivity', text: 'Bright, open spaces built for focus and collaboration.' },
+      { from: 6.5, to: 9, headline: 'Wellness Center', text: 'Train, swim, play and recharge, all without leaving the park.' },
+      { from: 9, to: 10.2, headline: 'Become Part of the Community.', text: 'Run, ride and connect with people who share your pace.' },
+      { from: 10.2, headline: 'Relax In the Evening.', text: 'Good food, great company and sunsets to share.' }
+    ]
   },
 
   next: {
@@ -106,12 +103,74 @@ const creativePark: Venue = {
 const fintechDistrict: Venue = {
   id: 'fintech-district',
   hero: {
-    eyebrow: ['50,000 sq ft', 'Al Quoz', 'Dubai'],
-    heading: 'A business district with new standards.',
-    lead: 'Built to prioritise accessibility, customisable spaces and natural light: offices, showrooms, galleries, wellness and F&B.',
+    eyebrow: ['50,000 sq ft', '65 spaces', 'Al Quoz', 'Dubai'],
+    heading: 'Where business finds its space.',
+    lead: 'Loft-style workspaces, showrooms and galleries within a curated business destination built around work, wellness and community.',
     stats: fintechDistrictStats,
     media: fintechDistrictLoop,
+    enter: { label: 'Scroll to enter', target: 'our-approach' },
     handoff: true
+  },
+
+  // Timed to the footage: door → plain office (the desk) → lobby (Work) → café terrace (Eat)
+  // → dojo (Train) → arcade (Unwind, hard cut at 7.17). The tour slides up over the last frame.
+  approach: {
+    id: 'our-approach',
+    title: 'Most spaces give your business a desk. This one gives it a destination.',
+    duration: 8.04,
+    track: { desktop: 800, mobile: 560 },
+    coverNext: true,
+    media: {
+      desktop: '/media/video/gulfalts-dfd-approach-desktop-v01.mp4',
+      mobile: '/media/video/gulfalts-dfd-approach-mobile-v01.mp4',
+      posterDesktop: '/media/posters/gulfalts-dfd-approach-poster-desktop-v01.jpg',
+      posterMobile: '/media/posters/gulfalts-dfd-approach-poster-mobile-v01.jpg'
+    },
+    statements: [
+      { from: 0, to: 1.75, text: 'Most spaces give your business a desk.' },
+      { from: 1.75, to: 2.75, text: 'This one gives it a destination.' }
+    ],
+    roll: {
+      lead: 'For',
+      from: 2.75,
+      words: [
+        { from: 2.75, to: 4.6, text: 'Work' },
+        { from: 4.6, to: 6, text: 'Eat' },
+        { from: 6, to: 7.15, text: 'Train' },
+        { from: 7.15, text: 'Unwind' }
+      ]
+    }
+  },
+
+  // Four clips joined (scripts/build-media.sh): space → Al Quoz → dojo (0–8.95), entrance → lobby
+  // (8.95–17), hall → yoga (17–23.7), loft → diner (23.7–31.75). Stories sit between the cuts.
+  tour: {
+    id: 'tour',
+    title: 'Take a Journey to Dubai Fintech District',
+    duration: 31.75,
+    track: { desktop: 1700, mobile: 1250 },
+    media: {
+      desktop: '/media/video/gulfalts-dfd-tour-desktop-v02.mp4',
+      mobile: '/media/video/gulfalts-dfd-tour-mobile-v02.mp4',
+      posterDesktop: '/media/posters/gulfalts-dfd-tour-poster-desktop-v02.jpg',
+      posterMobile: '/media/posters/gulfalts-dfd-tour-poster-mobile-v02.jpg'
+    },
+    intro: { from: 0, to: 1.5, text: 'Take a Journey to Dubai Fintech District' },
+    stories: [
+      { from: 1.8, to: 5.1, headline: 'Located in Al Quoz, Dubai.', text: '13 minutes from Business Bay, in the heart of the city\'s creative quarter.' },
+      { from: 5.4, to: 8.8, headline: 'Train With Purpose.', text: 'Martial arts and fitness studios, a few steps from your desk.' },
+      { from: 9.6, to: 16.7, headline: 'A Community Space.', text: 'Open lounges and shared floors where neighbours become collaborators.' },
+      { from: 18, to: 23.4, headline: 'Room to Breathe.', text: 'Sunlit studios for yoga and meditation, for when the day needs a pause.' },
+      { from: 28.6, headline: 'Unwind After Hours.', text: 'Pull up a booth: good food, cold drinks and better company once the work is done.' }
+    ]
+  },
+
+  // Loops back to the first venue until V8 District has a page here.
+  next: {
+    destination: 'creative-park',
+    kicker: 'Keep scrolling to see',
+    reducedKicker: 'Next destination',
+    media: creativeParkLoop
   }
 };
 

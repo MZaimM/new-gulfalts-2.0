@@ -4,6 +4,10 @@
 #   H01 Intro              no video: it sits on H02's first frame (its poster)
 #   H02 Dubai arrival      video concept/homepage/gulfalts-new-intro.mp4 → scrub, v03 (the Gulf → Dubai coast)
 #   H11 Our approach       video concept/DCP/DCP-Video.mp4           → scrub, v01 (+ reduced-motion stills)
+#   DCP Built for all      video concept/DCP/dcp-built-for-all.mp4    → scrub, v01 (venue page, our-approach)
+#   DCP Final tour         video concept/DCP/dcp-final-tour.mp4       → scrub, v01 (venue page, tour)
+#   DFD Approach           video concept/DFD/dfd-approach.mp4         → scrub, v01 (venue page, our-approach)
+#   DFD Tour               video concept/DFD/tour/tour-01..04.mp4     → joined, sped up → scrub, v01 (venue page, tour)
 #   H13 Our destinations   video concept/homepage/gulfalts-outro.mp4 → scrub, v02, played in reverse (pull-out)
 #   Images (H03, H05, H08) → scripts/build-images.mjs (AVIF + JPEG, responsive widths)
 #
@@ -13,7 +17,7 @@
 # one second of video. (AV1/HEVC were tested and came out larger on this footage.)
 #
 # Usage: npm run media            (from the v3 folder, needs ffmpeg)
-#        npm run media -- h02 h13 only rebuild those chapters (h02, h11, h13, v2, images)
+#        npm run media -- h02 h13 only rebuild those chapters (h02, h11, dcp, dfd, h13, v2, images)
 #
 # A re-encode that changes the picture gets a new version suffix: /media is cached for a week.
 set -euo pipefail
@@ -76,6 +80,43 @@ if want h11; then
   DCP="$SRC/DCP/DCP-Video.mp4"
   scrub "$DCP" h11-raw-to-destination v01 0.5 32 2:2:6:6
   frames "$DCP" h11-raw-to-destination 0.5 10.5 12.4 15.2 19.5 28.6
+fi
+
+if want dcp; then
+  log "DCP venue: Built for all (our-approach section)"
+  # 1920x1080 at 24 fps (12.05 s). Same settings as H11, which is the same kind of footage.
+  scrub "$SRC/DCP/dcp-built-for-all.mp4" dcp-built-for-all v01 0.5 32 2:2:6:6
+  log "DCP venue: Final tour (tour section)"
+  # 1920x1080 at 24 fps (12.05 s).
+  scrub "$SRC/DCP/dcp-final-tour.mp4" dcp-final-tour v01 0.5 32 2:2:6:6
+fi
+
+if want dfd; then
+  log "DFD venue: Approach (our-approach section)"
+  # 1920x1080 at 24 fps (8.08 s). Same settings as the DCP venue footage.
+  scrub "$SRC/DFD/dfd-approach.mp4" dfd-approach v01 0.5 32 2:2:6:6
+
+  log "DFD venue: Tour (tour section, four clips joined)"
+  # The clips play straight on from each other. Clip 1 is 30 fps H.264, the others 24 fps HEVC
+  # 10-bit, so each segment is trimmed, retimed and brought to 1920x1080 / 24 fps / 8-bit before
+  # joining into a near-lossless master, which is then encoded like the other scrub footage.
+  # Segments: "clip start end speed" (end "-" = to the clip's end). Clip 1's flight in and clip 3
+  # are sped up on request; clip 1 drops back to 1x at 10.5 s, where the dojo shows in the windows.
+  TOUR="$SRC/DFD/tour"
+  TOUR_SEGMENTS=("1 0 10.5 2" "1 10.5 - 1" "2 0 - 1" "3 0 - 1.5" "4 0 - 1")
+  inputs=() graph="" joins="" n=0
+  for i in 1 2 3 4; do inputs+=(-i "$TOUR/tour-0$i.mp4"); done
+  for segment in "${TOUR_SEGMENTS[@]}"; do
+    read -r clip start end speed <<< "$segment"
+    trim="start=$start"
+    [ "$end" != "-" ] && trim+=":end=$end"
+    graph+="[$((clip - 1)):v]trim=$trim,setpts=(PTS-STARTPTS)/$speed,fps=24,scale=1920:1080:flags=lanczos,format=yuv420p,setsar=1[v$n];"
+    joins+="[v$n]"
+    n=$((n + 1))
+  done
+  ffmpeg -v error -y "${inputs[@]}" -filter_complex "${graph}${joins}concat=n=$n:v=1:a=0[out]" -map "[out]" \
+    -an -c:v libx264 -preset slow -crf 12 -pix_fmt yuv420p "$TOUR/dfd-tour-master.mp4"
+  scrub "$TOUR/dfd-tour-master.mp4" dfd-tour v02 0.5 32 2:2:6:6
 fi
 
 if want h13; then

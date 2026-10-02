@@ -175,26 +175,31 @@ interface VenueScrub {
   /** Scroll length in viewport heights. */
   track: { desktop: number; mobile: number };
   media: MediaSources;
+  /**
+   * The next section slides up over this one: the stage stays pinned on its last frame for one
+   * more screen and dims as it's covered.
+   */
+  coverNext?: boolean;
 }
 
 export interface VenueApproach extends VenueScrub {
   statements: TimedCopy[];
   /** "For <word>": the lead word holds still while the words roll up through a clipped window. */
-  roll: { lead: string; from: number; to: number; words: TimedCopy[] };
+  roll: { lead: string; from: number; to?: number; words: TimedCopy[] };
 }
 
-export interface VenueTourStop {
+/** One beat of the tour story: a headline and a line, at the left of the screen. */
+export interface VenueTourStory {
   from: number;
-  to: number;
-  label: string;
-  line: string;
-  /** Wayfinding chip shown while the camera moves on to the next stop. */
-  walk?: TimedCopy;
+  to?: number;
+  headline: string;
+  text: string;
 }
 
 export interface VenueTour extends VenueScrub {
-  stops: VenueTourStop[];
-  finale: { from: number; line: string; actions: { label: string; href: string; primary?: boolean }[] };
+  /** Centred title over a darkened first frame, shown as the section slides in. */
+  intro: TimedCopy;
+  stories: VenueTourStory[];
 }
 
 export interface NextVenue {

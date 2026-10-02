@@ -17,6 +17,8 @@ const setupScrub = (section: HTMLElement, debug: HTMLElement | null) => {
   const track = section.querySelector<HTMLElement>('.scrub_track')!;
   const sticky = section.querySelector<HTMLElement>('.scrub_sticky')!;
   const video = section.querySelector<HTMLVideoElement>('.scrub_video')!;
+  // The next section slides up over this one: the last screen of the track holds the final frame.
+  const coverNext = section.hasAttribute('data-cover-next');
   const timed: Timed[] = [...section.querySelectorAll<HTMLElement>('[data-from]')].map(el => ({
     el,
     from: Number(el.dataset.from),
@@ -27,6 +29,7 @@ const setupScrub = (section: HTMLElement, debug: HTMLElement | null) => {
   let duration = Number(section.dataset.duration) || 0;
   let top = 0;
   let distance = 1;
+  let hold = 0;
   let targetTime = 0;
   let smoothTime = 0;
   let pendingSeek: number | null = null;
@@ -36,7 +39,8 @@ const setupScrub = (section: HTMLElement, debug: HTMLElement | null) => {
 
   const measure = () => {
     top = track.getBoundingClientRect().top + window.scrollY;
-    distance = Math.max(1, track.offsetHeight - sticky.offsetHeight);
+    hold = coverNext ? sticky.offsetHeight : 0;
+    distance = Math.max(1, track.offsetHeight - sticky.offsetHeight - hold);
   };
 
   // Show/hide copy for the current video time (driven by scroll, not by playback lag).
@@ -67,6 +71,7 @@ const setupScrub = (section: HTMLElement, debug: HTMLElement | null) => {
   const frame = () => {
     const progress = clamp((window.scrollY - top) / distance);
     targetTime = progress * duration;
+    if (hold) section.style.setProperty('--cover', clamp((window.scrollY - top - distance) / hold).toFixed(3));
 
     if (targetTime !== lastTime) {
       lastTime = targetTime;
