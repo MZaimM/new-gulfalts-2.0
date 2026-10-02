@@ -72,7 +72,7 @@
   transition: background-color var(--t-quick) ease;
 }
 .nav-dropdown_link:hover, .nav-dropdown_link:focus-visible { background: rgba(255, 255, 255, .08); }
-.nav-dropdown_link[aria-current='true'] { background: rgba(255, 255, 255, .08); }
+.nav-dropdown_link[aria-current='true'], .nav-dropdown_link[aria-current='page'] { background: rgba(255, 255, 255, .08); }
 .nav-dropdown_meta { font-size: var(--fs-meta); font-weight: 500; letter-spacing: var(--eyebrow-tracking); color: var(--text-inverse-secondary); font-variant-numeric: tabular-nums; }
 .nav-dropdown_link.is-all { margin-top: 4px; border-top: 1px solid rgba(255, 255, 255, .12); border-radius: 0 0 var(--radius-sm) var(--radius-sm); color: var(--text-inverse-secondary); }
 .nav-dropdown_link.is-all:hover { color: var(--text-inverse); }

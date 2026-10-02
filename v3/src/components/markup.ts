@@ -73,3 +73,19 @@ export const statList = (stats: DestinationStat[], label: string) => {
 };
 
 export const externalLink = 'target="_blank" rel="noopener"';
+
+/**
+ * Deploy base ('/' locally, '/new-home/' on Webflow Cloud). The Vite plugin sets it before
+ * rendering, so links between pages work under a sub-path and with or without a trailing slash.
+ */
+let base = '/';
+export const setBase = (value: string) => { base = value.endsWith('/') ? value : `${value}/`; };
+
+/** Another page of this site, e.g. `page('fintech-district/')` → `/new-home/fintech-district/`. */
+export const page = (path = '') => `${base}${path}`;
+
+/** Resolves a content URL: absolute URLs, mail links and anchors as-is, site paths against the base. */
+export const href = (url: string) => (/^([a-z]+:|#)/i.test(url) ? url : page(url));
+
+/** `href` plus `target="_blank"` for other sites only; pages of this site open in place. */
+export const linkAttrs = (url: string) => `href="${href(url)}"${/^https?:/i.test(url) ? ` ${externalLink}` : ''}`;
