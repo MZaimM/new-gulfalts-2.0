@@ -10,7 +10,7 @@ import { destinationById, destinations } from '../content/destinations';
 import { driveTime } from '../content/drive-times';
 import { keyLocations } from '../content/location-map';
 import { scrubChapter } from '../components/chapter';
-import { arrow, chapterKeyframes, chapterMedia, esc, linkTarget, pad, show } from '../components/markup';
+import { arrow, chapterKeyframes, chapterMedia, esc, linkAttrs, pad, page, show } from '../components/markup';
 import { picture } from '../components/responsive-image';
 
 const trackStyle = (track: { desktop: number; mobile: number }) =>
@@ -220,7 +220,7 @@ const renderLocation = () => {
 // ---------------------------------------------------------------------------
 const renderNext = () => {
   const { id, copy } = dfdNext;
-  const all = `/#h13-dubai-pull-out`;
+  const all = page('#h13-dubai-pull-out');
   return `
 <section class="chapter_component is-static h14 dfd-next" id="${id}" data-chapter="${id}" data-media="static" aria-labelledby="${id}-title">
   <div class="h14_inner">
@@ -230,7 +230,7 @@ const renderNext = () => {
         const destination = destinationById(link.destination);
         return `
       <li data-reveal>
-        <a class="h14_link" href="${destination.url}" ${linkTarget(destination.url)}>
+        <a class="h14_link" ${linkAttrs(destination.url)}>
           <span class="h14_index">${destination.index}</span>
           <span class="h14_label">${esc(link.label)}</span>
           <span class="h14_meta">${esc(destination.location)}</span>

@@ -11,8 +11,10 @@ import type { CommuteTime, Destination, DestinationStat, KeyLocationId } from '.
 
 export const venueBase = 'https://www.gulfalts.com/venue';
 
-/** Venues with their own page on this site; the others link to their gulfalts.com venue page. */
-export const fintechDistrictUrl = '/fintech-district/';
+/*
+ * Venues with a page on this site link there (paths are resolved against the deploy base, see
+ * `href` in components/markup.ts); the others still open their page on gulfalts.com.
+ */
 
 /** No all-destinations page exists yet on gulfalts.com; the live homepage lists every venue. */
 export const allDestinationsUrl = 'https://www.gulfalts.com/';
@@ -32,7 +34,7 @@ export const destinations: Destination[] = [
     fullName: 'Dubai Creative Park',
     tags: 'Movement · Wellness · Community',
     tagsConfirmed: true,
-    url: `${venueBase}/dubai-creative-park`,
+    url: 'dubai-creative-park/',
     location: 'Al Quoz · Dubai',
     preview: '/media/images/preview-creative-park-320.jpg',
     commute: commute('creative-park')
@@ -44,7 +46,7 @@ export const destinations: Destination[] = [
     fullName: 'Dubai Fintech District',
     tags: 'Work · Business · Community',
     tagsConfirmed: true,
-    url: fintechDistrictUrl,
+    url: 'fintech-district/',
     location: 'Al Quoz · Dubai',
     preview: '/media/images/preview-fintech-district-320.jpg',
     commute: commute('fintech-district')

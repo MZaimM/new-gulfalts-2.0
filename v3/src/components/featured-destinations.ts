@@ -6,7 +6,7 @@
  */
 import type { DestinationStat, ResponsiveImage } from '../content/types';
 import { destinationById } from '../content/destinations';
-import { arrow, esc, linkTarget, statList } from './markup';
+import { arrow, esc, linkAttrs, statList } from './markup';
 import { picture } from './responsive-image';
 
 export interface FeaturedItem {
@@ -48,7 +48,7 @@ const featuredItem = (item: FeaturedItem) => {
           ${statList(item.stats, `${destination.fullName} in numbers`)}
         </div>
         <div class="featured_action" data-reveal>
-          <a class="primary-button" href="${destination.url}" ${linkTarget(destination.url)}>${esc(item.cta)} ${arrow}</a>
+          <a class="primary-button" ${linkAttrs(destination.url)}>${esc(item.cta)} ${arrow}</a>
           <span class="featured_location">${esc(destination.location)}</span>
         </div>
       </div>

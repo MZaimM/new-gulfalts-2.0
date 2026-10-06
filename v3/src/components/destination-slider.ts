@@ -7,7 +7,7 @@
  */
 import type { ResponsiveImage } from '../content/types';
 import { destinationById } from '../content/destinations';
-import { esc, pad } from './markup';
+import { esc, href, pad } from './markup';
 
 interface SlideItem {
   destination: string;
@@ -30,7 +30,7 @@ const view = (item: SlideItem, index: number) => {
   const destination = destinationById(item.destination);
   const sizes = '(max-width: 767px) 80vw, min(46vw, 56vh, 560px)';
   return `
-        <a class="dslider_view${index ? '' : ' is-active'}" href="${destination.url}" data-slide-view tabindex="-1" aria-hidden="true">
+        <a class="dslider_view${index ? '' : ' is-active'}" href="${href(destination.url)}" data-slide-view tabindex="-1" aria-hidden="true">
           <picture>
             <source type="image/avif" srcset="${srcset(item.image, 'avif')}" sizes="${sizes}" />
             <img src="/media/images/${item.image.name}-${item.image.widths[0]}.jpg" srcset="${srcset(item.image, 'jpg')}" sizes="${sizes}"
@@ -46,7 +46,7 @@ const panel = (id: string, item: SlideItem, index: number) => {
         <p class="dslider_location">${esc(item.location)}</p>
         <h3 class="dslider_name">${esc(item.name)}</h3>
         <p class="dslider_pillars">${item.pillars.map(esc).join('<span aria-hidden="true">·</span>')}</p>
-        <a class="dslider_cta" href="${destination.url}" data-slide-cta>${esc(item.cta)} <span class="link-arrow" aria-hidden="true">→</span></a>
+        <a class="dslider_cta" href="${href(destination.url)}" data-slide-cta>${esc(item.cta)} <span class="link-arrow" aria-hidden="true">→</span></a>
       </div>`;
 };
 

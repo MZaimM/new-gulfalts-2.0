@@ -8,7 +8,7 @@ Homepage sinematik "From Space to Destination". Warna, tipografi, dan aturan kom
 ```bash
 cd v3
 npm install
-npm run dev        # http://127.0.0.1:5175
+npm run dev        # http://127.0.0.1:5175 (venue: /dubai-creative-park/, /fintech-district/)
 npm run build      # typecheck + build ke dist/
 npm run preview    # http://127.0.0.1:4175
 npm run media      # render ulang semua video + gambar (butuh ffmpeg)
@@ -84,7 +84,7 @@ Semua waktu tempuh (card marker homepage dan mode rute) adalah **ETA Mapbox Dire
 
 ## Halaman Dubai Fintech District (`/fintech-district/`)
 
-Inner page pertama. Struktur mengikuti template `inner page/index.html`, copy mengikuti dokumen klien "Website 2.0" tab **Fintech District**. Halaman kedua di build Vite (`fintech-district/index.html`, entry `src/fintech-district.ts`), memakai header, menu, contact drawer, footer, `ChapterTrack` dan peta yang sama dengan homepage.
+Struktur mengikuti template `inner page/index.html`, copy mengikuti dokumen klien "Website 2.0" tab **Fintech District**. Menggantikan halaman DFD versi venue-pages (hero saja): shell `fintech-district/index.html`, entry `src/fintech-district.ts` (Lenis + `ChapterTrack` seperti homepage, bukan `src/venue.ts`), konten `src/content/fintech-district.ts`. Header, menu, dan contact drawer dari slot `<!-- site:chrome fintech-district -->`, footer sama dengan homepage. Data DFD di `src/content/venues.ts` tidak lagi dipakai halaman ini.
 
 | ID | Section | Isi |
 |---|---|---|
@@ -96,10 +96,10 @@ Inner page pertama. Struktur mengikuti template `inner page/index.html`, copy me
 | `dfd-location` | Location (Mapbox, mode rute, pinned) | Peta masuk sebagai kartu di bawah judul; begitu panggungnya sampai di atas layar, kartu otomatis membuka jadi full screen (step `expand`, transisi clip-path 1,15 dtk, balik lagi saat scroll ke atas), judul memudar dan panel rute masuk. Rute jalan dari DFD ke DIFC, Downtown, Business Bay, Dubai Marina, DXB; waktu tempuh dari `drive-times.json`. Mapbox dimuat saat section mendekat; link menu "Location" mendarat dengan peta sudah terbuka |
 | `dfd-next` | Next destination | "Where would you like to go next?" + tombol Inquire (contact drawer) |
 
-- **Media**: `npm run media -- dfd` (video + still reduced-motion), `node scripts/build-images.mjs dfd-` (gambar). Desktop 6,2 MB + 7,9 MB, mobile 1,9 MB + 2,6 MB.
+- **Media**: `npm run media -- dfd-page` (video + still reduced-motion), `node scripts/build-images.mjs dfd-` (gambar). Desktop 6,2 MB + 7,9 MB, mobile 1,9 MB + 2,6 MB.
 - **Copy perlu konfirmasi klien**: baris pendukung Work/Eat/Train/Unwind, heading transformasi ("A district constructed around you…"), dan nama loft. Ditandai `PROPOSED` di `src/content/fintech-district.ts`.
 - **Angka**: dokumen menulis **500,000 sq ft**, homepage (`destinations.ts`, H08) masih **50,000 sq ft**. Perlu dicek ke klien lalu disamakan.
-- **Link dari homepage**: semua action Fintech District membuka halaman ini di tab yang sama: dropdown navbar, slider Our destinations (foto dan CTA, dengan transisi lingkaran), CTA H08, marker peta dan baris directory H13, link H14, dan footer. Sumbernya `fintechDistrictUrl` di `src/content/destinations.ts`; `linkTarget()` (`components/markup.ts`) hanya memberi `target="_blank"` ke URL gulfalts.com. Venue lain (Creative Park, V8 District, Motor Garten) masih ke gulfalts.com sampai halamannya ada. Link ditulis sebagai path root (`/fintech-district/`, `/#…`); plugin di `vite.config.ts` menambahkan base deploy ke setiap `<a href="/…">`, jadi build di sub-path (Webflow Cloud `/new-home/`, `vite build --base=/new-home/`) tetap benar.
+- **Link dari homepage**: semua action Fintech District membuka halaman ini di tab yang sama: dropdown navbar, slider Our destinations (foto dan CTA, dengan transisi lingkaran), CTA H08, marker peta dan baris directory H13, link H14, dan footer. Sumbernya `url: 'fintech-district/'` di `src/content/destinations.ts`, di-resolve terhadap base deploy oleh `href()` / `linkAttrs()` (`components/markup.ts`), jadi benar juga di Webflow Cloud `/new-home/`.
 - QA: `/fintech-district/?at=dfd-transformation:0.5` (sama seperti homepage).
 
 ## Peta chapter
@@ -127,8 +127,10 @@ Kode chapter mengikuti story map, jadi H06/H07, H09/H10, dan H12 memang tidak ad
 
 ```text
 v3/
-├── index.html                  header, menu, footer (V1) + slot <!-- homepage:sections -->
-├── vite.config.ts              plugin yang merender H01–H14 ke HTML statis saat dev/build
+├── index.html                  footer (V1) + slot <!-- site:chrome --> dan <!-- homepage:sections -->
+├── dubai-creative-park/        halaman venue DCP (shell HTML; isi dirender dari src/content/venues.ts)
+├── fintech-district/           halaman venue DFD (shell HTML)
+├── vite.config.ts              plugin yang merender header/menu/contact, H01–H14 dan halaman venue ke HTML statis saat dev/build; satu input per halaman
 ├── scripts/build-media.sh      video v01–v03 + salinan aset V2 yang dipakai (`npm run media -- h02 h13` untuk sebagian); build-images.mjs untuk still
 ├── public/media/{video,posters,images}  aset (v03 = intro homepage baru, v02 = outro homepage, v01 = footage produksi, v00 = placeholder dari V2)
 └── src/
@@ -154,6 +156,19 @@ Semua copy, statistik, marker, dan CTA adalah HTML statis (dirender saat build d
 - **Autoplay**: diputar hanya saat terlihat, dijeda saat keluar.
 - **Mobile (<768px)**: file 608×1080 terpisah, track lebih pendek, HUD diringkas, satu safe area teks di bawah.
 - **Reduced motion**: tanpa pinning, tanpa scrub, tanpa video. Setiap chapter tampil sebagai poster + seluruh copy; H11 menjadi urutan still frame.
+
+## Halaman venue
+
+Dua halaman per venue, di luar homepage: `/dubai-creative-park/` dan `/fintech-district/` (slug sama dengan gulfalts.com/venue). Semua link Creative Park dan Fintech District di homepage (slider, H05/H08, marker dan directory H13, H14, footer) sekarang membuka halaman ini di tab yang sama; V8 District dan Motor Garten tetap ke gulfalts.com. Untuk mengembalikan satu venue ke gulfalts.com, ubah `url`-nya di `src/content/destinations.ts`.
+
+- **Isi**: copy, statistik, media, dan timing di `src/content/venues.ts`; markup di `src/sections/venue.ts`; perilaku di `src/venue.ts` (entry terpisah dari homepage). Statistik H05/H08 dipakai ulang dari `destinations.ts`, jadi angka cukup diubah di satu tempat.
+- **Header, menu, contact drawer**: dipakai bersama dengan homepage (`components/site-chrome-markup.ts`, slot `<!-- site:chrome [venue-id] -->`). Di halaman venue, link-nya kembali ke homepage (`Destinations` → H13, `Our approach` → H11) atau ke venue lain; link venue yang sedang dibuka diberi `aria-current="page"`.
+- **DCP**: hero (video loop) → Our approach (scrub, footage H11 sementara) → tour (scrub, lima stop) → footer *next venue*: terus scroll mengisi cincin; lepas di atas 51% (atau sampai 100%) pindah ke DFD, dan video hero DFD melanjutkan dari frame yang sama (sessionStorage + View Transitions di Chrome/Edge/Safari 18+).
+- **DFD**: memakai halaman sendiri (lihat "Halaman Dubai Fintech District" di atas), bukan `venues.ts`. Footer *next venue* DCP tetap pindah ke DFD, tapi hero DFD sekarang Video 1 (orbit → Al Quoz), jadi video tidak lagi melanjutkan frame dari footer DCP. Copy PLACEHOLDER DCP di `venues.ts` (termasuk "[x] courts") masih sementara.
+- **Timing dalam detik**: berbeda dari chapter homepage (progress 0–1), copy scrub venue diatur dalam detik video (`from` / `to`), jadi bisa dibaca langsung dari timecode. Tambahkan `?debug` di URL untuk melihat waktu video saat scroll.
+- **Scroll native**: halaman venue tidak memakai Lenis; scrub (`lib/time-scrub.ts`) dan footer (`components/next-venue.ts`) membaca `window.scrollY` langsung.
+- **Media**: `dcp-hero-*`, `dcp-tour-placeholder-*`, dan `dfd-placeholder-*` di `public/media` belum dibuat oleh `scripts/build-media.sh`; video hero DFD dan footer DCP harus file yang sama agar handoff berjalan.
+- **Base path**: link antarhalaman memakai `page()` / `href()` di `components/markup.ts` (dan `%BASE_URL%` di HTML statis), jadi tetap benar di bawah `/new-home/`.
 
 ## Mengganti media
 

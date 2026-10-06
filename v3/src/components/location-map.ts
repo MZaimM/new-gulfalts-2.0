@@ -24,7 +24,7 @@ import { keyLocations, mapbox, mapCamera, mapVenues } from '../content/location-
 import type { KeyLocationId, LngLat, RouteSet } from '../content/types';
 import { spreadLabels } from '../lib/scroll-scrub';
 import { isMobile } from '../lib/viewport';
-import { esc, isExternal } from './markup';
+import { esc } from './markup';
 
 const ROUTE_SOURCE = 'active-route';
 const INTRO_MS = 2600;
@@ -265,9 +265,10 @@ export const initLocationMap = (section: HTMLElement, reduced: boolean) => {
       const destination = destinationById(venue.id);
       const element = document.createElement('a');
       element.className = `map_venue${venue.id === origin?.id ? ' is-origin' : ''}`;
-      // Pages of this site are root paths: carry the deploy base (Webflow Cloud: /new-home/).
-      element.href = destination.url.startsWith('/') ? `${import.meta.env.BASE_URL.replace(/\/$/, '')}${destination.url}` : destination.url;
-      if (isExternal(destination.url)) {
+      // Pages of this site are paths relative to the deploy base (Webflow Cloud: /new-home/).
+      const external = /^https?:/i.test(destination.url);
+      element.href = external ? destination.url : `${import.meta.env.BASE_URL}${destination.url}`;
+      if (external) {
         element.target = '_blank';
         element.rel = 'noopener';
       }

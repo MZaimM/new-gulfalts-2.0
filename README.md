@@ -121,7 +121,7 @@ H13 ends on a live map in the client's custom Mapbox style (`gius03/cmuolk2l0005
 
 ## Deployment
 
-Production is a static site on Vercel, deployed with the Vercel CLI. The project is **not** connected to Git, so pushing to GitHub does not deploy.
+Production is a static site on Vercel. The project is connected to this GitHub repo with Root Directory `v3`, so a push to `main` deploys. On the Hobby plan Vercel blocks deploys whose latest commit author is not the Vercel account owner (`gulfalts`); when that happens, the owner pushes a commit or deploys with the CLI.
 
 ```bash
 cd v3
