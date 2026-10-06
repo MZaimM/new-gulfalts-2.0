@@ -24,7 +24,7 @@ import { keyLocations, mapbox, mapCamera, mapVenues } from '../content/location-
 import type { KeyLocationId, LngLat, RouteSet } from '../content/types';
 import { spreadLabels } from '../lib/scroll-scrub';
 import { isMobile } from '../lib/viewport';
-import { esc } from './markup';
+import { esc, isExternal } from './markup';
 
 const ROUTE_SOURCE = 'active-route';
 const INTRO_MS = 2600;
@@ -265,9 +265,12 @@ export const initLocationMap = (section: HTMLElement, reduced: boolean) => {
       const destination = destinationById(venue.id);
       const element = document.createElement('a');
       element.className = `map_venue${venue.id === origin?.id ? ' is-origin' : ''}`;
-      element.href = destination.url;
-      element.target = '_blank';
-      element.rel = 'noopener';
+      // Pages of this site are root paths: carry the deploy base (Webflow Cloud: /new-home/).
+      element.href = destination.url.startsWith('/') ? `${import.meta.env.BASE_URL.replace(/\/$/, '')}${destination.url}` : destination.url;
+      if (isExternal(destination.url)) {
+        element.target = '_blank';
+        element.rel = 'noopener';
+      }
       element.setAttribute('aria-label', destination.fullName);
       element.innerHTML = `<span class="map_venue-label" aria-hidden="true">${destination.index} ${esc(destination.name)}</span>`;
       new gl.Marker({ element }).setLngLat(venue.coordinates).addTo(map!);
@@ -342,4 +345,7 @@ export const initLocationMap = (section: HTMLElement, reduced: boolean) => {
   };
   window.addEventListener('resize', relayout);
   new ResizeObserver(relayout).observe(panel);
+  // The canvas box can change without a window resize (a page restyling it, e.g. the Fintech
+  // District map letting the canvas fill its card until the panel shows).
+  new ResizeObserver(() => map?.resize()).observe(canvas);
 };

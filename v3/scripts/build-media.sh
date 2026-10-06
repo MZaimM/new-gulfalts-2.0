@@ -5,6 +5,7 @@
 #   H02 Dubai arrival      video concept/homepage/gulfalts-new-intro.mp4 → scrub, v03 (the Gulf → Dubai coast)
 #   H11 Our approach       video concept/DCP/DCP-Video.mp4           → scrub, v01 (+ reduced-motion stills)
 #   H13 Our destinations   video concept/homepage/gulfalts-outro.mp4 → scrub, v02, played in reverse (pull-out)
+#   DFD page              video concept/DFD/Video 1–4.mp4            → scrub, dfd-arrival + dfd-transformation v01
 #   Images (H03, H05, H08) → scripts/build-images.mjs (AVIF + JPEG, responsive widths)
 #
 # Scrub encodes are 1080p (desktop) and a native 608x1080 crop (mobile), H.264 with a short
@@ -13,7 +14,7 @@
 # one second of video. (AV1/HEVC were tested and came out larger on this footage.)
 #
 # Usage: npm run media            (from the v3 folder, needs ffmpeg)
-#        npm run media -- h02 h13 only rebuild those chapters (h02, h11, h13, v2, images)
+#        npm run media -- h02 h13 only rebuild those chapters (h02, h11, h13, dfd, v2, images)
 #
 # A re-encode that changes the picture gets a new version suffix: /media is cached for a week.
 set -euo pipefail
@@ -83,6 +84,23 @@ if want h13; then
   # Frames 0–141 only: the last 0.7 s is a still drone hold that would stall the start of the
   # pull-out. The first frame (the Dubai map) is the hold frame the markers are placed on.
   scrub "$SRC/homepage/gulfalts-outro.mp4" h13-dubai-pull-out v02 0.56 29 1.5:1.5:4:4 5.875
+fi
+
+if want dfd; then
+  log "Fintech District page: arrival (Video 1) and transformation (Videos 4 → 3 → 2)"
+  DFD="$SRC/DFD"
+  # Arrival: space → Sheikh Zayed Road → Al Quoz → the DFD warehouse → the studio inside (30 fps).
+  scrub "$DFD/Video 1.mp4" dfd-arrival v01 0.5 29 1.5:1.5:4:4
+  # Transformation: three exterior → raw interior → fitted-out sequences (café, studio, workspace),
+  # joined with 0.5 s dissolves into one 25.1 s master so a single video scrubs the whole chapter.
+  MASTER="$(mktemp -d)/dfd-transformation.mp4"
+  ffmpeg -v error -y -i "$DFD/Video 4.mp4" -i "$DFD/Video 3.mp4" -i "$DFD/Video 2.mp4" -filter_complex \
+    "[0:v]fps=24,format=yuv420p,settb=AVTB[a];[1:v]fps=24,format=yuv420p,settb=AVTB[b];[2:v]fps=24,format=yuv420p,settb=AVTB[c];\
+[a][b]xfade=transition=fade:duration=0.5:offset=7.5417[ab];[ab][c]xfade=transition=fade:duration=0.5:offset=17.0834[v]" \
+    -map "[v]" -an -c:v libx264 -preset fast -crf 12 -pix_fmt yuv420p "$MASTER"
+  scrub "$MASTER" dfd-transformation v01 0.5 30 1.5:1.5:4:4
+  frames "$MASTER" dfd-transformation 1 3.6 6.8 13.5 23.5
+  rm -f "$MASTER"
 fi
 
 if want v2; then

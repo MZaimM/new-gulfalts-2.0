@@ -45,7 +45,7 @@ Mengikuti style guide gulfalts.com (https://www.gulfalts.com/style/style-guide),
 ## Navigasi
 
 - **Navbar**: minimalis dan transparan di seluruh halaman (logo, Destinations, Inquire, Menu) dengan gradasi tipis di atas footage. Di atas section terang (chapter `.is-static` di canvas off-white) berganti ke ink: logo gelap, tombol Inquire ink (`initHeaderTone` di `components/site-chrome.ts`).
-- **Navbar desktop**: `Destinations ▾` (dropdown: Creative Park, Fintech District, All destinations) + tombol `Inquire`. Dropdown terbuka lewat hover, klik, atau keyboard (Arrow Down masuk ke daftar, Escape menutup); `Destinations` dan item submenu diberi `aria-current` saat section-nya terlihat.
+- **Navbar desktop**: `Destinations ▾` (dropdown: Creative Park, Fintech District, All destinations) + tombol `Inquire`. Fintech District membuka halaman `/fintech-district/`; dua item lain melompat ke section homepage. Dropdown terbuka lewat hover, klik, atau keyboard (Arrow Down masuk ke daftar, Escape menutup); `Destinations` dan item submenu diberi `aria-current` saat section-nya terlihat.
 - **Menu full-screen**: Home, Destinations, Our approach. `Destinations` (dan "All destinations" di dropdown) mendarat di H13 saat peta, directory, dan marker sudah tampil (`anchorProgress: 0.85`).
 - **The Firm** hanya ada di footer.
 - **Contact drawer**: `Inquire` (navbar) dan `Contact` (footer) membuka panel putih dari kanan seperti gulfalts.com: Get in Touch, Contact Form (Full Name, Phone Number, Email Address, jenis inquiry dengan 5 opsi yang sama), Submit Inquiry. Validasi + state loading/berhasil/gagal ada. **Belum mengirim data**: `CONTACT_ENDPOINT` di `src/components/contact.ts` masih `null`, jadi setelah submit pengunjung diminta email ke info@gulfalts.com. Isi endpoint (mis. Netlify Forms atau backend lain) untuk mengaktifkan.
@@ -81,6 +81,26 @@ Brief klien: `../gulfalts-mapbox-dev-instructions.md`. Interaksi rute sudah ada 
 ### Waktu tempuh
 
 Semua waktu tempuh (card marker homepage dan mode rute) adalah **ETA Mapbox Directions** (profil `driving`, lalu lintas tipikal), dibulatkan ke menit, untuk keempat venue × lima lokasi kunci. Ini menggantikan angka tetap dari brief klien (Fintech District: DIFC 12, Downtown 14, Business Bay 10, Dubai Marina 10, DXB 20 menit), atas instruksi Oktober 2026, meskipun brief meminta angka tetap. `npm run routes` menghitung ulang `src/content/drive-times.json` (menit) dan `src/content/routes.json` (geometri) sekaligus; jalankan setelah mengubah koordinat atau menambah venue. Halaman tidak memanggil Directions API saat dibuka, jadi angka hanya berubah saat skrip dijalankan.
+
+## Halaman Dubai Fintech District (`/fintech-district/`)
+
+Inner page pertama. Struktur mengikuti template `inner page/index.html`, copy mengikuti dokumen klien "Website 2.0" tab **Fintech District**. Halaman kedua di build Vite (`fintech-district/index.html`, entry `src/fintech-district.ts`), memakai header, menu, contact drawer, footer, `ChapterTrack` dan peta yang sama dengan homepage.
+
+| ID | Section | Isi |
+|---|---|---|
+| `dfd-arrival` | Hero (scrub) | `video concept/DFD/Video 1.mp4`: orbit → Dubai → Al Quoz → gudang DFD → studio di dalamnya. Judul "Dubai Fintech District", label tempat per cue. Di akhir frame mengecil jadi kartu bersudut di canvas (hero template) dan navbar berganti ink |
+| `dfd-intro` | Intro | Deskripsi dari dokumen, terisi per kata saat discroll (fill-text template); angka 500,000 sq ft · 65 spaces · Al Quoz, Dubai (count-up) |
+| `dfd-everyday` | Work · Eat · Train · Unwind (pinned) | Satu kata per seperempat track, gambar wipe naik di atas gambar sebelumnya (gambar dari `Website Material/DFD`) |
+| `dfd-transformation` | Transformasi (scrub) | Scale grid template zoom ke tile video, lalu Video 4 → 3 → 2 (digabung jadi satu master 25 dtk dengan dissolve 0,5 dtk): raw warehouse exteriors → raw interiors → interiors start to change → people → café → fitness → activity. Ditutup "Building is only the beginning." |
+| `dfd-spaces` | Spaces | Penthouse, Burj View, Galleria, Courtyard Loft (nama dari file render klien) |
+| `dfd-location` | Location (Mapbox, mode rute, pinned) | Peta masuk sebagai kartu di bawah judul; begitu panggungnya sampai di atas layar, kartu otomatis membuka jadi full screen (step `expand`, transisi clip-path 1,15 dtk, balik lagi saat scroll ke atas), judul memudar dan panel rute masuk. Rute jalan dari DFD ke DIFC, Downtown, Business Bay, Dubai Marina, DXB; waktu tempuh dari `drive-times.json`. Mapbox dimuat saat section mendekat; link menu "Location" mendarat dengan peta sudah terbuka |
+| `dfd-next` | Next destination | "Where would you like to go next?" + tombol Inquire (contact drawer) |
+
+- **Media**: `npm run media -- dfd` (video + still reduced-motion), `node scripts/build-images.mjs dfd-` (gambar). Desktop 6,2 MB + 7,9 MB, mobile 1,9 MB + 2,6 MB.
+- **Copy perlu konfirmasi klien**: baris pendukung Work/Eat/Train/Unwind, heading transformasi ("A district constructed around you…"), dan nama loft. Ditandai `PROPOSED` di `src/content/fintech-district.ts`.
+- **Angka**: dokumen menulis **500,000 sq ft**, homepage (`destinations.ts`, H08) masih **50,000 sq ft**. Perlu dicek ke klien lalu disamakan.
+- **Link dari homepage**: semua action Fintech District membuka halaman ini di tab yang sama: dropdown navbar, slider Our destinations (foto dan CTA, dengan transisi lingkaran), CTA H08, marker peta dan baris directory H13, link H14, dan footer. Sumbernya `fintechDistrictUrl` di `src/content/destinations.ts`; `linkTarget()` (`components/markup.ts`) hanya memberi `target="_blank"` ke URL gulfalts.com. Venue lain (Creative Park, V8 District, Motor Garten) masih ke gulfalts.com sampai halamannya ada. Link ditulis sebagai path root (`/fintech-district/`, `/#…`); plugin di `vite.config.ts` menambahkan base deploy ke setiap `<a href="/…">`, jadi build di sub-path (Webflow Cloud `/new-home/`, `vite build --base=/new-home/`) tetap benar.
+- QA: `/fintech-district/?at=dfd-transformation:0.5` (sama seperti homepage).
 
 ## Peta chapter
 

@@ -11,6 +11,9 @@ import type { CommuteTime, Destination, DestinationStat, KeyLocationId } from '.
 
 export const venueBase = 'https://www.gulfalts.com/venue';
 
+/** Venues with their own page on this site; the others link to their gulfalts.com venue page. */
+export const fintechDistrictUrl = '/fintech-district/';
+
 /** No all-destinations page exists yet on gulfalts.com; the live homepage lists every venue. */
 export const allDestinationsUrl = 'https://www.gulfalts.com/';
 
@@ -41,7 +44,7 @@ export const destinations: Destination[] = [
     fullName: 'Dubai Fintech District',
     tags: 'Work · Business · Community',
     tagsConfirmed: true,
-    url: `${venueBase}/fintech-district`,
+    url: fintechDistrictUrl,
     location: 'Al Quoz · Dubai',
     preview: '/media/images/preview-fintech-district-320.jpg',
     commute: commute('fintech-district')

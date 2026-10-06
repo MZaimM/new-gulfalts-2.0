@@ -73,3 +73,7 @@ export const statList = (stats: DestinationStat[], label: string) => {
 };
 
 export const externalLink = 'target="_blank" rel="noopener"';
+
+/** gulfalts.com venue pages open in a new tab; pages of this site (e.g. /fintech-district/) do not. */
+export const isExternal = (url: string) => /^https?:\/\//.test(url);
+export const linkTarget = (url: string) => (isExternal(url) ? externalLink : '');

@@ -6,7 +6,7 @@
 import { h11, h13, h14 } from '../content/homepage';
 import { allDestinationsUrl, destinationById, destinations } from '../content/destinations';
 import { scrubChapter } from '../components/chapter';
-import { arrow, chapterKeyframes, esc, externalLink, pad, show } from '../components/markup';
+import { arrow, chapterKeyframes, esc, externalLink, linkTarget, pad, show } from '../components/markup';
 import type { Destination } from '../content/types';
 
 export const renderH11 = () => {
@@ -72,7 +72,7 @@ export const renderH13 = () => {
         <div class="h13_markers" hidden data-map-markers>
           ${destinations.map(destination => `
           <div class="chapter_marker" data-destination="${destination.id}">
-            <a href="${destination.url}" ${externalLink} aria-label="${esc(destination.fullName)}" aria-describedby="marker-card-${destination.id}">
+            <a href="${destination.url}" ${linkTarget(destination.url)} aria-label="${esc(destination.fullName)}" aria-describedby="marker-card-${destination.id}">
               <span class="chapter_marker-dot" aria-hidden="true"></span>
               <span class="chapter_marker-leader" aria-hidden="true"></span>
               <span class="chapter_marker-label"><span aria-hidden="true">${destination.index}</span> ${esc(destination.name)}</span>
@@ -92,7 +92,7 @@ export const renderH13 = () => {
         <ol class="destination_directory">
           ${destinations.map(destination => `
           <li>
-            <a class="destination_row" href="${destination.url}" ${externalLink} data-destination="${destination.id}">
+            <a class="destination_row" href="${destination.url}" ${linkTarget(destination.url)} data-destination="${destination.id}">
               <span class="destination_row-index">${destination.index}</span>
               <span class="destination_row-name">${esc(destination.name)}</span>
               <span class="destination_row-tags${destination.tagsConfirmed ? '' : ' is-pending'}">${esc(destination.tags)}</span>
@@ -122,7 +122,7 @@ export const renderH14 = () => `
       const meta = destination ? destination.location : `${pad(destinations.length)} destinations · Dubai`;
       return `
     <li data-reveal>
-      <a class="h14_link" href="${href}" ${externalLink}>
+      <a class="h14_link" href="${href}" ${linkTarget(href)}>
         <span class="h14_index">${pad(index + 1)}</span>
         <span class="h14_label">${esc(link.label)}</span>
         <span class="h14_meta">${esc(meta)}</span>

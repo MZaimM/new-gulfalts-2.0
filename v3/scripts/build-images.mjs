@@ -43,7 +43,30 @@ const jobs = [
   ['preview-fintech-district', DFD('Courtyard corner.jpg'), 16 / 9, [0.6, 0.5], [320]],
   ['preview-v8-district', SITE('v8-district-auto-park.avif'), 16 / 9, [0.35, 0.55], [320]],
   ['preview-motor-garten', SITE('motor-garten-concept.avif'), 16 / 9, [0.5, 0.5], [320]],
-  ['og-gulfalts', DCP('Block 5 Padel - side.png'), 1200 / 630, [0.5, 0.6], [1200]]
+  ['og-gulfalts', DCP('Block 5 Padel - side.png'), 1200 / 630, [0.5, 0.6], [1200]],
+
+  // Fintech District page (fintech-district/index.html) — `node scripts/build-images.mjs dfd-`
+  // Work · Eat · Train · Unwind: a portrait main image and a square detail per word
+  ['dfd-work', DFD('Start Up Office .jpg'), 4 / 5, [0.42, 0.5], [640, 960, 1280]],
+  ['dfd-work-detail', DFD('workspace.avif'), 1, [0.62, 0.5], [480, 720]],
+  ['dfd-eat', DFD('Coffe shop.jpg'), 4 / 5, [0.5, 0.5], [640, 960, 1280]],
+  ['dfd-eat-detail', DFD('Courtyard corner.jpg'), 1, [0.55, 0.55], [480, 720]],
+  ['dfd-train', DFD('Signature Loft Space.jpg'), 4 / 5, [0.5, 0.5], [640, 960, 1280]],
+  ['dfd-train-detail', DFD('gym-building.webp'), 1, [0.5, 0.55], [480, 720]],
+  ['dfd-unwind', DFD('SPA.jpg'), 4 / 5, [0.5, 0.55], [640, 960, 1280]],
+  ['dfd-unwind-detail', DFD('Courtyard.jpg'), 1, [0.4, 0.62], [480, 720]],
+  // Transformation chapter: the grid that zooms into the video tile
+  ['dfd-grid-aerial', DFD('Exterior - Bird Eye.jpg'), 3 / 2, [0.5, 0.55], [640, 1080]],
+  ['dfd-grid-courtyard', DFD('Courtyard front .jpg'), 3 / 2, [0.5, 0.55], [640, 1080]],
+  ['dfd-grid-galleria', DFD('Galleria.png'), 3 / 2, [0.5, 0.5], [640, 1080]],
+  ['dfd-grid-corner', DFD('dfd-image-1.avif'), 3 / 2, [0.5, 0.5], [640, 1080]],
+  ['dfd-grid-masterplan', DFD('DFD-masterplan.png'), 3 / 2, [0.5, 0.5], [640, 1080]],
+  // Loft spaces
+  ['dfd-loft-penthouse', DFD('Penthouse Loft Space.jpg'), 4 / 5, [0.5, 0.5], [480, 800, 1200]],
+  ['dfd-loft-burj-view', DFD('Burj View Loft Space.jpg'), 4 / 5, [0.5, 0.5], [480, 800, 1200]],
+  ['dfd-loft-galleria', DFD('Galleria Loft Space.jpg'), 4 / 5, [0.5, 0.5], [480, 800, 1200]],
+  ['dfd-loft-courtyard', DFD('Courtyard loft space.jpg'), 4 / 5, [0.5, 0.5], [480, 800, 1200]],
+  ['og-fintech-district', DFD('Courtyard corner.jpg'), 1200 / 630, [0.58, 0.5], [1200]]
 ];
 
 const cropFor = (width, height, aspect, [fx, fy]) => {

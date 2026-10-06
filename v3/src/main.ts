@@ -124,7 +124,6 @@ initNavDropdown();
 initNavState({
   destinations: ['our-destinations', 'h05-creative-park', 'h08-fintech-district', 'h13-dubai-pull-out', 'h14-next-destination'],
   '#h05-creative-park': ['h05-creative-park'],
-  '#h08-fintech-district': ['h08-fintech-district'],
   '#h13-dubai-pull-out': ['h13-dubai-pull-out', 'h14-next-destination']
 });
 initFooter(lenis);
