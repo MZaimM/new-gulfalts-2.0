@@ -31,12 +31,21 @@ export default defineConfig({
   build: {
     assetsInlineLimit: 0,
     // mapbox-gl is one ~1.9 MB chunk, loaded on demand by the location maps only.
-    chunkSizeWarningLimit: 2000,
-    rollupOptions: {
-      input: {
-        // Relative to the project root (no @types/node here for path.resolve).
-        main: 'index.html',
-        'fintech-district': 'fintech-district/index.html'
+    chunkSizeWarningLimit: 2000
+  },
+  environments: {
+    // The pages are entries of the client (browser) build only. Webflow Cloud wraps this config
+    // with a Cloudflare worker environment that has its own entry (src/worker.ts); top-level
+    // build.rollupOptions.input would leak into it and fail ("index.html cannot be external").
+    client: {
+      build: {
+        rollupOptions: {
+          // Relative to the project root (no @types/node here for path.resolve).
+          input: {
+            main: 'index.html',
+            'fintech-district': 'fintech-district/index.html'
+          }
+        }
       }
     }
   }
