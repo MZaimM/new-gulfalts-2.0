@@ -55,7 +55,7 @@ const intro: InnerPage['intro'] = {
     eyebrow: 'Dubai Creative Park',
     body: 'Sport, wellness, family activities, creative studios and F&B, brought together in one connected, walkable community.',
     stats: [
-      { value: '500,000', label: 'sq ft', detail: 'Including 160,000+ sq ft of open land for activations' },
+      { value: '500,000', label: 'sq ft', detail: 'Including **160,000+ sq ft** of open land for activations' },
       { value: '54', label: 'spaces', detail: 'Across retail, office, F&B, fitness and wellness' },
       { value: '25+', label: 'activation zones' }
     ]

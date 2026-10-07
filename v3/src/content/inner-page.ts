@@ -50,7 +50,7 @@ export interface InnerPage {
     copy: {
       eyebrow: string;
       body: string;
-      /** `detail`: an optional sentence-case line under the label. */
+      /** `detail`: an optional sentence-case line under the label; **bold** marks emphasis. */
       stats: { value: string; label: string; detail?: string }[];
     };
   };
