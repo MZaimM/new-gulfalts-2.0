@@ -22,6 +22,8 @@ const DFD = file => path.join(material, 'DFD ', file);
 const SITE = file => path.join(material, 'gulfalts.com', file);
 // Photos taken from gulfalts-homepage-preview.html (Our destinations slider).
 const PORTAL = file => path.join(material, 'portals', file);
+// Creative Park page: stills cut from the DCP footage (scripts/build-media.sh `dcp-page`).
+const DCP_STILL = file => path.join(root, '../video concept/DCP/stills', `${file}.png`);
 
 /**
  * name, source, aspect (w/h), focus point (0–1) the crop is centred on, widths.
@@ -66,7 +68,28 @@ const jobs = [
   ['dfd-loft-burj-view', DFD('Burj View Loft Space.jpg'), 4 / 5, [0.5, 0.5], [480, 800, 1200]],
   ['dfd-loft-galleria', DFD('Galleria Loft Space.jpg'), 4 / 5, [0.5, 0.5], [480, 800, 1200]],
   ['dfd-loft-courtyard', DFD('Courtyard loft space.jpg'), 4 / 5, [0.5, 0.5], [480, 800, 1200]],
-  ['og-fintech-district', DFD('Courtyard corner.jpg'), 1200 / 630, [0.58, 0.5], [1200]]
+  ['og-fintech-district', DFD('Courtyard corner.jpg'), 1200 / 630, [0.58, 0.5], [1200]],
+
+  // Creative Park page (dubai-creative-park/index.html), placeholders until DCP renders arrive.
+  // Sources are 1920x1080 frames, so no width goes past the crop. `node scripts/build-images.mjs dcp-`
+  ['dcp-work', DCP_STILL('work'), 4 / 5, [0.5, 0.5], [480, 864]],
+  ['dcp-work-detail', DCP_STILL('work-detail'), 1, [0.5, 0.5], [480, 720]],
+  ['dcp-move', DCP_STILL('move'), 4 / 5, [0.45, 0.5], [480, 864]],
+  ['dcp-move-detail', DCP_STILL('move-detail'), 1, [0.5, 0.55], [480, 720]],
+  ['dcp-culture', DCP_STILL('culture'), 4 / 5, [0.4, 0.5], [480, 864]],
+  ['dcp-culture-detail', DCP_STILL('culture-detail'), 1, [0.5, 0.6], [480, 720]],
+  ['dcp-life', DCP_STILL('life'), 4 / 5, [0.5, 0.5], [480, 864]],
+  ['dcp-life-detail', DCP_STILL('life-detail'), 1, [0.6, 0.5], [480, 720]],
+  ['dcp-grid-city', DCP_STILL('grid-city'), 3 / 2, [0.5, 0.5], [640, 1080]],
+  ['dcp-grid-al-quoz', DCP_STILL('grid-al-quoz'), 3 / 2, [0.5, 0.5], [640, 1080]],
+  ['dcp-grid-plan', DCP_STILL('grid-plan'), 3 / 2, [0.5, 0.5], [640, 1080]],
+  ['dcp-grid-exterior', DCP_STILL('grid-exterior'), 3 / 2, [0.5, 0.5], [640, 1080]],
+  ['dcp-grid-evening', DCP_STILL('grid-evening'), 3 / 2, [0.5, 0.5], [640, 1080]],
+  ['dcp-space-offices', DCP_STILL('space-offices'), 4 / 5, [0.5, 0.5], [480, 864]],
+  ['dcp-space-wellness', DCP_STILL('space-wellness'), 4 / 5, [0.55, 0.5], [480, 864]],
+  ['dcp-space-courts', DCP_STILL('space-courts'), 4 / 5, [0.5, 0.5], [480, 864]],
+  ['dcp-space-market', DCP_STILL('space-market'), 4 / 5, [0.5, 0.5], [480, 864]],
+  ['og-creative-park', DCP_STILL('grid-evening'), 1200 / 630, [0.5, 0.5], [1200]]
 ];
 
 const cropFor = (width, height, aspect, [fx, fy]) => {

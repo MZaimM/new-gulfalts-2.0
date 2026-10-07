@@ -3,13 +3,15 @@ import './styles/global.css';
 import './styles/site-chrome.css';
 import './styles/chapters.css';
 import './styles/sections.css';
-import './styles/fintech-district.css';
+import './styles/inner-page.css';
 
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 
-import { dfdChapterById } from './content/fintech-district';
+import { fintechDistrictPage } from './content/fintech-district';
+import { creativeParkPage } from './content/creative-park';
+import { innerChapters } from './content/inner-page';
 import { ChapterMedia } from './lib/media-loader';
 import { ChapterTrack } from './lib/scroll-scrub';
 import { clamp, isMobile, prefersReducedMotion } from './lib/viewport';
@@ -20,7 +22,7 @@ import { initContact } from './components/contact';
 import type { ScrubChapter } from './content/types';
 
 /*
- * Dubai Fintech District page. Same runtime as the homepage (src/main.ts): Lenis smooths native
+ * Inner pages (Dubai Fintech District, Dubai Creative Park). Same runtime as the homepage (src/main.ts): Lenis smooths native
  * scrolling, ChapterTrack pins the chapters and scrubs their video, GSAP drives the entrances.
  * Page-specific motion from the inner page template lives here: the scale grid that zooms into
  * the transformation video, the word-by-word fill of the intro and the count-up figures.
@@ -28,6 +30,9 @@ import type { ScrubChapter } from './content/types';
 
 gsap.registerPlugin(ScrollTrigger);
 const reduced = prefersReducedMotion();
+
+const chapters = [fintechDistrictPage, creativeParkPage].flatMap(innerChapters);
+const chapterById = (id: string) => chapters.find(chapter => chapter.id === id);
 
 const lenis = reduced ? null : new Lenis({ lerp: 0.1, smoothWheel: true, syncTouch: false, wheelMultiplier: 0.9 });
 if (lenis) {
@@ -49,7 +54,7 @@ const tracks: ChapterTrack[] = [];
 if (!reduced) {
   sections.forEach(section => {
     if (!section.querySelector('.chapter_track')) return;
-    const config = dfdChapterById(section.dataset.chapter ?? '');
+    const config = chapterById(section.dataset.chapter ?? '');
     const scrub = config?.type === 'scrub' ? (config as ScrubChapter) : undefined;
     tracks.push(new ChapterTrack(section, scrub, scrub ? media.get(section) : undefined));
   });
@@ -69,7 +74,7 @@ if (!reduced) {
 // Scale grid (template "scale-grid"): the mosaic zooms until the video tile fills the screen.
 // Desktop scales the whole grid around the tile; phones grow the tile alone (CSS, from --z).
 // ---------------------------------------------------------------------------
-const transform = document.querySelector<HTMLElement>('.dfd-transform');
+const transform = document.querySelector<HTMLElement>('.inner-transform');
 const grid = transform?.querySelector<HTMLElement>('[data-scale-grid]');
 const gridContent = transform?.querySelector<HTMLElement>('[data-scale-content]');
 const gridRef = transform?.querySelector<HTMLElement>('[data-scale-ref]');
@@ -170,16 +175,16 @@ const scrollToHash = (hash: string, { immediate = false } = {}) => {
 
 const menu = initMenu(lenis);
 initAnchors(scrollToHash, menu);
-initHeader(document.querySelector<HTMLElement>('.dfd-hero')!, Promise.resolve());
+initHeader(document.querySelector<HTMLElement>('.inner-hero')!, Promise.resolve());
 initNavDropdown();
 initFooter(lenis);
 initContact(lenis);
 
 // ---------------------------------------------------------------------------
-// Location map: route mode from Fintech District. Mapbox loads once the section is near and
+// Location map: route mode from the venue. Mapbox loads once the section is near and
 // the map dissolves in once it is on screen (the `map-near` / `map` steps of location-map.ts).
 // ---------------------------------------------------------------------------
-const locationSection = document.querySelector<HTMLElement>('.dfd-location');
+const locationSection = document.querySelector<HTMLElement>('.inner-location');
 if (locationSection) {
   const step = (name: string, active: boolean) => {
     locationSection.classList.toggle(`is-${name}`, active);
@@ -192,7 +197,7 @@ if (locationSection) {
     step('map-near', true);
   }, { rootMargin: '150% 0px' }).observe(locationSection);
   new IntersectionObserver(([entry]) => step('map', entry.isIntersecting), { threshold: 0.25 })
-    .observe(locationSection.querySelector('.dfd-location_frame')!);
+    .observe(locationSection.querySelector('.inner-location_frame')!);
 }
 
 // ---------------------------------------------------------------------------

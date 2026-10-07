@@ -9,24 +9,71 @@
   <meta property="og:title" content="Dubai Creative Park | Gulfalts" />
   <meta property="og:description" content="A destination built around movement: 54 spaces and 25+ activation zones in Al Quoz, Dubai." />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="/media/posters/dcp-hero-poster-desktop.jpg" />
+  <meta property="og:image" content="/media/images/og-creative-park-1200.jpg" />
   <link rel="icon" href="/media/images/logo-dark.svg" type="image/svg+xml" />
-  <link rel="preload" href="/media/posters/dcp-hero-poster-desktop.jpg" as="image" media="(min-width: 768px)" fetchpriority="high" />
-  <link rel="preload" href="/media/posters/dcp-hero-poster-mobile.jpg" as="image" media="(max-width: 767px)" fetchpriority="high" />
+  <link rel="preload" href="/media/posters/gulfalts-dcp-arrival-poster-desktop-v01.jpg" as="image" media="(min-width: 768px)" fetchpriority="high" />
+  <link rel="preload" href="/media/posters/gulfalts-dcp-arrival-poster-mobile-v01.jpg" as="image" media="(max-width: 767px)" fetchpriority="high" />
   <link rel="preload" href="/fonts/SeasonSans-TRIAL-Light.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="/fonts/SeasonSerif-TRIAL-Regular.woff2" as="font" type="font/woff2" crossorigin />
   <script>document.documentElement.classList.add('js');</script>
-  <script type="module" src="/src/venue.ts"></script>
+  <script type="module" src="/src/inner-page.ts"></script>
 </head>
-<body class="venue-page">
+<body>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <!-- site:chrome creative-park -->
 
   <main id="main">
-    <!-- venue:sections creative-park -->
+    <!-- inner-page:sections creative-park -->
   </main>
 
-  <!-- venue:next creative-park -->
+  <div class="footer-spacer" aria-hidden="true"></div>
+  <footer class="site-footer" id="site-footer" aria-label="Site footer">
+    <div class="footer-top">
+      <div class="footer-newsletter">
+        <h2>Stay updated</h2>
+        <form class="footer-signup" action="mailto:info@gulfalts.com" method="get" novalidate>
+          <label class="visually-hidden" for="footer-email">Email address</label>
+          <input id="footer-email" name="email" type="email" placeholder="Enter your email" autocomplete="email" required />
+          <button type="submit" aria-label="Subscribe">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+          </button>
+        </form>
+        <p class="footer-signup-note" aria-live="polite">Be the first to hear about venue news, openings and Gulf Alternatives updates.</p>
+      </div>
+      <nav class="footer-col footer-col-nav" aria-labelledby="footer-nav-label">
+        <p class="footer-label" id="footer-nav-label">Navigate</p>
+        <div class="footer-links">
+          <a href="%BASE_URL%#the-firm">The firm</a>
+          <button type="button" class="footer-link-button" data-contact-open aria-haspopup="dialog" aria-controls="contact-dialog">Contact</button>
+          <a href="https://www.gulfalts.com/careers" target="_blank" rel="noopener">Careers</a>
+          <a href="https://www.gulfalts.com/thesis" target="_blank" rel="noopener">Thesis</a>
+          <a href="https://www.gulfalts.com/blogs" target="_blank" rel="noopener">Blog</a>
+        </div>
+      </nav>
+      <nav class="footer-col" aria-labelledby="footer-venue-label">
+        <p class="footer-label" id="footer-venue-label">Our Venue</p>
+        <div class="footer-links">
+          <a href="%BASE_URL%dubai-creative-park/" aria-current="page">Dubai Creative Park</a>
+          <a href="%BASE_URL%fintech-district/">Dubai Fintech District</a>
+          <a href="https://www.gulfalts.com/venue/v8-district" target="_blank" rel="noopener">V8 District</a>
+          <a href="https://www.gulfalts.com/venue/motor-garten" target="_blank" rel="noopener">Motor Garten</a>
+        </div>
+      </nav>
+      <div class="footer-col">
+        <p class="footer-label">Connect</p>
+        <div class="footer-links">
+          <a href="mailto:info@gulfalts.com">info@gulfalts.com</a>
+          <a href="https://www.linkedin.com/company/gulfalts" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://x.com/gulfaltsdubai" target="_blank" rel="noopener" aria-label="X (Twitter)">X</a>
+        </div>
+      </div>
+    </div>
+    <img class="footer-brand" src="/media/images/gulfalts-wordmark-white.svg" alt="Gulfalts" width="3044" height="537" loading="lazy" />
+    <div class="footer-bottom">
+      <span>© 2026 Gulf Alternatives. All rights reserved.</span>
+      <span>Dynamic destinations · Dubai</span>
+    </div>
+  </footer>
 </body>
 </html>

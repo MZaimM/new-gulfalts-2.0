@@ -10,6 +10,7 @@
 #   DFD Tour               video concept/DFD/tour/tour-01..04.mp4     → joined, sped up → scrub, v01 (venue page, tour)
 #   H13 Our destinations   video concept/homepage/gulfalts-outro.mp4 → scrub, v02, played in reverse (pull-out)
 #   DFD page (dfd-page)   video concept/DFD/Video 1–4.mp4            → scrub, dfd-arrival + dfd-transformation v01
+#   DCP page (dcp-page)   video concept/DCP/dcp-final-tour.mp4       → scrub, dcp-arrival v01 (0–5.6 s) + page stills
 #   Images (H03, H05, H08) → scripts/build-images.mjs (AVIF + JPEG, responsive widths)
 #
 # Scrub encodes are 1080p (desktop) and a native 608x1080 crop (mobile), H.264 with a short
@@ -18,7 +19,7 @@
 # one second of video. (AV1/HEVC were tested and came out larger on this footage.)
 #
 # Usage: npm run media            (from the v3 folder, needs ffmpeg)
-#        npm run media -- h02 h13 only rebuild those chapters (h02, h11, dcp, dfd, dfd-page, h13, v2, images)
+#        npm run media -- h02 h13 only rebuild those chapters (h02, h11, dcp, dfd, dfd-page, dcp-page, h13, v2, images)
 #
 # A re-encode that changes the picture gets a new version suffix: /media is cached for a week.
 set -euo pipefail
@@ -142,6 +143,47 @@ if want dfd-page; then
   scrub "$MASTER" dfd-transformation v01 0.5 30 1.5:1.5:4:4
   frames "$MASTER" dfd-transformation 1 3.6 6.8 13.5 23.5
   rm -f "$MASTER"
+fi
+
+if want dcp-page; then
+  log "Creative Park page: arrival (Final tour 0–5.6 s), transformation stills and page stills"
+  DCP="$SRC/DCP"
+  # Arrival: Dubai → Al Quoz → the park from above → the building rises → the office inside.
+  scrub "$DCP/dcp-final-tour.mp4" dcp-arrival v01 0.5 32 2:2:6:6 5.6
+  # Transformation reuses the dcp-built-for-all scrub (dcp job); stills at its cues.
+  frames "$DCP/dcp-built-for-all.mp4" dcp-transformation 0.5 3.8 5.4 7.5 9.6 11.5
+  # Full-size stills for the scripts/build-images.mjs `dcp-` jobs (no DCP renders in Website
+  # Material yet): <seconds> <source> <name>. `loop` is the hero loop (its master is not in the repo).
+  STILLS="$DCP/stills"
+  mkdir -p "$STILLS"
+  while read -r t source name; do
+    case "$source" in
+      loop) source="$OUT_VIDEO/dcp-hero-desktop.mp4" ;;
+      tour) source="$DCP/dcp-final-tour.mp4" ;;
+      all) source="$DCP/dcp-built-for-all.mp4" ;;
+    esac
+    ffmpeg -v error -y -ss "$t" -i "$source" -frames:v 1 "$STILLS/$name.png" </dev/null
+  done <<EOF
+2.5 loop work
+5.5 all work-detail
+0.5 loop move
+6.5 loop move-detail
+4.5 loop culture
+9.6 all culture-detail
+6.5 tour life
+7.5 tour life-detail
+1.5 tour grid-city
+2.25 tour grid-al-quoz
+3.25 tour grid-plan
+4.6 tour grid-exterior
+11.5 tour grid-evening
+5.5 tour space-offices
+11.5 all space-wellness
+8.5 tour space-courts
+10.5 tour space-market
+EOF
+  node "$ROOT/scripts/build-images.mjs" dcp-
+  node "$ROOT/scripts/build-images.mjs" og-creative-park
 fi
 
 if want v2; then
