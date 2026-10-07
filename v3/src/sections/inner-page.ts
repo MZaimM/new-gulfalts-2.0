@@ -54,7 +54,7 @@ const renderIntro = (content: InnerPage) => {
       ${copy.stats.map(stat => `
       <div class="inner-intro_stat" data-reveal>
         <dt class="visually-hidden">${esc(stat.label)}</dt>
-        <dd><strong data-count>${esc(stat.value)}</strong><span>${esc(stat.label)}</span></dd>
+        <dd><strong data-count>${esc(stat.value)}</strong><span>${esc(stat.label)}</span>${stat.detail ? `<small>${esc(stat.detail)}</small>` : ''}</dd>
       </div>`).join('')}
     </dl>
   </div>

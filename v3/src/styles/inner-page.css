@@ -70,6 +70,7 @@
   font-variant-numeric: tabular-nums;
 }
 .inner-intro_stat span { font-size: var(--fs-meta); font-weight: 500; letter-spacing: var(--eyebrow-tracking); text-transform: uppercase; color: var(--text-secondary); }
+.inner-intro_stat small { max-width: 26ch; text-wrap: balance; font-size: var(--fs-ui); line-height: 1.45; text-align: center; color: var(--text-secondary); }
 
 /* ---------------------------------------------------------------------------
    Work · Eat · Train · Unwind: pinned; one word at a time, its pictures wiping up in turn.

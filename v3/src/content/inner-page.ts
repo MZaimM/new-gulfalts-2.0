@@ -47,7 +47,12 @@ export interface InnerPage {
     };
   };
   intro: StaticChapter & {
-    copy: { eyebrow: string; body: string; stats: { value: string; label: string }[] };
+    copy: {
+      eyebrow: string;
+      body: string;
+      /** `detail`: an optional sentence-case line under the label. */
+      stats: { value: string; label: string; detail?: string }[];
+    };
   };
   everyday: StaticChapter & {
     track: Track;
