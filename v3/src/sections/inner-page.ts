@@ -30,7 +30,7 @@ const renderArrival = (content: InnerPage) => {
     steps: content.arrival.steps,
     overlay: `
       <div class="inner-hero_intro" ${show(0, 0.07)}>
-        <p class="chapter_eyebrow">${esc(copy.eyebrow)}</p>
+        <p class="chapter_eyebrow${copy.eyebrowLarge ? ' is-large' : ''}">${esc(copy.eyebrow)}</p>
         <h1 class="hero-display inner-hero_title" id="${content.arrival.id}-title">${esc(copy.title)}</h1>
       </div>
       <p class="inner-hero_cue" ${show(0, 0.04)} aria-hidden="true">${esc(copy.enter)} <span>↓</span></p>

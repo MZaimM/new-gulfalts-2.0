@@ -28,6 +28,7 @@
   text-align: center;
 }
 .inner-hero_intro .chapter_eyebrow { color: var(--text-inverse-secondary); }
+.inner-hero_intro .chapter_eyebrow.is-large { font-size: var(--fs-lead); color: var(--text-inverse); }
 .inner-hero_title { max-width: 12ch; font-size: clamp(2.75rem, 1.6rem + 3.8vw, 5.5rem); line-height: 1.05; }
 .inner-hero_cue {
   position: absolute; left: 50%; bottom: 40px; translate: -50% 0;

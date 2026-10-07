@@ -38,7 +38,13 @@ export interface InnerPage {
   venue: string;
   arrival: ScrubChapter & {
     steps: Record<string, number>;
-    copy: { eyebrow: string; title: string; enter: string };
+    copy: {
+      eyebrow: string;
+      /** Larger, full-opacity eyebrow (the venue name above the headline). */
+      eyebrowLarge?: boolean;
+      title: string;
+      enter: string;
+    };
   };
   intro: StaticChapter & {
     copy: { eyebrow: string; body: string; stats: { value: string; label: string }[] };

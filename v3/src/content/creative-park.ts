@@ -36,8 +36,9 @@ const arrival: InnerPage['arrival'] = {
     { at: 0.89, id: 'inside', label: 'Inside' }
   ],
   copy: {
-    eyebrow: 'Al Quoz · Dubai',
-    title: 'Dubai Creative Park',
+    eyebrow: 'Dubai Creative Park',
+    eyebrowLarge: true,
+    title: 'A destination built around movement.',
     enter: 'Scroll to explore'
   }
 };
