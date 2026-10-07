@@ -1,7 +1,10 @@
 import { defineConfig, type Plugin } from 'vite';
 import { renderHomepage } from './src/sections/index';
 import { renderNextVenue, renderVenueSections } from './src/sections/venue';
-import { renderFintechDistrict } from './src/sections/fintech-district';
+import { renderInnerPage } from './src/sections/inner-page';
+import { fintechDistrictPage } from './src/content/fintech-district';
+import { creativeParkPage } from './src/content/creative-park';
+import type { InnerPage } from './src/content/inner-page';
 import { renderSiteChrome } from './src/components/site-chrome-markup';
 import { setBase } from './src/components/markup';
 
@@ -13,10 +16,15 @@ import { setBase } from './src/components/markup';
  *
  *   <!-- site:chrome [venue-id] -->      header, menu and contact drawer (every page)
  *   <!-- homepage:sections -->           H01–H14
- *   <!-- fintech-district:sections -->   the Dubai Fintech District page (sections/fintech-district.ts)
- *   <!-- venue:sections <venue-id> -->   venue hero and scrub sections (Dubai Creative Park)
+ *   <!-- inner-page:sections <venue-id> --> inner page template (sections/inner-page.ts): DFD, DCP
+ *   <!-- venue:sections <venue-id> -->   v1 venue hero and scrub sections (archive/dubai-creative-park-v1)
  *   <!-- venue:next <venue-id> -->       next-venue footer
  */
+const innerPages: Record<string, InnerPage> = {
+  'fintech-district': fintechDistrictPage,
+  'creative-park': creativeParkPage
+};
+
 const pageSections = (): Plugin => ({
   name: 'gulfalts-page-sections',
   configResolved: config => setBase(config.base),
@@ -25,7 +33,7 @@ const pageSections = (): Plugin => ({
     handler: html => html
       .replace(/<!-- site:chrome(?: ([a-z-]+))? -->/, (_, venue?: string) => renderSiteChrome(venue))
       .replace('<!-- homepage:sections -->', () => renderHomepage())
-      .replace('<!-- fintech-district:sections -->', () => renderFintechDistrict())
+      .replace(/<!-- inner-page:sections ([a-z-]+) -->/, (_, venue: string) => renderInnerPage(innerPages[venue]))
       .replace(/<!-- venue:sections ([a-z-]+) -->/, (_, venue: string) => renderVenueSections(venue))
       .replace(/<!-- venue:next ([a-z-]+) -->/, (_, venue: string) => renderNextVenue(venue))
   }
@@ -49,7 +57,8 @@ export default defineConfig({
           input: {
             main: 'index.html',
             'dubai-creative-park': 'dubai-creative-park/index.html',
-            'fintech-district': 'fintech-district/index.html'
+            'fintech-district': 'fintech-district/index.html',
+            'archive-dubai-creative-park-v1': 'archive/dubai-creative-park-v1/index.html'
           }
         }
       }

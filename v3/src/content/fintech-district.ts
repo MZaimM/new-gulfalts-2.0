@@ -1,11 +1,8 @@
-import type { KeyLocationId, MediaSources, ResponsiveImage, ScrubChapter, StaticChapter } from './types';
+import type { KeyLocationId, ResponsiveImage, ScrubChapter, StaticChapter } from './types';
+import { image, scrubMedia as media, still, type EverydayItem, type InnerPage } from './inner-page';
 
 /*
- * Dubai Fintech District page (fintech-district/index.html), V3 inner page.
- *
- * Structure follows the inner page template (v3/inner page): pinned hero that shrinks into the
- * page → intro text + figures → an everyday mix → an immersive scroll that zooms into the footage
- * → spaces → location map → next destination.
+ * Dubai Fintech District page (fintech-district/index.html), V3 inner page (content/inner-page.ts).
  * Copy follows the client document "Website 2.0", tab "Fintech District" (October 2026):
  *
  *   Fintech District · "Loft-style workspaces, showrooms and galleries within a curated business
@@ -19,19 +16,6 @@ import type { KeyLocationId, MediaSources, ResponsiveImage, ScrubChapter, Static
  * Media: scripts/build-media.sh `dfd` job (video concept/DFD/Video 1–4). Images:
  * scripts/build-images.mjs `dfd-*` jobs (Website Material/DFD).
  */
-
-const media = (name: string, version: string): MediaSources => ({
-  desktop: `/media/video/gulfalts-${name}-desktop-${version}.mp4`,
-  mobile: `/media/video/gulfalts-${name}-mobile-${version}.mp4`,
-  posterDesktop: `/media/posters/gulfalts-${name}-poster-desktop-${version}.jpg`,
-  posterMobile: `/media/posters/gulfalts-${name}-poster-mobile-${version}.jpg`
-});
-
-const still = (name: string, frame: number, version: string) =>
-  `/media/images/gulfalts-${name}-frame-${String(frame).padStart(2, '0')}-${version}.jpg`;
-
-/** Mirrors the jobs in scripts/build-images.mjs. */
-const image = (name: string, widths: number[], ratio: number): ResponsiveImage => ({ name, widths, ratio });
 
 // ---------------------------------------------------------------------------
 // Arrival — SCRUB (Video 1: from orbit → Sheikh Zayed Road → Al Quoz → the DFD warehouse → the
@@ -84,16 +68,8 @@ export const dfdIntro = {
 
 // ---------------------------------------------------------------------------
 // Work · Eat · Train · Unwind — STATIC, pinned: each word replaces the previous one as the
-// visitor scrolls, and its pictures wipe up over the last ones.
+// visitor scrolls, and its pictures wipe up over the last ones. The `body` lines are PROPOSED.
 // ---------------------------------------------------------------------------
-export interface EverydayItem {
-  word: string;
-  /** PROPOSED supporting line. */
-  body: string;
-  main: ResponsiveImage & { alt: string };
-  detail: ResponsiveImage & { alt: string };
-}
-
 export const dfdEveryday = {
   id: 'dfd-everyday',
   code: 'DFD-03',
@@ -238,6 +214,18 @@ export const dfdNext = {
   }
 } satisfies StaticChapter & { copy: unknown };
 
-export const dfdChapters = [dfdArrival, dfdIntro, dfdEveryday, dfdTransformation, dfdSpaces, dfdLocation, dfdNext];
-
-export const dfdChapterById = (id: string) => dfdChapters.find(chapter => chapter.id === id);
+export const fintechDistrictPage: InnerPage = {
+  venue: 'fintech-district',
+  arrival: dfdArrival,
+  intro: dfdIntro,
+  everyday: dfdEveryday,
+  transformation: dfdTransformation,
+  grid: dfdGrid,
+  fallbacks: {
+    location: '/media/images/dfd-grid-aerial-1080.jpg',
+    transformation: '/media/posters/gulfalts-dfd-transformation-poster-desktop-v01.jpg'
+  },
+  spaces: dfdSpaces,
+  location: dfdLocation,
+  next: dfdNext
+};
