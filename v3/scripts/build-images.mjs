@@ -24,6 +24,8 @@ const SITE = file => path.join(material, 'gulfalts.com', file);
 const PORTAL = file => path.join(material, 'portals', file);
 // Creative Park page: stills cut from the DCP footage (scripts/build-media.sh `dcp-page`).
 const DCP_STILL = file => path.join(root, '../video concept/DCP/stills', `${file}.png`);
+// Creative Park renders (Higgsfield), kept beside the footage in video concept/DCP/renders.
+const DCP_RENDER = file => path.join(root, '../video concept/DCP/renders', file);
 
 /**
  * name, source, aspect (w/h), focus point (0–1) the crop is centred on, widths.
@@ -89,7 +91,9 @@ const jobs = [
   ['dcp-space-wellness', DCP_STILL('space-wellness'), 4 / 5, [0.55, 0.5], [480, 864]],
   ['dcp-space-courts', DCP_STILL('space-courts'), 4 / 5, [0.5, 0.5], [480, 864]],
   ['dcp-space-market', DCP_STILL('space-market'), 4 / 5, [0.5, 0.5], [480, 864]],
-  ['og-creative-park', DCP_STILL('grid-evening'), 1200 / 630, [0.5, 0.5], [1200]]
+  // Location section background (1344x752 source).
+  ['dcp-location', DCP_RENDER('dcp-night-aerial.png'), 16 / 9, [0.5, 0.5], [960, 1344]],
+  ['og-creative-park', DCP_STILL('grid-evening'), 1200 / 630, [0.5, 0.5], [1200]],
 ];
 
 const cropFor = (width, height, aspect, [fx, fy]) => {

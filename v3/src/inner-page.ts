@@ -191,6 +191,15 @@ if (locationSection) {
     locationSection.dispatchEvent(new CustomEvent('chapter:step', { detail: { name, active } }));
   };
   initLocationMap(locationSection, reduced);
+  // Dark backdrop (data-light-stage): light for the header until the photo opens to full screen.
+  if (locationSection.hasAttribute('data-light-stage')) {
+    const tone = () => {
+      const light = !locationSection.classList.contains('is-expand');
+      if (locationSection.classList.contains('is-light') !== light) locationSection.classList.toggle('is-light', light);
+    };
+    new MutationObserver(tone).observe(locationSection, { attributeFilter: ['class'] });
+    tone();
+  }
   new IntersectionObserver((entries, observer) => {
     if (!entries.some(entry => entry.isIntersecting)) return;
     observer.disconnect();

@@ -71,6 +71,8 @@ export interface InnerPage {
   };
   location: StaticChapter & {
     track: Track;
+    /** The location backdrop is a dark photo: the header turns white while it fills the screen. */
+    dark?: boolean;
     steps: Record<string, number>;
     anchorProgress: number;
     copy: { eyebrow: string; heading: string; body: string; note: string; routes: KeyLocationId[] };

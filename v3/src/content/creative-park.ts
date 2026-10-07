@@ -174,6 +174,7 @@ const location: InnerPage['location'] = {
   track: { desktop: 230, mobile: 210 },
   steps: { expand: 0.015 },
   anchorProgress: 0.12,
+  dark: true,
   copy: {
     eyebrow: 'Location',
     heading: 'Connected across Dubai.',
@@ -211,7 +212,7 @@ export const creativeParkPage: InnerPage = {
   transformation,
   grid,
   fallbacks: {
-    location: '/media/images/dcp-grid-al-quoz-1080.jpg',
+    location: '/media/images/dcp-location-1344.jpg',
     transformation: '/media/posters/gulfalts-dcp-built-for-all-poster-desktop-v01.jpg'
   },
   spaces,

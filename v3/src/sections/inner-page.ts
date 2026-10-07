@@ -176,13 +176,16 @@ const renderSpaces = (content: InnerPage) => {
 // Location: Mapbox route mode. Rows are the accessible control; the map mirrors them.
 // ---------------------------------------------------------------------------
 const renderLocation = (content: InnerPage) => {
-  const { id, copy, track, steps, anchorProgress } = content.location;
+  const { id, copy, track, steps, anchorProgress, dark } = content.location;
   const venueName = destinationById(content.venue).fullName;
   const stepsAttr = Object.entries(steps).map(([name, at]) => `${name}:${at}`).join(' ');
+  // Over a dark backdrop the section and the map are light stages (site-chrome initHeaderTone):
+  // light while the card sits on the canvas or the map shows, dark once the photo fills the screen.
+  const lightStage = dark ? ' data-light-stage' : '';
   // Pinned: the map arrives as a card under the heading and, once the stage reaches the top,
   // opens to full screen by itself (`expand` step, a timed transition that reverses on the way up).
   return `
-<section class="chapter_component is-static inner-location" id="${id}" data-chapter="${id}" data-media="static"
+<section class="chapter_component is-static inner-location" id="${id}" data-chapter="${id}" data-media="static"${lightStage}
   data-steps="${stepsAttr}" data-anchor-progress="${anchorProgress}"
   style="--fallback:url('${content.fallbacks.location}')" aria-labelledby="${id}-title">
   <div class="chapter_track" ${trackStyle(track)}>
@@ -192,7 +195,7 @@ const renderLocation = (content: InnerPage) => {
     <h2 class="section-display" id="${id}-title">${esc(copy.heading)}</h2>
   </header>
   <div class="inner-location_frame">
-    <div class="h13_map" data-location-map data-origin="${content.venue}">
+    <div class="h13_map"${lightStage} data-location-map data-origin="${content.venue}">
       <div class="h13_map-canvas" role="img" aria-label="Map of Dubai with ${esc(venueName)} in Al Quoz and the drive to the selected destination"></div>
     </div>
     <div class="inner-location_overlay">
