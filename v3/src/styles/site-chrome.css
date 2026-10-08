@@ -141,6 +141,11 @@ body.menu-open { overflow: hidden; }
 }
 .menu-dialog.is-visible .menu-contact { opacity: 1; transform: none; }
 .menu-dialog :focus-visible { outline-color: var(--text-inverse); }
+/* Opening and closing the menu moves focus between these two; on touch screens that draws
+   the focus ring after every tap, so it only shows for keyboards. */
+@media (hover: none) and (pointer: coarse) {
+  .menu-toggle:focus-visible, .menu-close:focus-visible { outline: none; }
+}
 
 @media (max-width: 767px) {
   .menu-body { padding: 20px 24px; }

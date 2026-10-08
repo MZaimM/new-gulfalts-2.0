@@ -294,15 +294,17 @@
   /* Everyday: words in a row on top, the picture, then the line. */
   .inner-everyday_stage {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto auto auto;
+    grid-template-rows: auto auto auto auto;
     align-content: center; row-gap: 20px;
-    padding-top: calc(var(--header-h) + 36px);
+    padding-top: calc(var(--header-h) + 20px);
   }
-  .inner-everyday_words { grid-row: 1; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+  /* The eyebrow joins the stack, so words wrapping to a second line (DCP) can't crowd it. */
+  .inner-everyday_eyebrow { position: static; grid-row: 1; margin-bottom: 4px; }
+  .inner-everyday_words { grid-row: 2; display: flex; flex-wrap: wrap; gap: 4px 16px; }
   .js .inner-everyday .chapter_overlay .inner-everyday_word { font-size: 2rem; gap: 6px; }
   .inner-everyday_index { display: none; }
-  .inner-everyday_main { grid-column: 1; grid-row: 2; aspect-ratio: auto; height: min(52svh, 118vw); max-height: none; }
-  .inner-everyday_bodies { grid-row: 3; margin-top: 0; }
+  .inner-everyday_main { grid-column: 1; grid-row: 3; aspect-ratio: auto; height: min(48svh, 118vw); max-height: none; }
+  .inner-everyday_bodies { grid-row: 4; margin-top: 0; }
   .inner-everyday_body { font-size: 1rem; }
   .inner-everyday_progress { bottom: 20px; }
 
@@ -314,7 +316,7 @@
     inset: 0; width: auto; height: auto; border-radius: 0;
     clip-path: inset(calc((1 - var(--z, 0)) * 26%) calc((1 - var(--z, 0)) * 12%) round calc((1 - var(--z, 0)) * 16px));
   }
-  .inner-transform_intro { justify-content: flex-end; padding-bottom: 64px; }
+
   .inner-transform_intro h2 { font-size: 1.75rem; }
   .inner-transform_stages { top: auto; bottom: 48px; }
   .js .inner-transform .chapter_overlay .inner-transform_stages[data-show] { transform: none; }
