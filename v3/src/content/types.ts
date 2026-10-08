@@ -20,6 +20,8 @@ export interface ChapterCue {
   copy?: string;
   /** Still used for the reduced-motion keyframe sequence. */
   still?: string;
+  /** Groups cues into acts (inner-page transformation): the raw space, then what it becomes. */
+  act?: number;
 }
 
 interface ChapterBase {

@@ -88,6 +88,7 @@ export class ChapterTrack {
         if (media.duration) this.section.dataset.scrubDuration = media.duration.toFixed(2);
         media.setActive(this.inView);
         this.smoothVideo = this.targetVideo;
+        this.setCue(this.targetVideo);
         this.seek(this.targetVideo);
       });
     }
@@ -161,7 +162,8 @@ export class ChapterTrack {
     if (!this.config) return;
     const [spanStart, spanEnd] = this.config.videoSpan ?? [0, 1];
     const videoProgress = clamp((story - spanStart) / (spanEnd - spanStart));
-    this.setCue(videoProgress);
+    // Once the video plays, the copy follows the frame on screen (tick), not the eased target.
+    if (!this.media?.isReady) this.setCue(videoProgress);
     this.targetVideo = videoProgress;
   }
 
@@ -172,7 +174,8 @@ export class ChapterTrack {
     if (!cue || cue.id === this.activeCue) return;
     this.activeCue = cue.id;
     this.section.dataset.cue = cue.id;
-    this.cueEls.forEach(el => el.classList.toggle('is-current', el.dataset.cue === cue.id));
+    // `data-cue` may list several ids: the element stays up across all of them.
+    this.cueEls.forEach(el => el.classList.toggle('is-current', el.dataset.cue!.split(' ').includes(cue.id)));
     this.markEls.forEach(el => el.classList.toggle('is-current', el.dataset.cueMark === cue.id));
   }
 
@@ -186,6 +189,7 @@ export class ChapterTrack {
     } else {
       this.smoothVideo += delta * SEEK_EASE;
     }
+    this.setCue(this.smoothVideo);
     this.seek(this.smoothVideo);
   }
 

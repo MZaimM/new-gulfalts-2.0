@@ -112,27 +112,29 @@ export const dfdEveryday = {
 // Transformation — SCRUB (Videos 4 → 3 → 2, one master): the template's scale grid zooms into
 // the video tile, then each sequence runs from a raw warehouse to a living interior, "almost
 // like the development is being constructed around the visitor while they scroll".
-// Cues are fractions of the 25.1 s master (Video 4 0–8 s, Video 3 7.5–17.6 s, Video 2 17.1–25.1 s).
+// Three acts, one per sequence: the raw space, then what it becomes. Cues sit on the frames where
+// the picture changes, as fractions of the 25.17 s master: the diner lights up at 5.2 s, the
+// dissolve to the second unit at 7.8 s, the studio floor at 11.6 s, the third unit at 17.4 s and
+// its doors open on the workspace at 20.0 s.
 // ---------------------------------------------------------------------------
 export const dfdTransformation = {
   id: 'dfd-transformation',
   code: 'DFD-04',
   title: 'Transformation',
   type: 'scrub',
-  media: media('dfd-transformation', 'v01'),
+  media: media('dfd-transformation', 'v02'),
   duration: 25.17,
-  track: { desktop: 1080, mobile: 860 },
+  track: { desktop: 1080, mobile: 1000 },
   /** 0 → 0.2: the grid zooms into the video tile; the scrub runs to 0.9, then holds. */
   videoSpan: [0.22, 0.9],
   zoom: [0.02, 0.2],
   cues: [
-    { at: 0, id: 'exterior', label: 'Raw warehouse exteriors', copy: 'Raw warehouse exteriors', still: still('dfd-transformation', 1, 'v01') },
-    { at: 0.12, id: 'interior', label: 'Raw interiors', copy: 'Raw interiors', still: still('dfd-transformation', 2, 'v01') },
-    { at: 0.19, id: 'change', label: 'Interiors start to change', copy: 'Interiors start to change' },
-    { at: 0.235, id: 'people', label: 'People', copy: 'People' },
-    { at: 0.27, id: 'cafe', label: 'Café', copy: 'Café', still: still('dfd-transformation', 3, 'v01') },
-    { at: 0.44, id: 'fitness', label: 'Fitness', copy: 'Fitness', still: still('dfd-transformation', 4, 'v01') },
-    { at: 0.8, id: 'activity', label: 'Activity', copy: 'Activity', still: still('dfd-transformation', 5, 'v01') }
+    { at: 0, act: 1, id: 'warehouse', label: 'A raw warehouse', copy: 'A raw warehouse', still: still('dfd-transformation', 1, 'v01') },
+    { at: 0.207, act: 1, id: 'diner', label: 'Becomes a diner and bar', copy: 'becomes a diner and bar.', still: still('dfd-transformation', 3, 'v01') },
+    { at: 0.31, act: 2, id: 'hall', label: 'An empty hall', copy: 'An empty hall' },
+    { at: 0.461, act: 2, id: 'wellness', label: 'Becomes a wellness studio', copy: 'becomes a wellness studio.', still: still('dfd-transformation', 4, 'v01') },
+    { at: 0.691, act: 3, id: 'door', label: 'Another door', copy: 'Another door' },
+    { at: 0.795, act: 3, id: 'workspace', label: 'Opens onto a workspace', copy: 'opens onto a workspace.', still: still('dfd-transformation', 5, 'v01') }
   ],
   copy: {
     eyebrow: 'From raw space',
@@ -223,7 +225,7 @@ export const fintechDistrictPage: InnerPage = {
   grid: dfdGrid,
   fallbacks: {
     location: '/media/images/dfd-grid-aerial-1080.jpg',
-    transformation: '/media/posters/gulfalts-dfd-transformation-poster-desktop-v01.jpg'
+    transformation: '/media/posters/gulfalts-dfd-transformation-poster-desktop-v02.jpg'
   },
   spaces: dfdSpaces,
   location: dfdLocation,

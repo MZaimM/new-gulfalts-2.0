@@ -9,7 +9,7 @@
 #   DFD Approach           video concept/DFD/dfd-approach.mp4         → scrub, v01 (venue page, our-approach)
 #   DFD Tour               video concept/DFD/tour/tour-01..04.mp4     → joined, sped up → scrub, v01 (venue page, tour)
 #   H13 Our destinations   video concept/homepage/gulfalts-outro.mp4 → scrub, v02, played in reverse (pull-out)
-#   DFD page (dfd-page)   video concept/DFD/Video 1–4.mp4            → scrub, dfd-arrival + dfd-transformation v01
+#   DFD page (dfd-page)   video concept/DFD/Video 1–4.mp4            → scrub, dfd-arrival v01 + dfd-transformation v02
 #   DCP page (dcp-page)   video concept/DCP/dcp-final-tour.mp4       → scrub, dcp-arrival v01 (0–5.6 s) + page stills
 #   Images (H03, H05, H08) → scripts/build-images.mjs (AVIF + JPEG, responsive widths)
 #
@@ -35,15 +35,18 @@ mkdir -p "$OUT_VIDEO" "$OUT_POSTER" "$OUT_IMAGE"
 log() { printf '\n\033[1m%s\033[0m\n' "$*"; }
 
 GOP=30
+# x264 <crf> [gop]
 x264() {
+  local gop="${2:-$GOP}"
   echo -an -c:v libx264 -preset slower -profile:v high -pix_fmt yuv420p -crf "$1" \
-    -g $GOP -keyint_min $GOP -sc_threshold 0 -bf 0 -refs 1 -x264-params aq-mode=3 -movflags +faststart
+    -g $gop -keyint_min $gop -sc_threshold 0 -bf 0 -refs 1 -x264-params aq-mode=3 -movflags +faststart
 }
 
 want() { [ -z "$ONLY" ] || [[ " $ONLY " == *" $1 "* ]]; }
 ONLY="$*"
 
 # scrub <master> <name> <version> <mobile crop x as a fraction of the frame width> <crf> <denoise> [end seconds]
+# MOBILE_GOP=<frames> gives the phone file a shorter GOP (cheaper seeks on long scrubs).
 # The poster is always the first source frame: for a reversed chapter (H13) that is the frame
 # the pull-out lands on, so the reduced-motion view shows the same picture as the hold.
 scrub() {
@@ -55,7 +58,7 @@ scrub() {
   # shellcheck disable=SC2046
   ffmpeg -v error -y -i "$master" ${trim[@]+"${trim[@]}"} -vf "$base" $(x264 "$crf") "$OUT_VIDEO/gulfalts-$name-desktop-$version.mp4"
   # shellcheck disable=SC2046
-  ffmpeg -v error -y -i "$master" ${trim[@]+"${trim[@]}"} -vf "$base,$mobile" $(x264 "$crf") "$OUT_VIDEO/gulfalts-$name-mobile-$version.mp4"
+  ffmpeg -v error -y -i "$master" ${trim[@]+"${trim[@]}"} -vf "$base,$mobile" $(x264 "$crf" "${MOBILE_GOP:-$GOP}") "$OUT_VIDEO/gulfalts-$name-mobile-$version.mp4"
   ffmpeg -v error -y -i "$master" -frames:v 1 -vf "scale=1920:1080:flags=lanczos" -pix_fmt yuvj420p -q:v 4 "$OUT_POSTER/gulfalts-$name-poster-desktop-$version.jpg"
   ffmpeg -v error -y -i "$master" -frames:v 1 -vf "scale=1920:1080:flags=lanczos,$mobile" -pix_fmt yuvj420p -q:v 4 "$OUT_POSTER/gulfalts-$name-poster-mobile-$version.jpg"
 }
@@ -140,7 +143,9 @@ if want dfd-page; then
     "[0:v]fps=24,format=yuv420p,settb=AVTB[a];[1:v]fps=24,format=yuv420p,settb=AVTB[b];[2:v]fps=24,format=yuv420p,settb=AVTB[c];\
 [a][b]xfade=transition=fade:duration=0.5:offset=7.5417[ab];[ab][c]xfade=transition=fade:duration=0.5:offset=17.0834[v]" \
     -map "[v]" -an -c:v libx264 -preset fast -crf 12 -pix_fmt yuv420p "$MASTER"
-  scrub "$MASTER" dfd-transformation v01 0.5 30 1.5:1.5:4:4
+  # v02: the phone file has a keyframe every 6 frames (0.25 s). Phones scrub this 25 s chapter
+  # quickly and decoding up to a 30-frame GOP per seek made it stutter; +1.2 MB on mobile.
+  MOBILE_GOP=6 scrub "$MASTER" dfd-transformation v02 0.5 30 1.5:1.5:4:4
   frames "$MASTER" dfd-transformation 1 3.6 6.8 13.5 23.5
   rm -f "$MASTER"
 fi

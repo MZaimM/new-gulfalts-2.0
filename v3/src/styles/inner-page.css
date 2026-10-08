@@ -179,6 +179,29 @@
 .js .inner-transform_stage.is-active:not(.is-current) { opacity: .6; }
 .inner-transform_stage.is-current { color: var(--text-inverse); }
 .inner-transform_index { font-family: var(--body-font); font-size: var(--fs-meta); font-weight: 500; letter-spacing: var(--eyebrow-tracking); font-variant-numeric: tabular-nums; transform: translateY(-0.5em); }
+/* One act at a time (data-cue lists its cues): the raw space, then what it becomes. */
+.inner-transform_acts {
+  position: absolute; left: var(--gutter); right: var(--gutter); top: 50%; transform: translateY(-50%);
+  display: grid; max-width: 14em;
+  font-size: var(--fs-feature);
+}
+.js .inner-transform .chapter_overlay .inner-transform_acts[data-show] { transform: translateY(-50%); }
+.inner-transform_act { grid-area: 1 / 1; align-self: end; }
+.inner-transform_count {
+  margin-bottom: 16px;
+  font-size: var(--fs-meta); font-weight: 500; letter-spacing: var(--eyebrow-tracking); font-variant-numeric: tabular-nums;
+  color: var(--text-inverse-secondary);
+}
+.inner-transform_count span { color: var(--text-inverse); }
+.inner-transform_line {
+  font-family: var(--heading-font); font-weight: var(--heading-weight);
+  line-height: var(--heading-leading); letter-spacing: var(--heading-tracking);
+  color: var(--text-inverse-secondary);
+  text-shadow: 0 2px 24px rgba(16, 16, 16, .45);
+  transition: color var(--t-standard) ease, opacity var(--t-standard) ease, transform var(--t-narrative) var(--ease);
+}
+.inner-transform_line.is-current { color: var(--text-inverse); }
+.js .inner-transform_line.is-result:not(.is-current) { opacity: 0; transform: translate3d(0, 12px, 0); }
 .inner-transform_statement {
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
@@ -296,6 +319,9 @@
   .inner-transform_stages { top: auto; bottom: 48px; }
   .js .inner-transform .chapter_overlay .inner-transform_stages[data-show] { transform: none; }
   .inner-transform_stage { font-size: 1.5rem; gap: 12px; }
+  .inner-transform_acts { top: auto; bottom: 48px; font-size: 1.75rem; }
+  .js .inner-transform .chapter_overlay .inner-transform_acts[data-show] { transform: none; }
+  .inner-transform_count { margin-bottom: 12px; }
   .inner-transform .chapter_scrim { background: linear-gradient(to top, rgba(16, 16, 16, 0.72) 0%, rgba(16, 16, 16, 0.18) 55%, rgba(16, 16, 16, 0.2) 100%); }
 
   .inner-spaces_grid { gap: 32px 12px; }
@@ -315,10 +341,13 @@
 --------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   .inner-hero .chapter_media-wrap { clip-path: none; }
-  .inner-hero_intro, .inner-hero_places, .inner-transform_intro, .inner-transform_stages, .inner-transform_statement {
+  .inner-hero_intro, .inner-hero_places, .inner-transform_intro, .inner-transform_stages, .inner-transform_acts, .inner-transform_statement {
     position: relative; inset: auto; top: auto; bottom: auto; transform: none !important;
   }
   .inner-hero_place { grid-area: auto; }
+  .inner-transform_acts { gap: 32px; }
+  .inner-transform_act { grid-area: auto; }
+  .js .inner-transform_line.is-result:not(.is-current) { opacity: 1; transform: none; }
   .inner-hero_cue { display: none; }
   .inner-everyday_stage { display: grid; grid-template-columns: 1fr; grid-template-rows: none; gap: 32px; padding: 96px var(--gutter); }
   .inner-everyday_main, .inner-everyday_detail { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; overflow: visible; aspect-ratio: auto; max-height: none; height: auto; margin: 0; background: none; }

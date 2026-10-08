@@ -4,6 +4,7 @@
  * scrub chapters are driven by ChapterTrack, `[data-show]` windows by story progress (src/lib/scroll-scrub.ts).
  */
 import type { InnerPage } from '../content/inner-page';
+import type { ChapterCue } from '../content/types';
 import { destinationById, destinations } from '../content/destinations';
 import { driveTime } from '../content/drive-times';
 import { keyLocations } from '../content/location-map';
@@ -132,18 +133,38 @@ const renderTransformation = (content: InnerPage) => {
           <p class="chapter_eyebrow">${esc(copy.eyebrow)}</p>
           <h2 class="section-display" id="${chapter.id}-title">${esc(copy.heading)}</h2>
         </div>
+        ${cues.some(cue => cue.act) ? renderActs(cues, span) : renderStages(cues, span)}
+        <p class="inner-transform_statement section-display" ${show(Number((span[1] + 0.015).toFixed(3)), 1)}>${esc(copy.statement)}</p>
+      </div>
+    </div>
+  </div>
+  ${chapterKeyframes(copy.heading, cues.map(cue => ({ ...cue, copy: cue.label })))}
+</section>`;
+};
+
+/** Every stage stays listed once reached; the current one is emphasised. */
+const renderStages = (cues: ChapterCue[], span: [number, number]) => `
         <ol class="inner-transform_stages" ${show(span[0], span[1])}>
           ${cues.map((cue, index) => `
           <li class="inner-transform_stage" ${show(storyAt(cue.at, span), 1)} data-cue-mark="${cue.id}">
             <span class="inner-transform_index">${pad(index + 1)}</span>${esc(cue.copy!)}
           </li>`).join('')}
-        </ol>
-        <p class="inner-transform_statement section-display" ${show(Number((span[1] + 0.015).toFixed(3)), 1)}>${esc(copy.statement)}</p>
-      </div>
-    </div>
-  </div>
-  ${chapterKeyframes(copy.heading, cues)}
-</section>`;
+        </ol>`;
+
+/**
+ * One act at a time, in step with the frame on screen: the raw space, then what it becomes
+ * once the footage changes ("A raw warehouse / becomes a diner and bar.").
+ */
+const renderActs = (cues: ChapterCue[], span: [number, number]) => {
+  const acts = [...new Set(cues.map(cue => cue.act ?? 0))].map(act => cues.filter(cue => (cue.act ?? 0) === act));
+  return `
+        <div class="inner-transform_acts" ${show(span[0], span[1])}>
+          ${acts.map((act, index) => `
+          <div class="inner-transform_act" data-cue="${act.map(cue => cue.id).join(' ')}">
+            <p class="inner-transform_count"><span>${pad(index + 1)}</span> / ${pad(acts.length)}</p>
+            ${act.map((cue, step) => `<p class="inner-transform_line${step ? ' is-result' : ''}" data-cue-mark="${cue.id}">${esc(cue.copy!)}</p>`).join('')}
+          </div>`).join('')}
+        </div>`;
 };
 
 // ---------------------------------------------------------------------------
