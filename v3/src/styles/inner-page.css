@@ -150,6 +150,7 @@
   background: linear-gradient(90deg, rgba(16, 16, 16, 0.78) 0%, rgba(16, 16, 16, 0.42) 38%, rgba(16, 16, 16, 0.08) 72%);
   opacity: var(--z, 0);
 }
+.inner-transform.is-uncaptioned .chapter_scrim { opacity: 0; }
 /* Darkens the mosaic behind the intro line, then the hold frame behind the closing statement. */
 .inner-transform_shade {
   position: absolute; inset: 0; z-index: 0; pointer-events: none;

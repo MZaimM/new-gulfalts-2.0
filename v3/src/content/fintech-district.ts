@@ -1,4 +1,5 @@
-import type { KeyLocationId, ResponsiveImage, ScrubChapter, StaticChapter } from './types';
+import type { ResponsiveImage, ScrubChapter, StaticChapter } from './types';
+import { venueLocations } from './location-map';
 import { image, scrubMedia as media, still, type EverydayItem, type InnerPage } from './inner-page';
 
 /*
@@ -18,26 +19,29 @@ import { image, scrubMedia as media, still, type EverydayItem, type InnerPage } 
  */
 
 // ---------------------------------------------------------------------------
-// Arrival — SCRUB (Video 1: from orbit → Sheikh Zayed Road → Al Quoz → the DFD warehouse → the
-// studio inside). The template hero: once the flight lands, the frame shrinks into a rounded
+// Arrival — SCRUB (dfd-arrival-v2, client, October 2026: Sheikh Zayed Road drawn in white, then
+// in colour → over Al Quoz → down onto the DFD warehouses → the facade, its windows lighting up →
+// the dojo inside). The template hero: once the flight lands, the frame shrinks into a rounded
 // card on the canvas (`shrink`) and the header turns ink (`light`).
+// Cues are fractions of the 12.04 s file: Sheikh Zayed Road in colour at 1.5 s, Al Quoz from
+// above at 3.0 s, the warehouses at 5.0 s, the dojo at 10.0 s.
 // ---------------------------------------------------------------------------
 export const dfdArrival = {
   id: 'dfd-arrival',
   code: 'DFD-01',
   title: 'Arrival',
   type: 'scrub',
-  media: media('dfd-arrival', 'v01'),
-  duration: 14.2,
-  track: { desktop: 560, mobile: 460 },
+  media: media('dfd-arrival', 'v02'),
+  duration: 12.04,
+  track: { desktop: 500, mobile: 440 },
   videoSpan: [0, 0.84],
   steps: { light: 0.95 },
   cues: [
     { at: 0, id: 'orbit', label: 'Arrival' },
-    { at: 0.15, id: 'dubai', label: 'Dubai', copy: 'Dubai' },
-    { at: 0.36, id: 'al-quoz', label: 'Al Quoz', copy: 'Al Quoz' },
-    { at: 0.57, id: 'district', label: 'Fintech District', copy: 'Fintech District' },
-    { at: 0.9, id: 'inside', label: 'Inside' }
+    { at: 0.125, id: 'dubai', label: 'Dubai', copy: 'Dubai' },
+    { at: 0.25, id: 'al-quoz', label: 'Al Quoz', copy: 'Al Quoz' },
+    { at: 0.415, id: 'district', label: 'Fintech District', copy: 'Fintech District' },
+    { at: 0.83, id: 'inside', label: 'Inside' }
   ],
   copy: {
     eyebrow: 'Al Quoz · Dubai',
@@ -112,10 +116,10 @@ export const dfdEveryday = {
 // Transformation — SCRUB (Videos 4 → 3 → 2, one master): the template's scale grid zooms into
 // the video tile, then each sequence runs from a raw warehouse to a living interior, "almost
 // like the development is being constructed around the visitor while they scroll".
-// Three acts, one per sequence: the raw space, then what it becomes. Cues sit on the frames where
-// the picture changes, as fractions of the 25.17 s master: the diner lights up at 5.2 s, the
-// dissolve to the second unit at 7.8 s, the studio floor at 11.6 s, the third unit at 17.4 s and
-// its doors open on the workspace at 20.0 s.
+// No copy over the footage (client, October 2026): the cues only mark where the picture changes,
+// as fractions of the 25.17 s master (the diner lights up at 5.2 s, the dissolve to the second
+// unit at 7.8 s, the studio floor at 11.6 s, the third unit at 17.4 s, its doors open on the
+// workspace at 20.0 s), for the reduced-motion stills.
 // ---------------------------------------------------------------------------
 export const dfdTransformation = {
   id: 'dfd-transformation',
@@ -129,12 +133,12 @@ export const dfdTransformation = {
   videoSpan: [0.22, 0.9],
   zoom: [0.02, 0.2],
   cues: [
-    { at: 0, act: 1, id: 'warehouse', label: 'A raw warehouse', copy: 'A raw warehouse', still: still('dfd-transformation', 1, 'v01') },
-    { at: 0.207, act: 1, id: 'diner', label: 'Becomes a diner and bar', copy: 'becomes a diner and bar.', still: still('dfd-transformation', 3, 'v01') },
-    { at: 0.31, act: 2, id: 'hall', label: 'An empty hall', copy: 'An empty hall' },
-    { at: 0.461, act: 2, id: 'wellness', label: 'Becomes a wellness studio', copy: 'becomes a wellness studio.', still: still('dfd-transformation', 4, 'v01') },
-    { at: 0.691, act: 3, id: 'door', label: 'Another door', copy: 'Another door' },
-    { at: 0.795, act: 3, id: 'workspace', label: 'Opens onto a workspace', copy: 'opens onto a workspace.', still: still('dfd-transformation', 5, 'v01') }
+    { at: 0, id: 'warehouse', label: 'A raw warehouse', still: still('dfd-transformation', 1, 'v01') },
+    { at: 0.207, id: 'diner', label: 'A diner and bar', still: still('dfd-transformation', 3, 'v01') },
+    { at: 0.31, id: 'hall', label: 'An empty hall' },
+    { at: 0.461, id: 'wellness', label: 'A wellness studio', still: still('dfd-transformation', 4, 'v01') },
+    { at: 0.691, id: 'door', label: 'Another door' },
+    { at: 0.795, id: 'workspace', label: 'A workspace', still: still('dfd-transformation', 5, 'v01') }
   ],
   copy: {
     eyebrow: 'From raw space',
@@ -175,7 +179,7 @@ export const dfdSpaces = {
 
 // ---------------------------------------------------------------------------
 // Location — STATIC: Mapbox route mode (components/location-map.ts), from this venue to the five
-// key locations of the client's map brief. Drive times are Mapbox ETAs (drive-times.json).
+// places the client listed (October 2026), with the client's drive times (drive-times.ts).
 // ---------------------------------------------------------------------------
 export const dfdLocation = {
   id: 'dfd-location',
@@ -191,8 +195,8 @@ export const dfdLocation = {
     eyebrow: 'Location',
     heading: 'Connected across Dubai.',
     body: 'Choose a destination to trace the drive from Dubai Fintech District.',
-    note: 'Mapbox estimates, driving in typical traffic.',
-    routes: ['difc', 'downtown', 'businessBay', 'dubaiMarina', 'dxb'] as KeyLocationId[]
+    note: 'Approximate drive times.',
+    routes: venueLocations
   }
 } satisfies StaticChapter & { copy: unknown; track: { desktop: number; mobile: number }; steps: Record<string, number>; anchorProgress: number };
 

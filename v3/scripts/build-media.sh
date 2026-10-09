@@ -9,7 +9,8 @@
 #   DFD Approach           video concept/DFD/dfd-approach.mp4         → scrub, v01 (venue page, our-approach)
 #   DFD Tour               video concept/DFD/tour/tour-01..04.mp4     → joined, sped up → scrub, v01 (venue page, tour)
 #   H13 Our destinations   video concept/homepage/gulfalts-outro.mp4 → scrub, v02, played in reverse (pull-out)
-#   DFD page (dfd-page)   video concept/DFD/Video 1–4.mp4            → scrub, dfd-arrival v01 + dfd-transformation v02
+#   DFD page (dfd-page)   video concept/DFD/dfd-arrival-v2.mp4       → scrub, dfd-arrival v02 (also `dfd-arrival` alone)
+#                         video concept/DFD/Video 2–4.mp4            → scrub, dfd-transformation v02
 #   DCP page (dcp-page)   video concept/DCP/dcp-final-tour.mp4       → scrub, dcp-arrival v01 (0–5.6 s) + page stills
 #   Images (H03, H05, H08) → scripts/build-images.mjs (AVIF + JPEG, responsive widths)
 #
@@ -19,7 +20,7 @@
 # one second of video. (AV1/HEVC were tested and came out larger on this footage.)
 #
 # Usage: npm run media            (from the v3 folder, needs ffmpeg)
-#        npm run media -- h02 h13 only rebuild those chapters (h02, h11, dcp, dfd, dfd-page, dcp-page, h13, v2, images)
+#        npm run media -- h02 h13 only rebuild those chapters (h02, h11, dcp, dfd, dfd-page, dfd-arrival, dcp-page, h13, v2, images)
 #
 # A re-encode that changes the picture gets a new version suffix: /media is cached for a week.
 set -euo pipefail
@@ -43,6 +44,7 @@ x264() {
 }
 
 want() { [ -z "$ONLY" ] || [[ " $ONLY " == *" $1 "* ]]; }
+wantAny() { local job; for job in "$@"; do want "$job" && return 0; done; return 1; }
 ONLY="$*"
 
 # scrub <master> <name> <version> <mobile crop x as a fraction of the frame width> <crf> <denoise> [end seconds]
@@ -131,11 +133,18 @@ if want h13; then
   scrub "$SRC/homepage/gulfalts-outro.mp4" h13-dubai-pull-out v02 0.56 29 1.5:1.5:4:4 5.875
 fi
 
+if wantAny dfd-page dfd-arrival; then
+  log "Fintech District page: arrival"
+  # v02 (client, October 2026): Sheikh Zayed Road drawn in white then in colour → over Al Quoz →
+  # down onto the DFD warehouses → the facade, its windows lighting up → the dojo inside.
+  # 1920x1080, 24 fps, 12.04 s (HEVC 10-bit master). Keyframes every 12 frames on desktop and
+  # every 6 on phones, so a seek decodes at most half (a quarter) of a second: smooth both ways.
+  GOP=12 MOBILE_GOP=6 scrub "$SRC/DFD/dfd-arrival-v2.mp4" dfd-arrival v02 0.5 28 1.5:1.5:4:4
+fi
+
 if want dfd-page; then
-  log "Fintech District page: arrival (Video 1) and transformation (Videos 4 → 3 → 2)"
+  log "Fintech District page: transformation (Videos 4 → 3 → 2)"
   DFD="$SRC/DFD"
-  # Arrival: space → Sheikh Zayed Road → Al Quoz → the DFD warehouse → the studio inside (30 fps).
-  scrub "$DFD/Video 1.mp4" dfd-arrival v01 0.5 29 1.5:1.5:4:4
   # Transformation: three exterior → raw interior → fitted-out sequences (café, studio, workspace),
   # joined with 0.5 s dissolves into one 25.1 s master so a single video scrubs the whole chapter.
   MASTER="$(mktemp -d)/dfd-transformation.mp4"

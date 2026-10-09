@@ -112,13 +112,15 @@ const renderTransformation = (content: InnerPage) => {
   const chapter = content.transformation;
   const { copy, cues, videoSpan, zoom } = chapter;
   const span = videoSpan as [number, number];
+  // Fintech District runs the footage without lines over it (and so without the scrim for them).
+  const captioned = cues.some(cue => cue.copy);
   const tiles = content.grid.map(tile => `
           <div class="inner-grid_item">${picture({ image: tile, alt: tile.alt, sizes: '34vw' })}</div>`);
   // The video is the third tile: the one the grid zooms into.
   tiles.splice(2, 0, `
           <div class="inner-grid_item is-ref" data-scale-ref>${chapterMedia(chapter.media, { kind: 'scrub', scrim: 'soft' })}</div>`);
   return `
-<section class="chapter_component is-scrub inner-transform" id="${chapter.id}" data-chapter="${chapter.id}" data-media="scrub"
+<section class="chapter_component is-scrub inner-transform${captioned ? '' : ' is-uncaptioned'}" id="${chapter.id}" data-chapter="${chapter.id}" data-media="scrub"
   data-scrub-duration="${chapter.duration}" data-scrub-ready="false" data-state="idle" data-reduced-motion="fallback"
   data-zoom="${zoom.join('-')}" style="--fallback:url('${content.fallbacks.transformation}')" aria-labelledby="${chapter.id}-title">
   <div class="chapter_track" ${trackStyle(chapter.track)}>
@@ -133,7 +135,7 @@ const renderTransformation = (content: InnerPage) => {
           <p class="chapter_eyebrow">${esc(copy.eyebrow)}</p>
           <h2 class="section-display" id="${chapter.id}-title">${esc(copy.heading)}</h2>
         </div>
-        ${cues.some(cue => cue.act) ? renderActs(cues, span) : renderStages(cues, span)}
+        ${!captioned ? '' : cues.some(cue => cue.act) ? renderActs(cues, span) : renderStages(cues, span)}
         <p class="inner-transform_statement section-display" ${show(Number((span[1] + 0.015).toFixed(3)), 1)}>${esc(copy.statement)}</p>
       </div>
     </div>

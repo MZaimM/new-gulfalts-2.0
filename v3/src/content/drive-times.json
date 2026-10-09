@@ -4,27 +4,43 @@
     "downtown": 16,
     "businessBay": 13,
     "dubaiMarina": 20,
-    "dxb": 24
+    "dxb": 24,
+    "dubaiHills": 14,
+    "mallOfTheEmirates": 18,
+    "jumeirahRoad": 17,
+    "dubaiMall": 18
   },
   "creative-park": {
     "difc": 19,
     "downtown": 17,
     "businessBay": 14,
     "dubaiMarina": 15,
-    "dxb": 25
+    "dxb": 25,
+    "dubaiHills": 10,
+    "mallOfTheEmirates": 13,
+    "jumeirahRoad": 18,
+    "dubaiMall": 19
   },
   "v8-district": {
     "difc": 17,
     "downtown": 18,
     "businessBay": 16,
     "dubaiMarina": 13,
-    "dxb": 26
+    "dxb": 26,
+    "dubaiHills": 9,
+    "mallOfTheEmirates": 11,
+    "jumeirahRoad": 17,
+    "dubaiMall": 17
   },
   "motor-garten": {
     "difc": 16,
     "downtown": 16,
     "businessBay": 17,
     "dubaiMarina": 15,
-    "dxb": 24
+    "dxb": 24,
+    "dubaiHills": 11,
+    "mallOfTheEmirates": 13,
+    "jumeirahRoad": 15,
+    "dubaiMall": 14
   }
 }

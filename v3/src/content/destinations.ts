@@ -1,6 +1,6 @@
 import { driveTimes } from './drive-times';
-import { keyLocations } from './location-map';
-import type { CommuteTime, Destination, DestinationStat, KeyLocationId } from './types';
+import { homeLocations, keyLocations } from './location-map';
+import type { CommuteTime, Destination, DestinationStat } from './types';
 
 /*
  * Destination data used by H05, H13 (map markers and directory) and H14. V8 District and Motor
@@ -19,9 +19,9 @@ export const venueBase = 'https://www.gulfalts.com/venue';
 /** No all-destinations page exists yet on gulfalts.com; the live homepage lists every venue. */
 export const allDestinationsUrl = 'https://www.gulfalts.com/';
 
-/** Mapbox drive times from a venue to each key location, for the H13 map marker cards. */
+/** Drive times from a venue to each of the homepage's key locations, for the H13 map marker cards. */
 const commute = (venue: string): CommuteTime[] =>
-  (Object.keys(keyLocations) as KeyLocationId[])
+  homeLocations
     .filter(place => driveTimes[venue]?.[place] !== undefined)
     .map(place => ({ place: keyLocations[place].name, minutes: driveTimes[venue]![place]! }));
 

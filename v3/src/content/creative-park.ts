@@ -1,4 +1,4 @@
-import type { KeyLocationId } from './types';
+import { venueLocations } from './location-map';
 import { image, scrubMedia as media, still, type InnerPage } from './inner-page';
 
 /*
@@ -164,7 +164,7 @@ const spaces: InnerPage['spaces'] = {
 };
 
 // ---------------------------------------------------------------------------
-// Location — STATIC: Mapbox route mode from Creative Park (drive-times.json).
+// Location — STATIC: Mapbox route mode from Creative Park to the client's five places (drive-times.ts).
 // ---------------------------------------------------------------------------
 const location: InnerPage['location'] = {
   id: 'dcp-location',
@@ -179,8 +179,8 @@ const location: InnerPage['location'] = {
     eyebrow: 'Location',
     heading: 'Connected across Dubai.',
     body: 'Choose a destination to trace the drive from Dubai Creative Park.',
-    note: 'Mapbox estimates, driving in typical traffic.',
-    routes: ['difc', 'downtown', 'businessBay', 'dubaiMarina', 'dxb'] as KeyLocationId[]
+    note: 'Approximate drive times.',
+    routes: venueLocations
   }
 };
 

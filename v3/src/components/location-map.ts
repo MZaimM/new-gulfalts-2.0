@@ -11,8 +11,8 @@
  *
  * Route mode (venue pages, per gulfalts-mapbox-dev-instructions.md): when the panel has
  * `[data-route]` rows and the stage a `data-origin` venue, picking a key location draws the road
- * route from that venue and reframes the camera; one route at a time. Drive times are Mapbox ETAs
- * and the routes their geometry, both precomputed (drive-times.json, routes.json).
+ * route from that venue and reframes the camera; one route at a time. Drive times (drive-times.ts)
+ * and the route geometry (routes.json) are precomputed.
  *
  * mapbox-gl (~540 kB gz) loads only once the visitor is part-way through H13 (`map-near` step),
  * or near the section under reduced motion.
@@ -20,7 +20,7 @@
 import type { LngLatBounds, Map as MapboxMap } from 'mapbox-gl';
 import { destinationById } from '../content/destinations';
 import { driveTime } from '../content/drive-times';
-import { keyLocations, mapbox, mapCamera, mapVenues } from '../content/location-map';
+import { homeLocations, keyLocations, mapbox, mapCamera, mapVenues } from '../content/location-map';
 import type { KeyLocationId, LngLat, RouteSet } from '../content/types';
 import { spreadLabels } from '../lib/scroll-scrub';
 import { isMobile } from '../lib/viewport';
@@ -214,8 +214,9 @@ export const initLocationMap = (section: HTMLElement, reduced: boolean) => {
     if (routeData) routes = routeData.default as unknown as RouteSet;
     fitStage();
 
-    // The overview frames the venues in their Dubai context: every key location fits in it.
-    const keys = Object.values(keyLocations).map(place => place.coordinates);
+    // The overview frames the venues in their Dubai context: every key location this map shows
+    // (the page's routes, or the homepage's set) fits in it.
+    const keys = (routeMode ? places : homeLocations).map(id => keyLocations[id].coordinates);
     const points: LngLat[] = [...mapVenues.map(venue => venue.coordinates), ...keys];
     overview = points.reduce((box, point) => box.extend(point), new gl.LngLatBounds(points[0], points[0]));
 

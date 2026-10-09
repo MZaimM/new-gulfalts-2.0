@@ -118,7 +118,9 @@ export interface CommuteTime {
 /** [longitude, latitude], Mapbox order. */
 export type LngLat = [number, number];
 
-export type KeyLocationId = 'difc' | 'downtown' | 'businessBay' | 'dubaiMarina' | 'dxb';
+export type KeyLocationId =
+  | 'difc' | 'downtown' | 'businessBay' | 'dubaiMarina' | 'dxb'
+  | 'dubaiHills' | 'mallOfTheEmirates' | 'jumeirahRoad' | 'dubaiMall';
 
 export interface KeyLocation {
   name: string;
